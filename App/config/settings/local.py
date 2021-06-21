@@ -7,10 +7,15 @@ ALLOWED_HOSTS = ['*']
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'user': env.str('USER'),
+        'password': env.str('PASSWORD'),
+        'host': env.str('HOST',default='localhost'),
+        'database': env.str('DATABASE'),
+        'port': env.str('PORT',default='3306')
     }
 }
+
+DATABASE = DATABASES[env.str('DATABASE_USE',default='default')]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
