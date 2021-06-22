@@ -9,13 +9,13 @@ def conectar(funcion):
             connection = mysql.connect(**DATABASE)
             kwargs['connection'] = connection
             resultado = funcion(*args, **kwargs)
+            if connection.is_connected():
+                connection.close()
         except mysql.Error as error: 
             print(error)
-        finally:
-            if connection.isConnected():
-                connection.close()
+            
         return resultado
-    return conectar
+    return decorador
 
     
     

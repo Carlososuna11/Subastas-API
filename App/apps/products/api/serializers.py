@@ -1,17 +1,24 @@
+
 from rest_framework import serializers
 from database.conexion import conectar 
 from apps.products.models import Producto
+import os
+
+def saveImage(image,id):
+    _,file_extension = os.path.splitext(str(image))
+    with open(f'static/img/product{id}{file_extension}', 'wb+') as f:
+        for chunk in image.chunks():
+            f.write(chunk)
 class ProductSerializer(serializers.Serializer):
     nombre = serializers.CharField(max_length=50)
     descripcion = serializers.CharField(max_length=500,style={'base_template':'textarea.html'})
     precio = serializers.DecimalField(max_digits=10,decimal_places=2,min_value=0)
-    imagen = serializers.ImageField()
+    imagen = serializers.ImageField(allow_null=True,allow_empty_file=True)
 
-    def validate_imagen(self,data):
-        return data
 
     @conectar
     def create(self, validated_data:dict,connection):
+        
         mysql_insert_query = """INSERT INTO productos (nombre, descripcion, precio) 
                                 VALUES (%s, %s, %s) """
         cursor = connection.cursor()
@@ -20,21 +27,41 @@ class ProductSerializer(serializers.Serializer):
         cursor.execute(mysql_insert_query,data)
         connection.commit()
         producto.id = cursor.lastrowid
+        if validated_data['imagen']:
+            saveImage(validated_data['imagen'],producto.id)
+            _,file_extension = os.path.splitext(str(validated_data['imagen']))
+            producto.imagen =f"product{producto.id}{file_extension}" 
+            mysql_update_query =  "UPDATE productos SET imagen = %s WHERE id = %s"
+            cursor.execute(mysql_update_query,(producto.imagen,producto.id))
+            connection.commit()
         return producto
 
     @conectar
     def update(self, instance:Producto, validated_data:dict,connection):
         cursor = connection.cursor()
-        mysql_update_query =  "UPDATE productos SET %s = %s WHERE id = %s"
-        for key,value in validated_data:
+        for key,value in validated_data.items():
             # instance.nombre = validated_data.get('nombre',instance.nombre)
-            cursor.execute(mysql_update_query,(key,value,instance.id))
-            setattr(instance,key,value)
+            if key != 'imagen':
+                mysql_update_query =  f"UPDATE productos SET {key} = %s WHERE id = %s"
+                cursor.execute(mysql_update_query,(value,instance.id))
+                setattr(instance,key,value)
+            else:
+                
+                if value:
+                    saveImage(validated_data['imagen'],instance.id)
+                    _,file_extension = os.path.splitext(str(validated_data['imagen']))
+                    instance.imagen =f"product{instance.id}{file_extension}"
+                else:
+                    instance.imagen = value 
+                mysql_update_query =  "UPDATE productos SET imagen = %s WHERE id = %s"
+                cursor.execute(mysql_update_query,(instance.imagen,instance.id))
         connection.commit()
         return instance
     
+    def to_representation(self, instance):
+        return instance.__dict__
     # def save(self,connection):
     #     pass
 
-    # def to_representation(self, instance):
-    #     return super().to_representation(instance)
+
+    # return super().to_representation(instance)

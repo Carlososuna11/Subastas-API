@@ -15,7 +15,13 @@ DATABASES = {
     }
 }
 
-DATABASE = DATABASES[env.str('DATABASE_USE',default='default')]
+DATABASE = {
+        'user': env.str('USER'),
+        'password': env.str('PASSWORD'),
+        'host': env.str('HOST',default='localhost'),
+        'database': env.str('DATABASE'),
+        'port': env.str('PORT',default='3306')
+    }
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

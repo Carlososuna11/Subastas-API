@@ -31,10 +31,13 @@ BASE_APPS = [
     'django.contrib.staticfiles',
 ]
 
-LOCAL_APPS = ['apps.products']
+LOCAL_APPS = ['apps.products',]
+
 
 THIRD_APPS = [
     'rest_framework',
+    'drf_yasg',
+    'corsheaders',
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -47,7 +50,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'config.urls'
 

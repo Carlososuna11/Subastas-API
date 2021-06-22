@@ -56,6 +56,30 @@ Api de prueba creada para demostrar que el sistema esta instalado en el computad
 
         ```
     
+    - **Adicional**: Ver los valores que tiene la tabla:
+        ```sql
+        SELECT * from productos;
+        ```
+        Un ejemplo de lo que podria retornar:
+        ```
+        +----+--------+-------------+--------+---------------+
+        | id | nombre | descripcion | precio | imagen        |
+        +----+--------+-------------+--------+---------------+
+        |  3 | string | string      |  15.80 | NULL          |
+        |  4 | string | string      |  23.00 | NULL          |
+        |  5 | carlos | string      |  10.00 | NULL          |
+        |  6 | string | string      | 150.25 | NULL          |
+        |  7 | carlos | Crear       |  15.25 | NULL          |
+        |  8 | carlos | Crear       |  15.25 | NULL          |
+        |  9 | carlos | Crear       |  15.25 | product9.png  |
+        | 10 | carlos | Crear       |  15.25 | product10.png |
+        | 11 | carlos | Crear       |  15.25 | product11.jpg |
+        | 12 | carlos | Crear       |  15.25 | product12.jpg |
+        | 13 | carlos | osuna       |  12.00 | NULL          |
+        | 14 | carlos | as          |  12.50 | NULL          |
+        +----+--------+-------------+--------+---------------+
+
+        ```
 
 4) configurar archivo .env (Localizado en el zip )
 ```
@@ -67,3 +91,24 @@ PORT=<port>
 ```
 por default el `port` es `3306` y el `host` es `localhost`
 
+5) Instalar librerias necesarias
+```
+pip install -r requirements.txt
+```
+6) correr Proyecto
+```
+python manage.py runserver
+```
+
+#### Link de la documentacion
+```
+<urlbase>/swagger/
+<urlbase>/redoc/
+```
+Ejemplo
+```
+http://localhost:8000/swagger/
+http://127.0.0.1:8000/redoc/
+```
+
+**Nota**: Aunque no aparezca el campo de imagen en el post y put, este es necesario enviar, de no requerir enviar imagen simplemente establezca `"imagen":null`
