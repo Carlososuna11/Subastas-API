@@ -6,7 +6,7 @@ import os
 
 def saveImage(image,id):
     _,file_extension = os.path.splitext(str(image))
-    with open(f'static/img/product{id}{file_extension}', 'wb+') as f:
+    with open(f'media/img/product{id}{file_extension}', 'wb+') as f:
         for chunk in image.chunks():
             f.write(chunk)
 class ProductSerializer(serializers.Serializer):
@@ -57,9 +57,12 @@ class ProductSerializer(serializers.Serializer):
                 cursor.execute(mysql_update_query,(instance.imagen,instance.id))
         connection.commit()
         return instance
+
     
     def to_representation(self, instance):
-        return instance.__dict__
+        producto = instance.__dict__
+        producto['imagen'] = '' if producto['imagen']==None else f"media/img/{producto['imagen']}"
+        return producto
     # def save(self,connection):
     #     pass
 
