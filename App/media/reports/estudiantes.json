@@ -49,6 +49,14 @@
             "imagen": "media/img/default.png"
         },
         {
+            "dni": 122323,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        },
+        {
             "dni": 165623,
             "nombre": "culo",
             "apellido": "string",

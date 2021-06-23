@@ -96,7 +96,10 @@ class ProductSerializer(serializers.Serializer):
         productos = { "productos" : [self.to_representation(Producto(**dato)) for dato in cursor]}
         with open('./media/reports/productos.json', 'w') as outfile:
             json.dump(productos,outfile, indent=4,encoding="utf-8")
-        json_to_pdf()
+        try:
+            json_to_pdf()
+        except Exception as e:
+            print(e)
         return retornar
     # def save(self,connection):
     #     pass

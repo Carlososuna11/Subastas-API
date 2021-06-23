@@ -4,24 +4,40 @@
             "id": 1,
             "habitaciones": 20,
             "banos": 15,
-            "gas": "Si",
-            "balcon": "Si",
+            "gas": true,
+            "balcon": true,
             "imagen": "media/img/default.png"
         },
         {
             "id": 2,
             "habitaciones": 20,
             "banos": 15,
-            "gas": "Si",
-            "balcon": "No",
+            "gas": true,
+            "balcon": false,
             "imagen": "media/img/default.png"
         },
         {
             "id": 3,
             "habitaciones": 0,
             "banos": 0,
-            "gas": "Si",
-            "balcon": "Si",
+            "gas": true,
+            "balcon": true,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 4,
+            "habitaciones": 0,
+            "banos": 0,
+            "gas": true,
+            "balcon": true,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 5,
+            "habitaciones": 0,
+            "banos": 0,
+            "gas": true,
+            "balcon": true,
             "imagen": "media/img/default.png"
         }
     ]

@@ -7,7 +7,7 @@ import simplejson as json
 from pyreportjasper import PyReportJasper
 
 def json_to_pdf():
-    input_file = './static/jaspersoft/estudiantes.jrxml'
+    input_file = './static/jaspersoft/casas.jrxml'
     output_file = './media/pdf/casas'
     conn = {
         'driver': 'json',
