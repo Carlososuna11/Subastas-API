@@ -87,6 +87,8 @@ class HouseSerializer(serializers.Serializer):
         producto = instance.__dict__
         # producto['gas'] = 'Si' if producto['gas'] else 'No'
         # producto['balcon'] = 'Si' if producto['balcon'] else 'No'
+        producto['gas'] = True if producto['gas'] else False
+        producto['balcon'] = True if producto['balcon'] else False
         producto['imagen'] = 'media/img/default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
         return producto
 
