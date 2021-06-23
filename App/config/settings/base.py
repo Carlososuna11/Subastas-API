@@ -32,7 +32,7 @@ BASE_APPS = [
     'django.contrib.staticfiles',
 ]
 
-LOCAL_APPS = ['apps.products',]
+LOCAL_APPS = ['apps.products','apps.students','apps.houses']
 
 
 THIRD_APPS = [
