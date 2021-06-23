@@ -56,7 +56,7 @@ class HouseSerializer(serializers.Serializer):
             _,file_extension = os.path.splitext(str(validated_data['imagen']))
             casa.imagen =f"house{casa.id}{file_extension}" 
             mysql_update_query =  "UPDATE casas SET imagen = %s WHERE id = %s"
-            cursor.execute(mysql_update_query,(casa.imagen,Casa.id))
+            cursor.execute(mysql_update_query,(casa.imagen,casa.id))
             connection.commit()
         return casa
 
