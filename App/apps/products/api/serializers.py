@@ -3,6 +3,29 @@ from rest_framework import serializers
 from database.conexion import conectar 
 from apps.products.models import Producto
 import os
+import simplejson as json
+from pyreportjasper import PyReportJasper
+
+
+def json_to_pdf():
+    input_file = './static/jaspersoft/productos.jrxml'
+    output_file = './media/pdf/productos'
+    conn = {
+        'driver': 'json',
+        'data_file': './media/reports/productos.json',
+        'json_query': 'productos'
+    }
+    pyreportjasper = PyReportJasper()
+    pyreportjasper.config(
+        input_file,
+        output_file,
+        output_formats=["pdf"],
+        db_connection=conn
+    )
+    pyreportjasper.process_report()
+    print('Result is the file below.')
+    print(output_file + '.pdf')
+
 
 def saveImage(image,id):
     _,file_extension = os.path.splitext(str(image))
@@ -62,8 +85,19 @@ class ProductSerializer(serializers.Serializer):
     
     def to_representation(self, instance):
         producto = instance.__dict__
-        producto['imagen'] = 'default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
+        producto['imagen'] = 'media/img/default.png' if not(producto['imagen']) else f"media/img/{producto['imagen']}"
         return producto
+
+    @conectar
+    def save(self,connection, **kwargs):
+        retornar =  super().save(**kwargs)
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM productos")
+        productos = { "productos" : [self.to_representation(Producto(**dato)) for dato in cursor]}
+        with open('./media/reports/productos.json', 'w') as outfile:
+            json.dump(productos,outfile, indent=4,encoding="utf-8")
+        json_to_pdf()
+        return retornar
     # def save(self,connection):
     #     pass
 

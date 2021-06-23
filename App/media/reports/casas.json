@@ -1,0 +1,28 @@
+{
+    "casas": [
+        {
+            "id": 1,
+            "habitaciones": 20,
+            "banos": 15,
+            "gas": "Si",
+            "balcon": "Si",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 2,
+            "habitaciones": 20,
+            "banos": 15,
+            "gas": "Si",
+            "balcon": "No",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 3,
+            "habitaciones": 0,
+            "banos": 0,
+            "gas": "Si",
+            "balcon": "Si",
+            "imagen": "media/img/default.png"
+        }
+    ]
+}

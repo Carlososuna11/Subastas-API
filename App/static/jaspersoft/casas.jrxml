@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="casas" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d1b462b2-03ef-4fdb-a390-d2c0a8f0dc91">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="casas"/>
+	<queryString language="json">
+		<![CDATA[casas]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<property name="net.sf.jasperreports.json.field.expression" value="id"/>
+		<fieldDescription><![CDATA[id]]></fieldDescription>
+	</field>
+	<field name="habitaciones" class="java.lang.Integer">
+		<property name="net.sf.jasperreports.json.field.expression" value="habitaciones"/>
+		<fieldDescription><![CDATA[habitaciones]]></fieldDescription>
+	</field>
+	<field name="banos" class="java.lang.Integer">
+		<property name="net.sf.jasperreports.json.field.expression" value="banos"/>
+		<fieldDescription><![CDATA[banos]]></fieldDescription>
+	</field>
+	<field name="gas" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="gas"/>
+		<fieldDescription><![CDATA[gas]]></fieldDescription>
+	</field>
+	<field name="balcon" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="balcon"/>
+		<fieldDescription><![CDATA[balcon]]></fieldDescription>
+	</field>
+	<field name="imagen" class="java.lang.String">
+		<property name="net.sf.jasperreports.json.field.expression" value="imagen"/>
+		<fieldDescription><![CDATA[imagen]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="250" y="30" width="100" height="30" uuid="7b27d2db-a2c4-4875-b57c-bb82f9487f2f"/>
+				<text><![CDATA[Reporte]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="20" width="70" height="30" uuid="54995ee5-1b02-4d41-bfb9-93cae85f1a3c"/>
+				<text><![CDATA[id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="20" width="70" height="30" uuid="c319f625-1da9-4339-8627-f74440b98518"/>
+				<text><![CDATA[Número de Habitaciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="20" width="70" height="30" uuid="e3bfeb32-efad-47c1-8c08-8836f7128e0d"/>
+				<text><![CDATA[Número de Baños]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="20" width="70" height="30" uuid="ed3ae334-7829-44d6-8ff8-6752c4f5dc41"/>
+				<text><![CDATA[¿Tiene Gas?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="20" width="70" height="30" uuid="be56ce59-6783-4d40-b605-4f1e1e14a8ae"/>
+				<text><![CDATA[¿Tiene Balcon?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="20" width="70" height="30" uuid="3d13eb61-fc69-494c-a73f-4b190ab33417"/>
+				<text><![CDATA[Imagen]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="40" width="48" height="30" uuid="d807ba30-1c49-413e-a33a-e52f71d6a1fd"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="89" y="40" width="72" height="30" uuid="81a1e2a0-9eb6-42ba-b804-386f478d0bdf"/>
+				<textFieldExpression><![CDATA[$F{habitaciones}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="192" y="40" width="67" height="30" uuid="02b0ae31-9ceb-444e-873c-70803e2a8618"/>
+				<textFieldExpression><![CDATA[$F{banos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="40" width="71" height="30" uuid="136471b1-997d-4c3c-97f1-a3bdca0af75e"/>
+				<textFieldExpression><![CDATA[$F{gas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="40" width="59" height="30" uuid="b3d34672-8cbe-4272-8e92-704c6912afdf"/>
+				<textFieldExpression><![CDATA[$F{balcon}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="490" y="20" width="69" height="69" uuid="5014b44b-dc5d-4c43-8045-5c5f7931228a"/>
+				<imageExpression><![CDATA["http://localhost:8000/"+$F{imagen}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,76 @@
+{
+    "estudiantes": [
+        {
+            "dni": 0,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 2,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 3,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 4,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 5,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 6,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 165623,
+            "nombre": "culo",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 29772315,
+            "nombre": "Carlos",
+            "apellido": "Osuna",
+            "segundoApellido": "Pi\u00f1ero",
+            "segundoNombre": null,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 30322538,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
+            "imagen": "media/img/default.png"
+        }
+    ]
+}

@@ -1,0 +1,137 @@
+{
+    "productos": [
+        {
+            "id": 1,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 2,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 3,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 4,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 5,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 6,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 7,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 8,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 9,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 10,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 11,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 12,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 25.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 13,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 15.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 14,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 15.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 15,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 15.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 16,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 15.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 17,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 28.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 18,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 28.00,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "id": 19,
+            "nombre": "string",
+            "descripcion": "string",
+            "precio": 28.00,
+            "imagen": "media/img/default.png"
+        }
+    ]
+}

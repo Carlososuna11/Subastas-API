@@ -3,12 +3,34 @@ from rest_framework import serializers
 from database.conexion import conectar 
 from apps.students.models import Estudiante
 import os
+import simplejson as json
+from pyreportjasper import PyReportJasper
 
 def saveImage(image,id):
     _,file_extension = os.path.splitext(str(image))
     with open(f'media/img/student{id}{file_extension}', 'wb+') as f:
         for chunk in image.chunks():
             f.write(chunk)
+
+def json_to_pdf():
+    input_file = './static/jaspersoft/estudiantes.jrxml'
+    output_file = './media/pdf/estudiantes'
+    conn = {
+        'driver': 'json',
+        'data_file': './media/reports/estudiantes.json',
+        'json_query': 'estudiantes'
+    }
+    pyreportjasper = PyReportJasper()
+    pyreportjasper.config(
+        input_file,
+        output_file,
+        output_formats=["pdf"],
+        db_connection=conn
+    )
+    pyreportjasper.process_report()
+    print('Result is the file below.')
+    print(output_file + '.pdf')
+
 
 class StudentSerializer(serializers.Serializer):
     dni = serializers.IntegerField(min_value=0)
@@ -73,8 +95,19 @@ class StudentSerializer(serializers.Serializer):
     
     def to_representation(self, instance):
         producto = instance.__dict__
-        producto['imagen'] = 'default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
+        producto['imagen'] = 'media/img/default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
         return producto
+
+    @conectar
+    def save(self,connection, **kwargs):
+        retornar =  super().save(**kwargs)
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM estudiantes")
+        productos = { "estudiantes" : [self.to_representation(Estudiante(**dato)) for dato in cursor]}
+        with open('./media/reports/estudiantes.json', 'w') as outfile:
+            json.dump(productos,outfile, indent=4,encoding="utf-8")
+        json_to_pdf()
+        return retornar
     # def save(self,connection):
     #     pass
 

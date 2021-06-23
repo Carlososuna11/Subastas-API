@@ -3,6 +3,27 @@ from rest_framework import serializers
 from database.conexion import conectar 
 from apps.houses.models import Casa
 import os
+import simplejson as json
+from pyreportjasper import PyReportJasper
+
+def json_to_pdf():
+    input_file = './static/jaspersoft/estudiantes.jrxml'
+    output_file = './media/pdf/casas'
+    conn = {
+        'driver': 'json',
+        'data_file': './media/reports/casas.json',
+        'json_query': 'casas'
+    }
+    pyreportjasper = PyReportJasper()
+    pyreportjasper.config(
+        input_file,
+        output_file,
+        output_formats=["pdf"],
+        db_connection=conn
+    )
+    pyreportjasper.process_report()
+    print('Result is the file below.')
+    print(output_file + '.pdf')
 
 def saveImage(image,id):
     _,file_extension = os.path.splitext(str(image))
@@ -66,8 +87,20 @@ class HouseSerializer(serializers.Serializer):
         producto = instance.__dict__
         producto['gas'] = 'Si' if producto['gas'] else 'No'
         producto['balcon'] = 'Si' if producto['balcon'] else 'No'
-        producto['imagen'] = '' if producto['imagen']==None else f"media/img/{producto['imagen']}"
+        producto['imagen'] = 'media/img/default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
         return producto
+
+    @conectar
+    def save(self,connection, **kwargs):
+        retornar =  super().save(**kwargs)
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM casas")
+        productos = { "casas" : [self.to_representation(Casa(**dato)) for dato in cursor]}
+        with open('./media/reports/casas.json', 'w') as outfile:
+            json.dump(productos,outfile, indent=4,encoding="utf-8")
+        json_to_pdf()
+        return retornar
+
     # def save(self,connection):
     #     pass
 
