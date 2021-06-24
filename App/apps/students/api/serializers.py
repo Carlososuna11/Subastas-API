@@ -52,12 +52,12 @@ class StudentSerializer(serializers.Serializer):
     @conectar
     def create(self, validated_data:dict,connection):
         
-        mysql_insert_query = """INSERT INTO estudiantes (dni, nombre, apellido, segundoApellido, imagen) 
-                                VALUES (%s, %s, %s, %s, %s) """
+        mysql_insert_query = """INSERT INTO estudiantes (dni, nombre, apellido, segundoApellido) 
+                                VALUES (%s, %s, %s, %s) """
         cursor = connection.cursor()
         estudiante = Estudiante(**validated_data)
-        estudiante.imagen='default.png'
-        data = (estudiante.dni,estudiante.nombre,estudiante.apellido,estudiante.segundoApellido,estudiante.imagen)
+        #estudiante.imagen='default.png'
+        data = (estudiante.dni,estudiante.nombre,estudiante.apellido,estudiante.segundoApellido)
         cursor.execute(mysql_insert_query,data)
         if 'segundoNombre' in validated_data:
             cursor.execute('UPDATE estudiantes SET segundoNombre = %s WHERE dni=%s',(estudiante.segundoNombre,estudiante.dni))
@@ -86,7 +86,7 @@ class StudentSerializer(serializers.Serializer):
                     _,file_extension = os.path.splitext(str(validated_data['imagen']))
                     instance.imagen =f"student{instance.dni}{file_extension}"
                 else:
-                    instance.imagen = 'default.png'
+                    instance.imagen = None
                 mysql_update_query =  "UPDATE estudiantes SET imagen = %s WHERE dni = %s"
                 cursor.execute(mysql_update_query,(instance.imagen,instance.dni))
         connection.commit()

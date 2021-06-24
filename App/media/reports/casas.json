@@ -1,51 +1,27 @@
 {
     "casas": [
         {
-            "id": 1,
-            "habitaciones": 20,
-            "banos": 15,
+            "id": 3,
+            "habitaciones": 2,
+            "banos": 1,
             "gas": "Si",
             "balcon": "Si",
-            "imagen": "media/img/default.png"
+            "imagen": "media/img/house3.jpg"
         },
         {
-            "id": 2,
-            "habitaciones": 20,
-            "banos": 15,
+            "id": 7,
+            "habitaciones": 10,
+            "banos": 7,
+            "gas": "No",
+            "balcon": "No",
+            "imagen": "media/img/house7.jpg"
+        },
+        {
+            "id": 8,
+            "habitaciones": 3,
+            "banos": 3,
             "gas": "Si",
             "balcon": "No",
-            "imagen": "media/img/default.png"
-        },
-        {
-            "id": 3,
-            "habitaciones": 0,
-            "banos": 0,
-            "gas": "Si",
-            "balcon": "Si",
-            "imagen": "media/img/default.png"
-        },
-        {
-            "id": 4,
-            "habitaciones": 0,
-            "banos": 0,
-            "gas": "Si",
-            "balcon": "Si",
-            "imagen": "media/img/default.png"
-        },
-        {
-            "id": 5,
-            "habitaciones": 0,
-            "banos": 0,
-            "gas": "Si",
-            "balcon": "Si",
-            "imagen": "media/img/default.png"
-        },
-        {
-            "id": 6,
-            "habitaciones": 0,
-            "banos": 0,
-            "gas": "Si",
-            "balcon": "Si",
             "imagen": "media/img/default.png"
         }
     ]

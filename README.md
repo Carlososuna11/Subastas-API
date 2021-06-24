@@ -176,23 +176,13 @@ http://127.0.0.1:8000/redoc/
         ```
         Un ejemplo de lo que podria retornar:
         ```
-        +----+--------+-------------+--------+---------------+
-        | id | nombre | descripcion | precio | imagen        |
-        +----+--------+-------------+--------+---------------+
-        |  3 | string | string      |  15.80 | NULL          |
-        |  4 | string | string      |  23.00 | NULL          |
-        |  5 | carlos | string      |  10.00 | NULL          |
-        |  6 | string | string      | 150.25 | NULL          |
-        |  7 | carlos | Crear       |  15.25 | NULL          |
-        |  8 | carlos | Crear       |  15.25 | NULL          |
-        |  9 | carlos | Crear       |  15.25 | product9.png  |
-        | 10 | carlos | Crear       |  15.25 | product10.png |
-        | 11 | carlos | Crear       |  15.25 | product11.jpg |
-        | 12 | carlos | Crear       |  15.25 | product12.jpg |
-        | 13 | carlos | osuna       |  12.00 | NULL          |
-        | 14 | carlos | as          |  12.50 | NULL          |
-        +----+--------+-------------+--------+---------------+
-
+        +----+--------------+-------+-----+--------+------------+
+        | id | habitaciones | banos | gas | balcon | imagen     |
+        +----+--------------+-------+-----+--------+------------+
+        |  3 |            2 |     1 |   1 |      1 | house3.jpg |
+        |  7 |           10 |     7 |   0 |      0 | house7.jpg |
+        |  8 |            3 |     3 |   1 |      0 | NULL       |
+        +----+--------------+-------+-----+--------+------------+
         ```
 
 4) configurar archivo .env (Localizado en el zip )
@@ -290,23 +280,12 @@ http://127.0.0.1:8000/redoc/
         ```
         Un ejemplo de lo que podria retornar:
         ```
-        +----+--------+-------------+--------+---------------+
-        | id | nombre | descripcion | precio | imagen        |
-        +----+--------+-------------+--------+---------------+
-        |  3 | string | string      |  15.80 | NULL          |
-        |  4 | string | string      |  23.00 | NULL          |
-        |  5 | carlos | string      |  10.00 | NULL          |
-        |  6 | string | string      | 150.25 | NULL          |
-        |  7 | carlos | Crear       |  15.25 | NULL          |
-        |  8 | carlos | Crear       |  15.25 | NULL          |
-        |  9 | carlos | Crear       |  15.25 | product9.png  |
-        | 10 | carlos | Crear       |  15.25 | product10.png |
-        | 11 | carlos | Crear       |  15.25 | product11.jpg |
-        | 12 | carlos | Crear       |  15.25 | product12.jpg |
-        | 13 | carlos | osuna       |  12.00 | NULL          |
-        | 14 | carlos | as          |  12.50 | NULL          |
-        +----+--------+-------------+--------+---------------+
-
+        +----------+-------------------+----------+-----------------+---------------+--------------+
+        | dni      | nombre            | apellido | segundoApellido | segundoNombre | imagen       |
+        +----------+-------------------+----------+-----------------+---------------+--------------+
+        |        4 | Cristiano Ronaldo | Osuna    | Piñero          | Ronaldo       | student4.gif |
+        | 29772315 | carlos            | Osuna    | Piñero          | NULL          | NULL         |
+        +----------+-------------------+----------+-----------------+---------------+--------------+
         ```
 
 4) configurar archivo .env (Localizado en el zip )

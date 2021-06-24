@@ -42,12 +42,12 @@ class ProductSerializer(serializers.Serializer):
     @conectar
     def create(self, validated_data:dict,connection):
         
-        mysql_insert_query = """INSERT INTO productos (nombre, descripcion, precio, imagen) 
-                                VALUES (%s, %s, %s, %s) """
+        mysql_insert_query = """INSERT INTO productos (nombre, descripcion, precio) 
+                                VALUES (%s, %s, %s) """
         cursor = connection.cursor()
         producto = Producto(**validated_data)
-        producto.imagen = 'default.png'
-        data = (producto.nombre,producto.descripcion,producto.precio,producto.imagen)
+        #producto.imagen = 'default.png'
+        data = (producto.nombre,producto.descripcion,producto.precio)
         cursor.execute(mysql_insert_query,data)
         connection.commit()
         producto.id = cursor.lastrowid
@@ -76,7 +76,7 @@ class ProductSerializer(serializers.Serializer):
                     _,file_extension = os.path.splitext(str(validated_data['imagen']))
                     instance.imagen =f"product{instance.id}{file_extension}"
                 else:
-                    instance.imagen = 'default.png' 
+                    instance.imagen = None 
                 mysql_update_query =  "UPDATE productos SET imagen = %s WHERE id = %s"
                 cursor.execute(mysql_update_query,(instance.imagen,instance.id))
         connection.commit()

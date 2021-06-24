@@ -42,12 +42,12 @@ class HouseSerializer(serializers.Serializer):
     @conectar
     def create(self, validated_data:dict,connection):
         
-        mysql_insert_query = """INSERT INTO casas (habitaciones, banos, gas, balcon, imagen) 
-                                VALUES (%s, %s, %s, %s, %s) """
+        mysql_insert_query = """INSERT INTO casas (habitaciones, banos, gas, balcon) 
+                                VALUES (%s, %s, %s, %s) """
         cursor = connection.cursor()
         casa = Casa(**validated_data)
-        casa.imagen='default.png'
-        data = (casa.habitaciones,casa.banos,casa.gas,casa.balcon,casa.imagen)
+        #casa.imagen='default.png'
+        data = (casa.habitaciones,casa.banos,casa.gas,casa.balcon)
         cursor.execute(mysql_insert_query,data)
         connection.commit()
         casa.id = cursor.lastrowid
