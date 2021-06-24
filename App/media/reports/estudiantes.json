@@ -65,11 +65,19 @@
             "imagen": "media/img/default.png"
         },
         {
-            "dni": 29772315,
-            "nombre": "Carlos",
-            "apellido": "Osuna",
-            "segundoApellido": "Pi\u00f1ero",
+            "dni": 787878,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
             "segundoNombre": null,
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 29772315,
+            "nombre": "carlxs",
+            "apellido": "osuna",
+            "segundoApellido": "string",
+            "segundoNombre": "string",
             "imagen": "media/img/default.png"
         },
         {

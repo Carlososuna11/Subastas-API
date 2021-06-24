@@ -33,7 +33,7 @@ def json_to_pdf():
 
 
 class StudentSerializer(serializers.Serializer):
-    dni = serializers.IntegerField(min_value=0)
+    dni = serializers.IntegerField(min_value=0,required=False)
     nombre = serializers.CharField(max_length=50)
     apellido = serializers.CharField(max_length=50)
     segundoApellido = serializers.CharField(max_length=50)
@@ -73,6 +73,7 @@ class StudentSerializer(serializers.Serializer):
     @conectar
     def update(self, instance:Estudiante, validated_data:dict,connection):
         cursor = connection.cursor()
+        print(validated_data)
         for key,value in validated_data.items():
             # instance.nombre = validated_data.get('nombre',instance.nombre)
             if key != 'imagen':
@@ -80,11 +81,10 @@ class StudentSerializer(serializers.Serializer):
                 cursor.execute(mysql_update_query,(value,instance.dni))
                 setattr(instance,key,value)
             else:
-                
                 if value:
-                    saveImage(validated_data['imagen'],instance.id)
+                    saveImage(validated_data['imagen'],instance.dni)
                     _,file_extension = os.path.splitext(str(validated_data['imagen']))
-                    instance.imagen =f"student{instance.id}{file_extension}"
+                    instance.imagen =f"student{instance.dni}{file_extension}"
                 else:
                     instance.imagen = 'default.png'
                 mysql_update_query =  "UPDATE estudiantes SET imagen = %s WHERE dni = %s"
