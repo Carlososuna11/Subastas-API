@@ -57,6 +57,22 @@
             "imagen": "media/img/default.png"
         },
         {
+            "dni": 123224,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "-",
+            "imagen": "media/img/default.png"
+        },
+        {
+            "dni": 154784,
+            "nombre": "string",
+            "apellido": "string",
+            "segundoApellido": "string",
+            "segundoNombre": "-",
+            "imagen": "media/img/default.png"
+        },
+        {
             "dni": 165623,
             "nombre": "culo",
             "apellido": "string",
@@ -69,7 +85,7 @@
             "nombre": "string",
             "apellido": "string",
             "segundoApellido": "string",
-            "segundoNombre": null,
+            "segundoNombre": "-",
             "imagen": "media/img/default.png"
         },
         {

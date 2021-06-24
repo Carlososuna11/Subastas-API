@@ -98,12 +98,18 @@ class StudentSerializer(serializers.Serializer):
         producto['imagen'] = 'media/img/default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
         return producto
 
+    def to_json_representation(self,instance):
+        producto = instance.__dict__
+        producto['segundoNombre'] = '-' if producto['segundoNombre']==None else producto['segundoNombre']
+        producto['imagen'] = 'media/img/default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
+        return producto
+
     @conectar
     def save(self,connection, **kwargs):
         retornar =  super().save(**kwargs)
         cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM estudiantes")
-        productos = { "estudiantes" : [self.to_representation(Estudiante(**dato)) for dato in cursor]}
+        productos = { "estudiantes" : [self.to_json_representation(Estudiante(**dato)) for dato in cursor]}
         with open('./media/reports/estudiantes.json', 'w') as outfile:
             json.dump(productos,outfile, indent=4,encoding="utf-8")
         json_to_pdf()

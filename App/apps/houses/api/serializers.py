@@ -92,12 +92,21 @@ class HouseSerializer(serializers.Serializer):
         producto['imagen'] = 'media/img/default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
         return producto
 
+    def to_json_representation(self,instance):
+        producto = instance.__dict__
+        producto['gas'] = 'Si' if producto['gas'] else 'No'
+        producto['balcon'] = 'Si' if producto['balcon'] else 'No'
+        #producto['gas'] = True if producto['gas'] else False
+        #producto['balcon'] = True if producto['balcon'] else False
+        producto['imagen'] = 'media/img/default.png' if producto['imagen']==None else f"media/img/{producto['imagen']}"
+        return producto
+
     @conectar
     def save(self,connection, **kwargs):
         retornar =  super().save(**kwargs)
         cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT * FROM casas")
-        productos = { "casas" : [self.to_representation(Casa(**dato)) for dato in cursor]}
+        productos = { "casas" : [self.to_json_representation(Casa(**dato)) for dato in cursor]}
         with open('./media/reports/casas.json', 'w') as outfile:
             json.dump(productos,outfile, indent=4,encoding="utf-8")
         json_to_pdf()
