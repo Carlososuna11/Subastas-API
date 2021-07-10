@@ -51,7 +51,6 @@ class StudentSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
-        
         mysql_insert_query = """INSERT INTO estudiantes (dni, nombre, apellido, segundoApellido) 
                                 VALUES (%s, %s, %s, %s) """
         cursor = connection.cursor()

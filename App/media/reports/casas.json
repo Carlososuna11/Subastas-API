@@ -4,17 +4,9 @@
             "id": 3,
             "habitaciones": 2,
             "banos": 1,
-            "gas": "Si",
-            "balcon": "Si",
-            "imagen": "media/img/house3.jpg"
-        },
-        {
-            "id": 7,
-            "habitaciones": 10,
-            "banos": 7,
             "gas": "No",
             "balcon": "No",
-            "imagen": "media/img/house7.jpg"
+            "imagen": "media/img/house3.jpg"
         },
         {
             "id": 8,
@@ -23,6 +15,14 @@
             "gas": "Si",
             "balcon": "No",
             "imagen": "media/img/default.png"
+        },
+        {
+            "id": 9,
+            "habitaciones": 20,
+            "banos": 10,
+            "gas": "Si",
+            "balcon": "No",
+            "imagen": "media/img/house9.jpg"
         }
     ]
 }
