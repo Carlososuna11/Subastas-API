@@ -56,7 +56,8 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
                 CONSTRAINT pk_divisa PRIMARY KEY (id,id_pais),
                 CONSTRAINT fk_pais FOREIGN KEY (id_pais)
                     REFERENCES paises(id)
-                    ON DELETE CASCADE
+                    ON DELETE CASCADE,
+                CONSTRAINT unique_divisas UNIQUE(nombre,id_pais)
             );
             ```
             - ver estructura de la tabla
@@ -90,13 +91,14 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
                 acunacion VARCHAR(100) NOT NULL,
                 anverso TEXT NOT NULL,
                 reverso TEXT NOT NULL,
+                id_pais_divisa INT NOT NULL,
                 id_pais INT NOT NULL,
                 id_divisa INT NOT NULL,
                 imagen VARCHAR(255),
                 CONSTRAINT fk_paisMonedas FOREIGN KEY (id_pais)
                     REFERENCES paises(id)
                     ON DELETE CASCADE,
-                CONSTRAINT fk_divisa FOREIGN KEY (id_divisa,id_pais)
+                CONSTRAINT fk_divisa FOREIGN KEY (id_divisa,id_pais_divisa)
                     REFERENCES divisas(id,id_pais)
                     ON DELETE CASCADE
             );
@@ -312,7 +314,8 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
                     ON DELETE CASCADE,
                 CONSTRAINT fk_organizacion_cliente FOREIGN KEY (id_organizacion)
                     REFERENCES organizaciones(id)
-                    ON DELETE CASCADE
+                    ON DELETE CASCADE,
+                CONSTRAINT unique_cliente UNIQUE(id_coleccionista,id_organizacion)
             );
             ```
             - ver estructura de la tabla
@@ -545,7 +548,8 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
                     ON DELETE CASCADE,
                 CONSTRAINT fk_pais_costoEnvio FOREIGN KEY (id_pais)
                     REFERENCES paises(id)
-                    ON DELETE CASCADE
+                    ON DELETE CASCADE,
+                CONSTRAINT unique_costo_envio UNIQUE(id_pais,id_evento)
             );
             ```
             - ver estructura de la tabla
@@ -567,6 +571,7 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
             ```sql
             CREATE TABLE Lista_Objetos (
                 id_evento INT NOT NULL,
+                id_eventoParticipante INT,
                 id INT NOT NULL AUTO_INCREMENT,
                 id_pintura INT,
                 id_moneda INT,
@@ -584,7 +589,7 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
                 CONSTRAINT fk_evento_objetos FOREIGN KEY (id_evento)
                     REFERENCES eventos(id)
                     ON DELETE CASCADE,
-                CONSTRAINT fk_cliente_objeto FOREIGN KEY (fechaIngresoParticipante,id_coleccionistaParticipante,id_organizacionParticipante,id_evento)
+                CONSTRAINT fk_cliente_objeto FOREIGN KEY (fechaIngresoParticipante,id_coleccionistaParticipante,id_organizacionParticipante,id_eventoParticipante)
                     REFERENCES participantes(fechaIngresoCliente,id_coleccionista_cliente,id_organizacion_cliente,id_evento)
                     ON DELETE CASCADE,
                 CONSTRAINT fk_evento_pintura FOREIGN KEY (id_pintura)
@@ -686,6 +691,37 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
                 | precio        | decimal(13,2) | NO   |     | NULL    |                |
                 +---------------+---------------+------+-----+---------+----------------+
                 ```
+    ```
+    mysql> show tables;
+    +-------------------------+
+    | Tables_in_subastas      |
+    +-------------------------+
+    | Catalogo_Moneda_Tienda  |
+    | Catalogo_Pintura_Tienda |
+    | Lista_Objetos           |
+    | M_A                     |
+    | P_A                     |
+    | artistas                |
+    | clientes                |
+    | coleccionistas          |
+    | contactos               |
+    | costoEnvios             |
+    | detFacturas             |
+    | divisas                 |
+    | eventos                 |
+    | facturas                |
+    | monedas                 |
+    | organizaciones          |
+    | paises                  |
+    | participantes           |
+    | planificadores          |
+    +-------------------------+
+    ```
+    - Ver el Diccionario de Datos
+    ```sql
+    SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = 'subastas';
+    ```
+    
 4) configurar archivo .env (Localizado en el zip )
 ```
 HOST=<yourhost>
