@@ -1,12 +1,12 @@
-
 from pathlib import Path
 import environ
+import os
 
 env = environ.Env()
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,15 +31,19 @@ BASE_APPS = [
     'django.contrib.staticfiles',
 ]
 
-LOCAL_APPS = []
+LOCAL_APPS = ['apps.commons','apps.monedas','apps.coleccionistas']
+
 
 THIRD_APPS = [
     'rest_framework',
+    'drf_yasg',
+    'corsheaders',
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,6 +53,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+ALLOWED_HOSTS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -107,6 +121,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT  = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

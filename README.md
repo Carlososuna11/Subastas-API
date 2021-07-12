@@ -14,6 +14,14 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
 2) Configurar usuario y contraseña. Un ejemplo de tutorial (Ubuntu) en el siguiente  [configurar usuario](https://www.digitalocean.com/community/tutorials/crear-un-nuevo-usuario-y-otorgarle-permisos-en-mysql-es)
 
 3) Abrir el mysql command line (o usar mysql Workbench) y escribrir lo siguiente
+    - Puede hacer todo el proceso manual (los pasos a continuacion) o simplemente ejecutar el archivo `create.sql` que se encuentra en la Carpeta Database, escribiendo en `mysql -p < create.sql`
+    ```
+    LINUX
+    $mysql -p <create.sql
+
+    WINDOWS
+    C:\> cmd.exe /c "mysql -u root -p < create.sql"
+    ```
 
     1) Crear Base de datos
         ```sql
