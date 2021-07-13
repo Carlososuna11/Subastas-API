@@ -119,7 +119,7 @@ CREATE TABLE contactos (
 
 CREATE TABLE clientes (
     fechaIngreso DATE NOT NULL,
-    numeroExpedienteUnico INT NOT NULL UNIQUE,
+    numeroExpedienteUnico INT NOT NULL AUTO_INCREMENT UNIQUE,
     id_coleccionista INT NOT NULL,
     id_organizacion INT NOT NULL,
     CONSTRAINT pk_cliente PRIMARY KEY (fechaIngreso,id_coleccionista,id_organizacion),
