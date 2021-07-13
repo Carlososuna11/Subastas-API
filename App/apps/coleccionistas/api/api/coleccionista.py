@@ -16,12 +16,15 @@ class ColeccionistaListAPIView(generics.ListAPIView):
         pais = ['id','nombre','nacionalidad']
         coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
-        query_action = f"""SELECT * 
-                        FROM (SELECT {', '.join([f'{i} as coleccionista_{i}' for i in coleccionista])} FROM coleccionistas) as `Coleccionista`
-                        INNER JOIN (SELECT {', '.join([f'{i} as pais_nacio_{i}' for i in pais])} FROM paises) as `Pais_nacio`
-                        ON `Pais_nacio`.pais_nacio_id = `Coleccionista`.coleccionista_id_pais_nacio
-                        INNER JOIN (SELECT {', '.join([f'{i} as pais_reside_{i}' for i in pais])} FROM paises) as `Pais_reside`
-                        ON `Pais_reside`.pais_reside_id = `Coleccionista`.coleccionista_id_pais_reside
+        query_action = f"""SELECT 
+                            {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                            {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
+                            {', '.join([f'paises.{i} as pais_reside_{i}' for i in pais])}
+                        FROM coleccionistas
+                        INNER JOIN paises as pais_nacio
+                        ON pais_nacio.id = coleccionistas.id_pais_nacio
+                        INNER JOIN paises
+                        ON paises.id = coleccionistas.id_pais_reside
                         """
         # if query:
         #     query_action = """SELECT divisas.id as divisa_id, divisas.id_pais as divisa_id_pais, divisas.nombre as divisa_nombre,
@@ -64,13 +67,16 @@ class ColeccionistaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
         pais = ['id','nombre','nacionalidad']
         coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
-        query_action = f"""SELECT * 
-                        FROM (SELECT {', '.join([f'{i} as coleccionista_{i}' for i in coleccionista])} FROM coleccionistas) as `Coleccionista`
-                        INNER JOIN (SELECT {', '.join([f'{i} as pais_nacio_{i}' for i in pais])} FROM paises) as `Pais_nacio`
-                        ON `Pais_nacio`.pais_nacio_id = `Coleccionista`.coleccionista_id_pais_nacio
-                        INNER JOIN (SELECT {', '.join([f'{i} as pais_reside_{i}' for i in pais])} FROM paises) as `Pais_reside`
-                        ON `Pais_reside`.pais_reside_id = `Coleccionista`.coleccionista_id_pais_reside
-                        WHERE `Coleccionista`.coleccionista_dni = %s
+        query_action = f"""SELECT 
+                            {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                            {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
+                            {', '.join([f'paises.{i} as pais_reside_{i}' for i in pais])}
+                        FROM coleccionistas
+                        INNER JOIN paises as pais_nacio
+                        ON pais_nacio.id = coleccionistas.id_pais_nacio
+                        INNER JOIN paises
+                        ON paises.id = coleccionistas.id_pais_reside
+                        WHERE coleccionistas.dni = %s
                         """
         cursor = connection.cursor(dictionary=True)
         cursor.execute(query_action,(self.kwargs.get('dni'),))

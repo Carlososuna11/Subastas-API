@@ -21,19 +21,24 @@ class MonedaListAPIView(generics.ListAPIView):
         pais = ['id','nombre','nacionalidad']
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
-        query_action = f"""SELECT *
-                        FROM (SELECT {', '.join([f'{i} as moneda_{i}' for i in moneda])} FROM monedas) as `Moneda`
-                        INNER JOIN (SELECT {', '.join([f'{i} as divisa_{i}' for i in divisa])} FROM divisas) as `Divisa` 
-                        ON (`Divisa`.divisa_id,`Divisa`.divisa_id_pais) = (`Moneda`.moneda_id_divisa,`Moneda`.moneda_id_pais_divisa) 
-                        INNER JOIN (SELECT {', '.join([f'{i} as divisa_pais_{i}' for i in pais])} FROM paises) as `DivisaPais`
-                        ON `Divisa`.divisa_id_pais = `DivisaPais`.divisa_pais_id
-                        INNER JOIN (SELECT {', '.join([f'{i} as pais_{i}' for i in pais])} FROM paises) as `Pais`
-                        ON `Moneda`.moneda_id_pais = `Pais`.pais_id
-                        INNER JOIN (SELECT {', '.join([f'{i} as moneda_artista_{i}' for i in moneda_artista])} FROM M_A) as `M_A`
-                        ON `M_A`.moneda_artista_id_moneda = `Moneda`.moneda_id
-                        INNER JOIN (SELECT {', '.join([f'{i} as artista_{i}' for i in artista])} FROM artistas) as `Artista`
-                        ON `M_A`.moneda_artista_id_artista = `Artista`.artista_id
-                        """.strip()
+        query_action = f"""SELECT {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+                        {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
+                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])},
+                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])}
+                        FROM monedas
+                        INNER JOIN divisas
+                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
+                        INNER JOIN paises as `divisa_pais`
+                        ON divisas.id_pais = divisa_pais.id
+                        INNER JOIN paises
+                        ON monedas.id_pais = paises.id
+                        LEFT JOIN M_A
+                        ON M_A.id_moneda = monedas.id
+                        LEFT JOIN artistas
+                        ON M_A.id_artista = artistas.id
+                        """
         print(query_action)
         cursor.execute(query_action)
         #print(pais_quey,id_pais_query)
@@ -88,20 +93,26 @@ class MonedaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         pais = ['id','nombre','nacionalidad']
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
-        query_action = f"""SELECT *
-                        FROM (SELECT {', '.join([f'{i} as moneda_{i}' for i in moneda])} FROM monedas) as `Moneda`
-                        INNER JOIN (SELECT {', '.join([f'{i} as divisa_{i}' for i in divisa])} FROM divisas) as `Divisa` 
-                        ON (`Divisa`.divisa_id,`Divisa`.divisa_id_pais) = (`Moneda`.moneda_id_divisa,`Moneda`.moneda_id_pais_divisa) 
-                        INNER JOIN (SELECT {', '.join([f'{i} as divisa_pais_{i}' for i in pais])} FROM paises) as `DivisaPais`
-                        ON `Divisa`.divisa_id_pais = `DivisaPais`.divisa_pais_id
-                        INNER JOIN (SELECT {', '.join([f'{i} as pais_{i}' for i in pais])} FROM paises) as `Pais`
-                        ON `Moneda`.moneda_id_pais = `Pais`.pais_id
-                        INNER JOIN (SELECT {', '.join([f'{i} as moneda_artista_{i}' for i in moneda_artista])} FROM M_A) as `M_A`
-                        ON `M_A`.moneda_artista_id_moneda = `Moneda`.moneda_id
-                        INNER JOIN (SELECT {', '.join([f'{i} as artista_{i}' for i in artista])} FROM artistas) as `Artista`
-                        ON `M_A`.moneda_artista_id_artista = `Artista`.artista_id
-                        WHERE `Moneda`.moneda_id = %s
+        query_action = f"""SELECT {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+                        {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
+                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])},
+                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])}
+                        FROM monedas
+                        INNER JOIN divisas
+                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
+                        INNER JOIN paises as `divisa_pais`
+                        ON divisas.id_pais = divisa_pais.id
+                        INNER JOIN paises
+                        ON monedas.id_pais = paises.id
+                        LEFT JOIN M_A
+                        ON M_A.id_moneda = monedas.id
+                        LEFT JOIN artistas
+                        ON M_A.id_artista = artistas.id
+                        WHERE monedas.id = %s
                         """
+        print(query_action)
         cursor.execute(query_action,(self.kwargs.get('id'),))
         datos = cursor.fetchall()
         if datos:

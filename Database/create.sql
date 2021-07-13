@@ -86,7 +86,7 @@ CREATE TABLE coleccionistas (
 );
 
 CREATE TABLE organizaciones(
-    id INT NOT NULL PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     proposito TEXT NOT NULL,
     fundacion DATE NOT NULL,
@@ -134,7 +134,7 @@ CREATE TABLE clientes (
 
 CREATE TABLE Catalogo_Moneda_Tienda (
     id_moneda INT NOT NULL,
-    nur INT NOT NULL UNIQUE,
+    nur INT NOT NULL AUTO_INCREMENT UNIQUE,
     id_coleccionista INT,
     id_organizacion INT,
     CONSTRAINT pk_catalogo_moneda PRIMARY KEY (id_moneda,nur),
@@ -150,7 +150,7 @@ CREATE TABLE Catalogo_Moneda_Tienda (
 );
 
 CREATE TABLE Catalogo_Pintura_Tienda (
-    nur INT NOT NULL PRIMARY KEY,
+    nur INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,
     dimensionescm VARCHAR(20) NOT NULL,
     estilo VARCHAR(30) NOT NULL,

@@ -1,3 +1,5 @@
+from apps.organizaciones.models import Organizacion
+from apps.coleccionistas.models import Coleccionista
 from apps.commons.models import *
 import datetime
 
@@ -44,7 +46,7 @@ class Moneda:
         self.id_divisa = id_divisa
         self.pais = pais
         self.divisa = divisa
-        self.artistas = artistas
+        self.artistas = [artista for artista in artistas if artista.id!=None]
         self.imagen = imagen        
 
     def normalize(self):
@@ -89,3 +91,44 @@ class Moneda:
                 artistas.append(Artista(**i))
             kwargs['artistas'] = artistas
         return cls(**kwargs)
+
+class Catalogo_Moneda_Tienda:
+    """Representación en Objetos de la entidad Catalogo_Moneda_Tienda"""
+    def __init__(self,id_moneda:int,nur:int=None,id_coleccionista:int=None,id_organizacion:int=None,
+        moneda:Moneda=None,coleccionista:Coleccionista=None,organizacion:Organizacion=None):
+        self.nur = nur
+        self.id_moneda = id_moneda
+        self.id_coleccionista = id_coleccionista
+        self.id_organizacion = id_organizacion
+        self.moneda = moneda
+        self.coleccionista = coleccionista
+        if coleccionista.dni ==None:
+            self.coleccionista=None
+        self.organizacion = organizacion
+        if organizacion.id ==None:
+            self.organizacion = None
+
+    def normalize(self):
+        if self.moneda:
+            self.moneda.normalize()
+        if self.coleccionista:
+            self.coleccionista.normalize()
+        if self.organizacion:
+            self.organizacion.normalize()
+    
+    def to_representation(self):
+        self.moneda.to_representation()
+        if self.coleccionista:
+            self.coleccionista.to_representation()
+        if self.organizacion:
+            self.organizacion.to_representation()
+
+    @classmethod
+    def model(cls, **kwargs):
+        if kwargs.get('moneda',None):
+            kwargs['moneda'] = Moneda.model(**kwargs['moneda'])
+        if kwargs.get('coleccionista',None):
+            kwargs['coleccionista'] = Coleccionista.model(**kwargs['coleccionista'])
+        if kwargs.get('organizacion',None):
+            kwargs['organizacion'] = Organizacion.model(**kwargs['organizacion'])
+        return cls(**kwargs)    

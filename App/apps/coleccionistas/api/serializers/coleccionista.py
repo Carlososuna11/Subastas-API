@@ -102,7 +102,7 @@ class ColeccionistaSerializer(serializers.Serializer):
         for key,value in validated_data.items():
                 setattr(instance,key,value)
                 if key in ['id_pais_reside','id_pais_nacio']:
-                   cursor.execute(mysql_query,(instance.id_pais_reside,))
+                   cursor.execute(mysql_query,(value,))
                    setattr(instance,pais_objeto[key],Pais.model(**cursor.fetchone()))
                    
         instance.normalize()

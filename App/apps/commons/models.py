@@ -32,7 +32,8 @@ class Divisa:
 
     def normalize(self):
         self.nombre = self.nombre.lower()
-        self.pais.normalize()
+        if self.pais:
+            self.pais.normalize()
         
     def to_representation(self):
         self.nombre = self.nombre.capitalize()

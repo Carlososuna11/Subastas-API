@@ -235,7 +235,7 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
         6) Entidad Organizacion
             ```sql
             CREATE TABLE organizaciones(
-                id INT NOT NULL PRIMARY KEY,
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 nombre VARCHAR(50) NOT NULL,
                 proposito TEXT NOT NULL,
                 fundacion DATE NOT NULL,
@@ -346,7 +346,7 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
             ```sql
             CREATE TABLE Catalogo_Moneda_Tienda (
                 id_moneda INT NOT NULL,
-                nur INT NOT NULL UNIQUE,
+                nur INT NOT NULL AUTO_INCREMENT UNIQUE,
                 id_coleccionista INT,
                 id_organizacion INT,
                 CONSTRAINT pk_catalogo_moneda PRIMARY KEY (id_moneda,nur),
@@ -379,7 +379,7 @@ El planteamiento del problema puede encontrarse en el siguiente [link](https://d
         10) Entidad Catalogo_Pintura_Tienda
             ```sql
             CREATE TABLE Catalogo_Pintura_Tienda (
-                nur INT NOT NULL PRIMARY KEY,
+                nur INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 titulo VARCHAR(100) NOT NULL,
                 dimensionescm VARCHAR(20) NOT NULL,
                 estilo VARCHAR(30) NOT NULL,
