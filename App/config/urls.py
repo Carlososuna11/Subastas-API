@@ -31,8 +31,10 @@ urlpatterns = [
     path('',include('apps.monedas.urls.catalogo_moneda_tienda')),
     path('',include('apps.monedas.urls.moneda_artista')),
     path('',include('apps.coleccionistas.urls.coleccionista')),
+    path('',include('apps.coleccionistas.urls.cliente')),
     path('',include('apps.organizaciones.urls.organizacion')),
     path('',include('apps.organizaciones.urls.contacto')),
+    path('',include('apps.eventos.urls.eventos')),
     # path('houses/',include('apps.houses.urls')),
     # path('students/',include('apps.students.urls'))
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

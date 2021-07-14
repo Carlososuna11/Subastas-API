@@ -180,14 +180,14 @@ CREATE TABLE P_A (
 
 
 CREATE TABLE eventos (
-    id INT NOT NULL PRIMARY KEY,
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     inscripcionCliente DECIMAL(13,2) NOT NULL,
     inscripcionClienteNuevo DECIMAL(13,2),
     fecha DATETIME NOT NULL,
     status VARCHAR(12) NOT NULL CHECK (status in ('realizado','pendiente','cancelado')),
     tipo VARCHAR(12) NOT NULL CHECK (tipo in ('virtual','presencial')),
     tipoPuja VARCHAR(20) NOT NULL CHECK (tipoPuja in ('ascendente','sobre cerrado')),
-    duracionHoras INT NOT NULL CHECK ((duracionHoras >=4) and (duracionHoras <=6)),
+    duracionHoras INT NOT NULL,
     lugar VARCHAR(100),
     id_pais INT,
     CONSTRAINT fk_pais_evento FOREIGN KEY (id_pais)
