@@ -14,7 +14,7 @@ class ColeccionistaListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         pais = ['id','nombre','nacionalidad']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         query_action = f"""SELECT 
                             {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
@@ -51,7 +51,7 @@ class ColeccionistaListAPIView(generics.ListAPIView):
             coleccionistaData['pais_nacio']=paisNacio
             coleccionistas.append(coleccionistaData)
         coleccionistas = [Coleccionista.model(**dato) for dato in coleccionistas]
-        coleccionistas.sort(key=lambda x: x.dni)
+        coleccionistas.sort(key=lambda x: x.id)
         return coleccionistas
     
 
@@ -65,7 +65,7 @@ class ColeccionistaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
     @conectar
     def get_object(self,connection):
         pais = ['id','nombre','nacionalidad']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         query_action = f"""SELECT 
                             {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
@@ -76,10 +76,10 @@ class ColeccionistaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
                         ON pais_nacio.id = coleccionistas.id_pais_nacio
                         INNER JOIN paises
                         ON paises.id = coleccionistas.id_pais_reside
-                        WHERE coleccionistas.dni = %s
+                        WHERE coleccionistas.id = %s
                         """
         cursor = connection.cursor(dictionary=True)
-        cursor.execute(query_action,(self.kwargs.get('dni'),))
+        cursor.execute(query_action,(self.kwargs.get('id'),))
         dato = cursor.fetchone()
         if dato:
             coleccionistaData = {}
@@ -98,6 +98,6 @@ class ColeccionistaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM coleccionistas WHERE dni = %s",(instance.dni,))
+        cursor.execute("DELETE FROM coleccionistas WHERE id = %s",(instance.id,))
         connection.commit()
 

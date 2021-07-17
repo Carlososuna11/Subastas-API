@@ -95,7 +95,7 @@ class MonedaSerializer(serializers.Serializer):
         cursor.execute(mysql_insert_query,data)
         connection.commit()
         moneda.id = cursor.lastrowid
-        if 'imagen' in validated_data:
+        if 'imagen' in validated_data and validated_data['imagen']!= None:
             saveImage(validated_data['imagen'],'moneda',moneda.id)
             _,file_extension = os.path.splitext(str(validated_data['imagen']))
             moneda.imagen =f"moneda{moneda.id}{file_extension}" 
@@ -112,6 +112,8 @@ class MonedaSerializer(serializers.Serializer):
         
         cursor = connection.cursor(dictionary=True)
         for key,value in validated_data.items():
+                if key in ['id']:
+                    continue
                 if key == 'id_pais':
                     cursor.execute(mysql_query_pais,(value,))
                     pais = Pais.model(**cursor.fetchone())

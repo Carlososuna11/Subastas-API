@@ -35,6 +35,13 @@ urlpatterns = [
     path('',include('apps.organizaciones.urls.organizacion')),
     path('',include('apps.organizaciones.urls.contacto')),
     path('',include('apps.eventos.urls.eventos')),
+    path('',include('apps.eventos.urls.participante')),
+    path('',include('apps.eventos.urls.planificador')),
+    path('',include('apps.eventos.urls.costoEnvio')),
+    path('',include('apps.pinturas.urls.pintura')),
+    path('',include('apps.pinturas.urls.pintura_artista')),
+    path('',include('apps.eventos.urls.Lista_Objeto')),
+    
     # path('houses/',include('apps.houses.urls')),
     # path('students/',include('apps.students.urls'))
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

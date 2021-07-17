@@ -13,7 +13,7 @@ class ParticipanteListAPIView(generics.ListAPIView):
     def get_queryset(self,connection):
         cursor = connection.cursor(dictionary=True)
         pais = ['id','nombre','nacionalidad']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
@@ -36,12 +36,11 @@ class ParticipanteListAPIView(generics.ListAPIView):
                         INNER JOIN paises as organizacion_pais
                         ON organizacion_pais.id = organizaciones.id_pais
                         INNER JOIN coleccionistas
-                        ON coleccionistas.dni = clientes.id_coleccionista
+                        ON coleccionistas.id = clientes.id_coleccionista
                         INNER JOIN paises as pais_nacio
                         ON pais_nacio.id = coleccionistas.id_pais_nacio
                         INNER JOIN paises as pais_reside
                         ON pais_reside.id = coleccionistas.id_pais_reside
-                        WHERE (clientes.id_coleccionista,clientes.id_organizacion) = (%s, %s)
                         """
         print(query_cliente)
         # if query:

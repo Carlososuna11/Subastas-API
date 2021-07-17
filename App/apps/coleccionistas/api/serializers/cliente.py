@@ -23,7 +23,7 @@ class ClienteSerializer(serializers.Serializer):
     @conectar
     def validate_id_coleccionista(self,id_coleccionista,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM coleccionistas WHERE dni= %s"""
+        mysql_query = """SELECT * FROM coleccionistas WHERE id= %s"""
         cursor.execute(mysql_query,(id_coleccionista,))
         if cursor.fetchone():
             return id_coleccionista
@@ -41,7 +41,7 @@ class ClienteSerializer(serializers.Serializer):
     @conectar
     def create(self, validated_data:dict,connection):
         pais = ['id','nombre','nacionalidad']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
@@ -54,7 +54,7 @@ class ClienteSerializer(serializers.Serializer):
                         ON pais_nacio.id = coleccionistas.id_pais_nacio
                         INNER JOIN paises
                         ON paises.id = coleccionistas.id_pais_reside
-                        WHERE coleccionistas.dni = %s
+                        WHERE coleccionistas.id = %s
                         """
         mysql_query_organizacion = f"""SELECT 
                         {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},

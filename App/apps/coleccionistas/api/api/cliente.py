@@ -13,7 +13,7 @@ class ClienteListAPIView(generics.ListAPIView):
     @conectar
     def get_queryset(self,connection):
         pais = ['id','nombre','nacionalidad']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
@@ -33,7 +33,7 @@ class ClienteListAPIView(generics.ListAPIView):
                         INNER JOIN paises as organizacion_pais
                         ON organizacion_pais.id = organizaciones.id_pais
                         INNER JOIN coleccionistas
-                        ON coleccionistas.dni = clientes.id_coleccionista
+                        ON coleccionistas.id = clientes.id_coleccionista
                         INNER JOIN paises as pais_nacio
                         ON pais_nacio.id = coleccionistas.id_pais_nacio
                         INNER JOIN paises as pais_reside

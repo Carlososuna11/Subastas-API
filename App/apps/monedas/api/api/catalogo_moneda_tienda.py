@@ -21,7 +21,7 @@ class Catalogo_Moneda_TiendaListAPIView(generics.ListAPIView):
         pais = ['id','nombre','nacionalidad']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         catalogo_moneda_tienda = ['nur','id_moneda','id_coleccionista','id_organizacion']
         cursor = connection.cursor(dictionary=True)
@@ -57,7 +57,7 @@ class Catalogo_Moneda_TiendaListAPIView(generics.ListAPIView):
                         LEFT JOIN paises as organizacion_pais
                         ON organizacion_pais.id = organizaciones.id_pais
                         LEFT JOIN coleccionistas
-                        ON coleccionistas.dni = Catalogo_Moneda_Tienda.id_coleccionista
+                        ON coleccionistas.id = Catalogo_Moneda_Tienda.id_coleccionista
                         LEFT JOIN paises as pais_nacio
                         ON pais_nacio.id = coleccionistas.id_pais_nacio
                         LEFT JOIN paises as pais_reside
@@ -147,7 +147,7 @@ class Catalogo_Moneda_TiendaRetriveDestroyAPIView(generics.RetrieveDestroyAPIVie
         pais = ['id','nombre','nacionalidad']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         catalogo_moneda_tienda = ['nur','id_moneda','id_coleccionista','id_organizacion']
         cursor = connection.cursor(dictionary=True)
@@ -183,7 +183,7 @@ class Catalogo_Moneda_TiendaRetriveDestroyAPIView(generics.RetrieveDestroyAPIVie
                         LEFT JOIN paises as organizacion_pais
                         ON organizacion_pais.id = organizaciones.id_pais
                         LEFT JOIN coleccionistas
-                        ON coleccionistas.dni = Catalogo_Moneda_Tienda.id_coleccionista
+                        ON coleccionistas.id = Catalogo_Moneda_Tienda.id_coleccionista
                         LEFT JOIN paises as pais_nacio
                         ON pais_nacio.id = coleccionistas.id_pais_nacio
                         LEFT JOIN paises as pais_reside

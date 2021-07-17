@@ -7,7 +7,7 @@ from apps.monedas.models import *
 
 class Catalogo_Moneda_TiendaSerializer(serializers.Serializer):
     id_moneda = serializers.IntegerField()
-    id_organizacion = serializers.IntegerField(required=False)
+    id_organizacion = serializers.IntegerField()
     #id_coleccionista = serializers.IntegerField(required=False)
 
     # @conectar
@@ -74,7 +74,7 @@ class Catalogo_Moneda_TiendaSerializer(serializers.Serializer):
         moneda_artista = ['id_moneda','id_artista']
         divisa = ['id','id_pais','nombre']
         pais = ['id','nombre','nacionalidad']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
@@ -87,7 +87,7 @@ class Catalogo_Moneda_TiendaSerializer(serializers.Serializer):
                         ON pais_nacio.id = coleccionistas.id_pais_nacio
                         INNER JOIN paises
                         ON paises.id = coleccionistas.id_pais_reside
-                        WHERE coleccionistas.dni = %s
+                        WHERE coleccionistas.id = %s
                         """
         mysql_query_organizacion = f"""SELECT 
                         {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},

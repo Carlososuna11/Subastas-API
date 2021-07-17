@@ -7,7 +7,7 @@ from apps.coleccionistas.models import *
 
 required_formats = ['%d-%m-%Y']
 class ColeccionistaSerializer(serializers.Serializer):
-    dni = serializers.IntegerField()
+    dni = serializers.CharField(max_length=20)
     nombre = serializers.CharField(max_length=30)
     segundoNombre = serializers.CharField(max_length=30,required=False)
     apellido = serializers.CharField(max_length=30)
@@ -39,8 +39,8 @@ class ColeccionistaSerializer(serializers.Serializer):
     @conectar
     def validate_dni(self,dni,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM coleccionistas WHERE dni= %s"""
-        cursor.execute(mysql_query,(dni,))
+        mysql_query = """SELECT * FROM coleccionistas WHERE (dni,id_pais_nacio)= (%s,%s)"""
+        cursor.execute(mysql_query,(dni,self._kwargs['data']['id_pais_nacio']))
         if cursor.fetchone():
             raise serializers.ValidationError('El DNI ya Existe')
         return dni
@@ -63,8 +63,10 @@ class ColeccionistaSerializer(serializers.Serializer):
             raise serializers.ValidationError('El telefono ya Existe')
         return telefono
 
-
-    # def validate(self, attrs):
+    # @conectar
+    # def validate(self, attrs,connection):
+    #     cursor = connection.cursor()
+    #     mysql_query = """SELECT * FROM coleccionistas WHERE (id_pais_nacio,dni)= (%s,%s)"""
     #     return super().validate(attrs)
 
     @conectar
@@ -89,6 +91,7 @@ class ColeccionistaSerializer(serializers.Serializer):
                 coleccionista.email,coleccionista.fechaNacimiento,coleccionista.id_pais_nacio,coleccionista.id_pais_reside)
         cursor.execute(mysql_insert_query,data)
         connection.commit()
+        coleccionista.id = cursor.lastrowid
         return coleccionista
 
     @conectar
@@ -108,12 +111,13 @@ class ColeccionistaSerializer(serializers.Serializer):
         instance.normalize()
         divisa = instance.__dict__.copy()
         divisa.pop('dni')
+        divisa.pop('id')
         divisa.pop('pais_reside')
         divisa.pop('pais_nacio')
         for key,value in divisa.items():
             mysql_update_query =  f"""UPDATE coleccionistas SET {key} """
-            mysql_update_query+= """= %s WHERE dni = %s"""
-            cursor.execute(mysql_update_query,(value,instance.dni))
+            mysql_update_query+= """= %s WHERE id = %s"""
+            cursor.execute(mysql_update_query,(value,instance.id))
         connection.commit()
         return instance
 

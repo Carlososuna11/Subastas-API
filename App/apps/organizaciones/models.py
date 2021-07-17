@@ -31,6 +31,7 @@ class Organizacion:
             self.pais.normalize()
         
     def to_representation(self):
+        self.fundacion = self.fundacion.strftime("%d-%m-%Y")
         self.nombre.capitalize()
         self.alcance.capitalize()
         self.tipo.capitalize()

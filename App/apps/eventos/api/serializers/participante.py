@@ -39,8 +39,8 @@ class ParticipanteSerializer(serializers.Serializer):
         id_organizacion)= (%s, %s)"""
         cursor.execute(mysql_query,(attrs['id_coleccionista_cliente'],attrs['id_organizacion_cliente']))
         if cursor.fetchone():
-            mysql_query = """SELECT * FROM participantes WHERE (id_coleccionista,
-            id_organizacion,id_evento)= (%s, %s, %s)"""
+            mysql_query = """SELECT * FROM participantes WHERE (id_coleccionista_cliente,
+            id_organizacion_cliente,id_evento)= (%s, %s, %s)"""
             cursor.execute(mysql_query,(attrs['id_coleccionista_cliente'],attrs['id_organizacion_cliente'],attrs['id_evento']))
             if cursor.fetchone():
                 raise serializers.ValidationError('Ya se encuentra inscrito')
@@ -50,13 +50,13 @@ class ParticipanteSerializer(serializers.Serializer):
     @conectar
     def create(self, validated_data:dict,connection):
         pais = ['id','nombre','nacionalidad']
-        coleccionista = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
         cliente = ['fechaIngreso','numeroExpedienteUnico','id_coleccionista','id_organizacion']
         #query = self.request.query_params.get('id_pais',None)
-        query_cliente = f"""SELECT 
+        mysql_query_cliente = f"""SELECT 
                         {', '.join([f'clientes.{i} as cliente_{i}' for i in cliente])},
                         {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
                         {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
@@ -69,14 +69,13 @@ class ParticipanteSerializer(serializers.Serializer):
                         INNER JOIN paises as organizacion_pais
                         ON organizacion_pais.id = organizaciones.id_pais
                         INNER JOIN coleccionistas
-                        ON coleccionistas.dni = clientes.id_coleccionista
+                        ON coleccionistas.id = clientes.id_coleccionista
                         INNER JOIN paises as pais_nacio
                         ON pais_nacio.id = coleccionistas.id_pais_nacio
                         INNER JOIN paises as pais_reside
                         ON pais_reside.id = coleccionistas.id_pais_reside
-                        WHERE (clientes.id_coleccionista,clientes.id_organizacion) = (%s, %s)
+                        WHERE (clientes.id_coleccionista, clientes.id_organizacion) = (%s, %s)
                         """
-        mysql_query_cliente = """SELECT * FROM clientes WHERE (id_organizacion,id_coleccionista) = (%s, %s)"""
         mysql_query_pais = """SELECT * FROM paises WHERE id= %s"""
         mysql_insert_query = """INSERT INTO participantes (id_evento, fechaIngresoCliente, id_coleccionista_cliente,
         id_organizacion_cliente,id_pais) 
@@ -109,6 +108,7 @@ class ParticipanteSerializer(serializers.Serializer):
         clienteDato['organizacion'] = organizacionData
         validated_data['fechaIngresoCliente'] = dato['cliente_fechaIngreso']
         validated_data['cliente'] = clienteDato
+        print(validated_data)
         participante = Participante.model(**validated_data)
         participante.normalize()
         #---------Participante--------
