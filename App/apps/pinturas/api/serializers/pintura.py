@@ -99,6 +99,8 @@ class PinturaSerializer(serializers.Serializer):
         mysql_insert_query = """INSERT INTO caj_Catalogo_Pintura_Tienda (nur,titulo, dimensionescm, estilo, ano, imagen, id_coleccionista, id_organizacion) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
+        imagen = validated_data.get('imagen',None)
+        validated_data.pop('imagen')
         validated_data['nur'] = random_nur()
         catalogo = Pintura.model(**validated_data)
         catalogo.normalize()
@@ -135,9 +137,9 @@ class PinturaSerializer(serializers.Serializer):
                 catalogo.imagen, catalogo.id_coleccionista,catalogo.id_organizacion)
         cursor.execute(mysql_insert_query,data)
         connection.commit()
-        if 'imagen' in validated_data and validated_data['imagen']!= None:
-            saveImage(validated_data['imagen'],'pintura',catalogo.nur)
-            _,file_extension = os.path.splitext(str(validated_data['imagen']))
+        if imagen:
+            saveImage(imagen,'pintura',catalogo.nur)
+            _,file_extension = os.path.splitext(str(imagen))
             catalogo.imagen =f"pintura{catalogo.nur}{file_extension}" 
             mysql_update_query =  "UPDATE caj_Catalogo_Pintura_Tienda SET imagen = %s WHERE nur = %s"
             cursor.execute(mysql_update_query,(catalogo.imagen,catalogo.nur))

@@ -74,7 +74,8 @@ class MonedaSerializer(serializers.Serializer):
                             reverso, id_pais_divisa, id_pais,id_divisa,imagen) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
-        
+        imagen = validated_data.get('imagen',None)
+        validated_data.pop('imagen')
         moneda = Moneda(**validated_data)
         moneda.normalize()
         #---------Pais---------
@@ -97,14 +98,13 @@ class MonedaSerializer(serializers.Serializer):
         cursor.execute(mysql_insert_query,data)
         connection.commit()
         moneda.id = cursor.lastrowid
-        if 'imagen' in validated_data and validated_data['imagen']!= None:
-            saveImage(validated_data['imagen'],'moneda',moneda.id)
-            _,file_extension = os.path.splitext(str(validated_data['imagen']))
+        if imagen:
+            saveImage(imagen,'moneda',moneda.id)
+            _,file_extension = os.path.splitext(str(imagen))
             moneda.imagen =f"moneda{moneda.id}{file_extension}" 
             mysql_update_query =  "UPDATE caj_monedas SET imagen = %s WHERE id = %s"
             cursor.execute(mysql_update_query,(moneda.imagen,moneda.id))
             connection.commit()
-        print(moneda)
         return moneda
 
     @conectar
