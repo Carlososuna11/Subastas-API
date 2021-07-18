@@ -535,7 +535,7 @@
                                 <span
                                   data-mce-style="font-size: 18px; line-height: 36px;"
                                   style="font-size: 18px; line-height: 36px"
-                                  >Evento: ${evento}</span
+                                  >Fecha: {{fecha}}</span
                                 ><br>
                                 <span
                                   data-mce-style="font-size: 18px; line-height: 36px;"
@@ -544,8 +544,20 @@
                                     line-height: 36px;
                                     margin-left: 8px;
                                   "
-                                  >Fecha: ${fecha}</span
-                                >
+                                  >Costo: ${{costo}}</span
+                                ><br>
+                                <span
+                                  data-mce-style="font-size: 18px; line-height: 36px;"
+                                  style="font-size: 18px; line-height: 36px"
+                                  >Planificador:</span
+                                ><br>
+                                {{% for planificador in  planificadores%}
+                                    <span
+                                  data-mce-style="font-size: 18px; line-height: 36px;"
+                                  style="font-size: 18px; line-height: 36px"
+                                  >Planificador:</span
+                                ><br>
+                                {% endfor %}}
                               </span></span
                             ></a
                           >
