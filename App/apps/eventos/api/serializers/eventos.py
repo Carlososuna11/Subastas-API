@@ -131,7 +131,7 @@ class EventoSerializer(serializers.Serializer):
     @conectar
     def update(self, instance:Evento, validated_data:dict,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s""" 
         for key,value in validated_data.items():
                 setattr(instance,key,value)
                 if key in ['id_pais']:
@@ -142,6 +142,7 @@ class EventoSerializer(serializers.Serializer):
         divisa = instance.__dict__.copy()
         divisa.pop('id')
         divisa.pop('pais')
+        divisa.pop('planificadores')
         for key,value in divisa.items():
             mysql_update_query =  f"""UPDATE caj_eventos SET {key} """
             mysql_update_query+= """= %s WHERE id = %s"""
