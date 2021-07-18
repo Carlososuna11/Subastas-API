@@ -15,7 +15,8 @@ class EventoSerializer(serializers.Serializer):
     duracionHoras = serializers.IntegerField(min_value=4,max_value=6)
     lugar = serializers.CharField(max_length=100,required=False)
     id_pais = serializers.IntegerField(required=False)
-    
+    planificadores = serializers.ListField(child=serializers.IntegerField(),min_length=1)
+
     @conectar
     def validate_id_pais(self,id_pais,connection):
         cursor = connection.cursor()
@@ -25,16 +26,58 @@ class EventoSerializer(serializers.Serializer):
             return id_pais
         raise serializers.ValidationError('El Pais no Existe')
 
-    #TODO: hacer validaciones de si se puede hacer en la fecha o no
-    # def validate_fecha(self,status):
-    #     pass
+    def validate_fecha(self,fecha):
+        print(fecha)
+        if fecha < datetime.date.today():
+            raise serializers.ValidationError("La fecha debe ser mayor a la fecha actual")
+        return fecha
 
-    #TODO: hacer validaciones de máximo de eventos a organizaciones x año
-    # def validate_status(self,status):
-    #     if status.lower() in ['realizado','pendiente','calcelado']:
-    #         return status.lower()
-    #     raise serializers.ValidationError("El alcance no es Válido, solo puede ser 'nacional', 'internacional' o 'ambos' ")
+    @conectar
+    def validate_planificadores(self,planificadores,connection):
+        cursor = connection.cursor(dictionary=True)
+        planificadores = list(set(planificadores))
+        mysql_participantes = """SELECT id_organizacion FROM caj_planificadores WHERE id_evento = %s"""
+        mysql_query_organizacion = """SELECT nombre FROM caj_organizaciones WHERE id = %s"""
+        mysql_query_clientes = """SELECT id_coleccionista FROM caj_clientes WHERE id_organizacion = %s"""
+        mysq_query_clientes_many = f"""SELECT id_coleccionista FROM caj_clientes WHERE id_organizacion IN ({','.join([str(i) for i in planificadores])})"""
+        mysql_query_evento = """SELECT id,fecha FROM caj_eventos"""
+        mysql_query_evento_planificador = """SELECT id_evento from caj_planificadores WHERE id_organizacion = %s"""
 
+        cursor.execute(mysql_query_evento)
+        eventos = [evento for evento in cursor if evento['fecha'] == datetime.datetime.strptime(self._kwargs['data']['fecha'], '%d-%m-%Y').date()]
+        cursor.execute(mysq_query_clientes_many)
+        idsColeccionistas = list(set([cliente['id_coleccionista'] for cliente in cursor]))
+        for evento in eventos:
+            cursor.execute(mysql_participantes,(evento['id'],))
+            organizaciones = cursor.fetchall()
+            for organizacion in organizaciones:
+                if organizacion['id_organizacion'] in planificadores:
+                    cursor.execute(mysql_query_organizacion,(organizacion['id_organizacion'],))
+                    raise serializers.ValidationError(f"No se puede realizar el evento ya que para dicho dia ya existe un evento para {cursor.fetchone()['nombre']}")
+                cursor.execute(mysql_query_clientes,(organizacion['id_organizacion'],))
+                coleccionistas = cursor.fetchall()
+                for coleccionista in coleccionistas:
+                    if coleccionista['id_coleccionista'] in idsColeccionistas:
+                        cursor.execute(mysql_query_organizacion,(organizacion['id_organizacion'],))
+                        raise serializers.ValidationError(f"No se puede realizar el evento ya que para dicho dia ya existe un evento para algunos de los clientes de {cursor.fetchone()['nombre']}")
+        for i in planificadores:
+            cursor.execute(mysql_query_evento_planificador,(i,))
+            eventos = cursor.fetchall()
+            if eventos:
+                cant_eventos_ano = []
+                ano = datetime.date.today().year
+                for evento in eventos:
+                    cursor.execute( """SELECT id,fecha FROM caj_eventos where id = %s""",(evento['id_evento'],))
+                    dataEvento = cursor.fetchone()
+                    #print(self._kwargs)
+                    #print(datetime.datetime.strptime(self._kwargs['data']['fecha'], '%d-%m-%Y'))
+                    if dataEvento['fecha'].year == ano:
+                        cant_eventos_ano.append(evento['id_evento'])
+                if len(cant_eventos_ano)>5:
+                    cursor.execute(mysql_query_organizacion,(i,))
+                    raise serializers.ValidationError(f"{cursor.fetchone()['nombre']} Ya no puede realizar más eventos, son 5 Eventos por año")
+        return planificadores
+                
     def validate_tipo(self,tipo):
         if tipo.lower() in ['virtual','presencial']:
             return tipo.lower()
@@ -45,11 +88,15 @@ class EventoSerializer(serializers.Serializer):
             return tipoPuja.lower()
         raise serializers.ValidationError("El tipo de Puja no es Válido, solo puede ser 'ascendente' o 'sobre cerrado' ")
 
-
     def validate(self, attrs):
         if attrs['tipo'] == 'virtual':
             if attrs['tipoPuja'] == 'sobre cerrado':
                 raise serializers.ValidationError("El tipo de Puja para eventos Virtuales no es Válido, solo puede ser 'ascendente'")
+        else:
+            if 'lugar' not in attrs or 'id_pais' not in attrs:
+                raise serializers.ValidationError("Debe ingresar el lugar o el Pais de origen")
+            if len(attrs['planificadores'])>1:
+                raise serializers.ValidationError("Debe ingresar un solo planificador")
         return attrs
 
     @conectar
@@ -58,8 +105,11 @@ class EventoSerializer(serializers.Serializer):
         mysql_insert_query = """INSERT INTO caj_eventos (inscripcionCliente, inscripcionClienteNuevo, fecha,
                                 status, tipo, tipoPuja, duracionHoras, lugar, id_pais) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        mysql_insert_planificadores_query = """INSERT INTO caj_planificadores (id_evento,id_organizacion) VALUES (%s, %s)"""
         cursor = connection.cursor(dictionary=True)
         validated_data['status']='pendiente'
+        planificadores = validated_data['planificadores']
+        validated_data.pop('planificadores')
         print(validated_data)
         evento = Evento.model(**validated_data)
         evento.normalize()
@@ -73,6 +123,9 @@ class EventoSerializer(serializers.Serializer):
         cursor.execute(mysql_insert_query,data)
         connection.commit()
         evento.id = cursor.lastrowid
+        for planificador in planificadores:
+            cursor.execute(mysql_insert_planificadores_query,(evento.id,planificador))  
+        connection.commit()
         return evento
 
     @conectar
