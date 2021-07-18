@@ -16,6 +16,9 @@ class OrganizacionSerializer(serializers.Serializer):
     emailCorporativo = serializers.EmailField(max_length=50,required=False)
     id_pais = serializers.IntegerField()
     
+    def validate_ano(self,ano):
+        return ano.year
+        
     @conectar
     def validate_id_pais(self,id_pais,connection):
         cursor = connection.cursor()

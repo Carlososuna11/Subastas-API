@@ -60,7 +60,8 @@ class MonedaSerializer(serializers.Serializer):
             return canto.lower()
         raise serializers.ValidationError("El canto no es Válido, solo puede ser 'estriado' o 'liso' ")
 
-
+    def validate_ano(self,ano):
+        return ano.year
     # def validate(self, attrs):
     #     return super().validate(attrs)
 
@@ -73,6 +74,7 @@ class MonedaSerializer(serializers.Serializer):
                             reverso, id_pais_divisa, id_pais,id_divisa,imagen) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
+        
         moneda = Moneda(**validated_data)
         moneda.normalize()
         #---------Pais---------

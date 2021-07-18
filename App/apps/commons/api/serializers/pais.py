@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from database.conexion import conectar 
 from apps.commons.models import Pais
-
+from database.task import send_email_task
             
 class PaisSerializer(serializers.Serializer):
     nombre = serializers.CharField(max_length=30)
@@ -27,6 +27,7 @@ class PaisSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
+        # send_email_task.delay()
         mysql_insert_query = """INSERT INTO caj_paises (nombre, nacionalidad) 
                                 VALUES (%s, %s)"""
         cursor = connection.cursor()

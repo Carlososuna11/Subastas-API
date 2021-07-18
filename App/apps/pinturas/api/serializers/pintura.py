@@ -18,6 +18,9 @@ class PinturaSerializer(serializers.Serializer):
 
     #id_coleccionista = serializers.IntegerField(required=False)
 
+    def validate_ano(self,ano):
+        return ano.year
+
     # @conectar
     # def validate_id_coleccionista(self,id_coleccionista,connection):
     #     cursor = connection.cursor()
