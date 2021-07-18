@@ -10,17 +10,17 @@ class PlanificadorSerializer(serializers.Serializer):
     @conectar
     def validate_id_organizacion(self, id_organizacion,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM organizaciones WHERE id = %s"""
+        mysql_query = """SELECT * FROM caj_organizaciones WHERE id = %s"""
         cursor.execute(mysql_query,(id_organizacion,))
         if cursor.fetchone():
             return id_organizacion    
-        raise serializers.ValidationError('La organización no Existe')
+        raise serializers.ValidationError('La caj_organización no Existe')
         
 
     @conectar
     def validate_id_evento(self, id_evento,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM eventos WHERE id = %s"""
+        mysql_query = """SELECT * FROM caj_eventos WHERE id = %s"""
         cursor.execute(mysql_query,(id_evento,))
         if cursor.fetchone():
             return id_evento
@@ -29,7 +29,7 @@ class PlanificadorSerializer(serializers.Serializer):
     @conectar
     def validate(self,validated_data,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM planificadores WHERE (id_organizacion,id_evento) = (%s, %s)"""
+        mysql_query = """SELECT * FROM caj_planificadores WHERE (id_organizacion,id_evento) = (%s, %s)"""
         cursor.execute(mysql_query,(validated_data['id_organizacion'],validated_data['id_evento']))
         if cursor.fetchone():
             raise serializers.ValidationError('Ya existe dicha organizacion para el Evento')
@@ -37,7 +37,7 @@ class PlanificadorSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
-        mysql_insert_query = """INSERT INTO planificadores (id_evento, id_organizacion) 
+        mysql_insert_query = """INSERT INTO caj_planificadores (id_evento, id_organizacion) 
                                 VALUES (%s, %s)"""
         cursor = connection.cursor()
         planificador = Planificador.model(**validated_data)

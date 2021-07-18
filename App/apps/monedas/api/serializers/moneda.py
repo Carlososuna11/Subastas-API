@@ -10,13 +10,13 @@ required_formats = ['%Y', '%d-%m-%Y']
 
 class MonedaSerializer(serializers.Serializer):
     nombre = serializers.CharField(max_length=30)
-    denominacion = serializers.IntegerField(min_value=1)
+    denominacion = serializers.DecimalField(7,3,min_value=0)
     mintage = serializers.IntegerField(min_value=1)
     forma = serializers.CharField(max_length=10)
     metal = serializers.CharField(max_length=10)
-    diametromm = serializers.IntegerField(min_value=1)
+    diametromm = serializers.DecimalField(6,2,min_value=0)
     canto = serializers.CharField(max_length=10)
-    pesogr = serializers.IntegerField(min_value=1)
+    pesogr = serializers.DecimalField(6,2,min_value=0)
     ano = serializers.DateField(input_formats=required_formats)
     motivo = serializers.CharField(max_length=100)
     acunacion = serializers.CharField(max_length=100)
@@ -30,7 +30,7 @@ class MonedaSerializer(serializers.Serializer):
     @conectar
     def validate_id_pais(self,id_pais,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         cursor.execute(mysql_query,(id_pais,))
         if cursor.fetchone():
             return id_pais
@@ -39,7 +39,7 @@ class MonedaSerializer(serializers.Serializer):
     @conectar
     def validate_id_divisa(self,id_pais,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM divisas WHERE (id,id_pais) = (%s, %s)"""
+        mysql_query = """SELECT * FROM caj_divisas WHERE (id,id_pais) = (%s, %s)"""
         cursor.execute(mysql_query,(id_pais,self._kwargs['data']['id_pais_divisa']))
         if cursor.fetchone():
             return id_pais
@@ -66,9 +66,9 @@ class MonedaSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
-        mysql_query_pais = """SELECT * FROM paises WHERE id= %s"""
-        mysql_query_divisa = """SELECT * FROM divisas WHERE (id,id_pais)= (%s, %s)"""
-        mysql_insert_query = """INSERT INTO monedas (nombre, denominacion, mintage, forma, 
+        mysql_query_pais = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysql_query_divisa = """SELECT * FROM caj_divisas WHERE (id,id_pais)= (%s, %s)"""
+        mysql_insert_query = """INSERT INTO caj_monedas (nombre, denominacion, mintage, forma, 
                             metal, diametromm, canto, pesogr, ano, motivo, acunacion, anverso, 
                             reverso, id_pais_divisa, id_pais,id_divisa,imagen) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -99,7 +99,7 @@ class MonedaSerializer(serializers.Serializer):
             saveImage(validated_data['imagen'],'moneda',moneda.id)
             _,file_extension = os.path.splitext(str(validated_data['imagen']))
             moneda.imagen =f"moneda{moneda.id}{file_extension}" 
-            mysql_update_query =  "UPDATE monedas SET imagen = %s WHERE id = %s"
+            mysql_update_query =  "UPDATE caj_monedas SET imagen = %s WHERE id = %s"
             cursor.execute(mysql_update_query,(moneda.imagen,moneda.id))
             connection.commit()
         print(moneda)
@@ -107,8 +107,8 @@ class MonedaSerializer(serializers.Serializer):
 
     @conectar
     def update(self, instance:Moneda, validated_data:dict,connection):
-        mysql_query_pais = """SELECT * FROM paises WHERE id= %s"""
-        mysql_query_divisa = """SELECT * FROM divisas WHERE (id,id_pais)= (%s, %s)"""
+        mysql_query_pais = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysql_query_divisa = """SELECT * FROM caj_divisas WHERE (id,id_pais)= (%s, %s)"""
         
         cursor = connection.cursor(dictionary=True)
         for key,value in validated_data.items():
@@ -138,7 +138,7 @@ class MonedaSerializer(serializers.Serializer):
         divisa.pop('pais')
         divisa.pop('divisa')
         for key,value in divisa.items():
-            mysql_update_query =  f"""UPDATE monedeas SET {key} """
+            mysql_update_query =  f"""UPDATE caj_monedeas SET {key} """
             mysql_update_query+= """= %s WHERE id= %s"""
             cursor.execute(mysql_update_query,(value,instance.id))
         connection.commit()

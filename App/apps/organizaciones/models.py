@@ -4,7 +4,7 @@ from apps.commons.models import *
 
 class Organizacion:
     """Representacion en Objeto de la Entidad Organizacion"""
-    def __init__(self,nombre:str,proposito:str,fundacion:datetime.date,alcance:str,
+    def __init__(self,nombre:str,proposito:str,fundacion:int,alcance:str,
                 tipo:str,telefonoPrincipal:str,id_pais:int,paginaWeb:str=None,emailCorporativo:str=None,
                 id:int=None,pais:Pais=None):
         self.id = id
@@ -31,7 +31,6 @@ class Organizacion:
             self.pais.normalize()
         
     def to_representation(self):
-        self.fundacion = self.fundacion.strftime("%d-%m-%Y")
         self.nombre.capitalize()
         self.alcance.capitalize()
         self.tipo.capitalize()
@@ -48,8 +47,9 @@ class Organizacion:
 
 class Contacto:
     """Representacion en Objeto de la Entidad Contacto"""
-    def __init__(self,dni:int,nombre:str,apellido:str,segundoApellido:str,
-        telefono:str,email:str,id_organizacion:int,cargo:str,segundoNombre:str=None):
+    def __init__(self,dni:float,nombre:str,apellido:str,segundoApellido:str,
+        telefono:str,email:str,id_organizacion:int,cargo:str,segundoNombre:str=None,id:int=None):
+        self.id = id
         self.dni = dni
         self.nombre = nombre
         self.segundoNombre = segundoNombre

@@ -14,7 +14,7 @@ class ClienteSerializer(serializers.Serializer):
     @conectar
     def validate_id_organizacion(self,id_organizacion,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM organizaciones WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_organizaciones WHERE id= %s"""
         cursor.execute(mysql_query,(id_organizacion,))
         if cursor.fetchone():
             return id_organizacion
@@ -23,7 +23,7 @@ class ClienteSerializer(serializers.Serializer):
     @conectar
     def validate_id_coleccionista(self,id_coleccionista,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM coleccionistas WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_coleccionistas WHERE id= %s"""
         cursor.execute(mysql_query,(id_coleccionista,))
         if cursor.fetchone():
             return id_coleccionista
@@ -32,7 +32,7 @@ class ClienteSerializer(serializers.Serializer):
     @conectar
     def validate(self, attrs,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM clientes WHERE (id_coleccionista,id_organizacion) = (%s,%s)"""
+        mysql_query = """SELECT * FROM caj_clientes WHERE (id_coleccionista,id_organizacion) = (%s,%s)"""
         cursor.execute(mysql_query,(attrs['id_coleccionista'],attrs['id_organizacion']))
         if cursor.fetchone():
             raise serializers.ValidationError('El Coleccionista Ya es Cliente')
@@ -46,25 +46,25 @@ class ClienteSerializer(serializers.Serializer):
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
         mysql_query_coleccionista = f"""SELECT 
-                            {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                            {', '.join([f'caj_coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
                             {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
-                            {', '.join([f'paises.{i} as pais_reside_{i}' for i in pais])}
-                        FROM coleccionistas
-                        INNER JOIN paises as pais_nacio
-                        ON pais_nacio.id = coleccionistas.id_pais_nacio
-                        INNER JOIN paises
-                        ON paises.id = coleccionistas.id_pais_reside
-                        WHERE coleccionistas.id = %s
+                            {', '.join([f'caj_paises.{i} as pais_reside_{i}' for i in pais])}
+                        FROM caj_coleccionistas
+                        INNER JOIN caj_paises as pais_nacio
+                        ON pais_nacio.id = caj_coleccionistas.id_pais_nacio
+                        INNER JOIN caj_paises
+                        ON caj_paises.id = caj_coleccionistas.id_pais_reside
+                        WHERE caj_coleccionistas.id = %s
                         """
         mysql_query_organizacion = f"""SELECT 
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])}
-                        FROM organizaciones
-                        INNER JOIN paises
-                        ON paises.id = organizaciones.id_pais
-                        WHERE organizaciones.id = %s
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])}
+                        FROM caj_organizaciones
+                        INNER JOIN caj_paises
+                        ON caj_paises.id = caj_organizaciones.id_pais
+                        WHERE caj_organizaciones.id = %s
                         """
-        mysql_insert_query = """INSERT INTO clientes (id_organizacion,id_coleccionista,fechaIngreso)
+        mysql_insert_query = """INSERT INTO caj_clientes (id_organizacion,id_coleccionista,fechaIngreso)
                                 VALUES (%s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
         cliente = Cliente.model(**validated_data)

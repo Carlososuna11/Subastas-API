@@ -11,7 +11,7 @@ class ArtistaSerializer(serializers.Serializer):
     
     @conectar
     def create(self, validated_data:dict,connection):
-        mysql_insert_query = """INSERT INTO artistas (nombre, apellido, nombreArtistico) 
+        mysql_insert_query = """INSERT INTO caj_artistas (nombre, apellido, nombreArtistico) 
                                 VALUES (%s, %s, %s)"""
         cursor = connection.cursor()
         artista = Artista.model(**validated_data)
@@ -31,7 +31,7 @@ class ArtistaSerializer(serializers.Serializer):
         pais = instance.__dict__.copy()
         pais.pop('id')
         for key,value in pais.items():
-            mysql_update_query =  f"UPDATE artistas SET {key} = %s WHERE id = %s"
+            mysql_update_query =  f"UPDATE caj_artistas SET {key} = %s WHERE id = %s"
             cursor.execute(mysql_update_query,(value,instance.id))
         connection.commit()
         return instance

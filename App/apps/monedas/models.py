@@ -22,9 +22,9 @@ class Moneda_Artista:
 
 class Moneda:
     """Representacion en Objeto de la Entidad Moneda"""
-    def __init__(self,nombre:str,denominacion:int,
-    mintage:int,forma:str,metal:str,diametromm:int,canto:str,
-    pesogr:int,ano:datetime.date,motivo:str,acunacion:str,
+    def __init__(self,nombre:str,denominacion:float,
+    mintage:int,forma:str,metal:str,diametromm:float,canto:str,
+    pesogr:float,ano:InterruptedError,motivo:str,acunacion:str,
     anverso:str,reverso:str,id_pais_divisa:int,id_pais:int,
     id_divisa:int,pais:Pais=None,divisa:Divisa=None,artistas:list=[],imagen:str=None,id:int=None):
         self.id = id
@@ -36,7 +36,7 @@ class Moneda:
         self.diametromm = diametromm
         self.canto = canto
         self.pesogr = pesogr
-        self.ano = ano.year
+        self.ano = ano
         self.motivo = motivo
         self.acunacion = acunacion
         self.anverso = anverso
@@ -102,10 +102,10 @@ class Catalogo_Moneda_Tienda:
         self.id_organizacion = id_organizacion
         self.moneda = moneda
         self.coleccionista = coleccionista
-        if coleccionista.dni ==None:
+        if self.coleccionista!= None and self.coleccionista.id == None:
             self.coleccionista=None
         self.organizacion = organizacion
-        if organizacion.id ==None:
+        if self.coleccionista!= None and self.coleccionista.id == None:
             self.organizacion = None
 
     def normalize(self):

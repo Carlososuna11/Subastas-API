@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from database.conexion import conectar 
 from database.jsonFormat import get_json
+from database.random_nur import random_nur
 from apps.commons.models import Pais
 from apps.monedas.models import *
 
@@ -22,7 +23,7 @@ class Catalogo_Moneda_TiendaSerializer(serializers.Serializer):
     @conectar
     def validate_id_moneda(self,id_moneda,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM monedas WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_monedas WHERE id= %s"""
         cursor.execute(mysql_query,(id_moneda,))
         if cursor.fetchone():
             return id_moneda
@@ -31,7 +32,7 @@ class Catalogo_Moneda_TiendaSerializer(serializers.Serializer):
     @conectar
     def validate_id_organizacion(self,id_organizacion,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM organizaciones WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_organizaciones WHERE id= %s"""
         cursor.execute(mysql_query,(id_organizacion,))
         if cursor.fetchone():
             return id_organizacion
@@ -78,47 +79,48 @@ class Catalogo_Moneda_TiendaSerializer(serializers.Serializer):
                         'fechaNacimiento','id_pais_nacio','id_pais_reside']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
-        mysql_query_coleccionista = f"""SELECT 
-                            {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
-                            {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
-                            {', '.join([f'paises.{i} as pais_reside_{i}' for i in pais])}
-                        FROM coleccionistas
-                        INNER JOIN paises as pais_nacio
-                        ON pais_nacio.id = coleccionistas.id_pais_nacio
-                        INNER JOIN paises
-                        ON paises.id = coleccionistas.id_pais_reside
-                        WHERE coleccionistas.id = %s
-                        """
+    #    mysql_query_coleccionista = f"""SELECT 
+    #                         {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+    #                         {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
+    #                         {', '.join([f'paises.{i} as pais_reside_{i}' for i in pais])}
+    #                     FROM coleccionistas
+    #                     INNER JOIN paises as pais_nacio
+    #                     ON pais_nacio.id = coleccionistas.id_pais_nacio
+    #                     INNER JOIN paises
+    #                     ON paises.id = coleccionistas.id_pais_reside
+    #                     WHERE coleccionistas.id = %s
+    #                     """
         mysql_query_organizacion = f"""SELECT 
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])}
-                        FROM organizaciones
-                        INNER JOIN paises
-                        ON paises.id = organizaciones.id_pais
-                        WHERE organizaciones.id = %s
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])}
+                        FROM caj_organizaciones
+                        INNER JOIN caj_paises
+                        ON caj_paises.id = caj_organizaciones.id_pais
+                        WHERE caj_organizaciones.id = %s
                         """
-        mysql_query_moneda = f"""SELECT {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
-                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+        mysql_query_moneda = f"""SELECT {', '.join([f'caj_monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'caj_divisas.{i} as divisa_{i}' for i in divisa])},
                         {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])},
-                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])}
-                        FROM monedas
-                        INNER JOIN divisas
-                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
-                        INNER JOIN paises as `divisa_pais`
-                        ON divisas.id_pais = divisa_pais.id
-                        INNER JOIN paises
-                        ON monedas.id_pais = paises.id
-                        LEFT JOIN M_A
-                        ON M_A.id_moneda = monedas.id
-                        LEFT JOIN artistas
-                        ON M_A.id_artista = artistas.id
-                        WHERE monedas.id = %s
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])},
+                        {', '.join([f'caj_M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])}
+                        FROM caj_monedas
+                        INNER JOIN caj_divisas
+                        ON (caj_divisas.id,caj_divisas.id_pais) = (caj_monedas.id_divisa,caj_monedas.id_pais_divisa) 
+                        INNER JOIN caj_paises as `divisa_pais`
+                        ON caj_divisas.id_pais = divisa_pais.id
+                        INNER JOIN caj_paises
+                        ON caj_monedas.id_pais = caj_paises.id
+                        LEFT JOIN caj_M_A
+                        ON caj_M_A.id_moneda = caj_monedas.id
+                        LEFT JOIN caj_artistas
+                        ON caj_M_A.id_artista = caj_artistas.id
+                        WHERE caj_monedas.id = %s
                         """
-        mysql_insert_query = """INSERT INTO Catalogo_Moneda_Tienda (id_moneda, id_coleccionista, id_organizacion) 
-                                VALUES (%s, %s, %s)"""
+        mysql_insert_query = """INSERT INTO caj_Catalogo_Moneda_Tienda (nur,id_moneda, id_coleccionista, id_organizacion) 
+                                VALUES (%s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
+        validated_data['nur'] = random_nur()
         catalogo = Catalogo_Moneda_Tienda.model(**validated_data)
         catalogo.normalize()
         #-------Moneda----------------------------
@@ -183,10 +185,9 @@ class Catalogo_Moneda_TiendaSerializer(serializers.Serializer):
         organizacionData['pais']= paisReside
         catalogo.organizacion = Organizacion.model(**organizacionData)
         #-------Insertar data--------
-        data = (catalogo.id_moneda,catalogo.id_coleccionista,catalogo.id_organizacion)
+        data = (catalogo.nur,catalogo.id_moneda,catalogo.id_coleccionista,catalogo.id_organizacion)
         cursor.execute(mysql_insert_query,data)
         connection.commit()
-        catalogo.nur = cursor.lastrowid
         return catalogo
 
     # @conectar

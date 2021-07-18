@@ -24,7 +24,7 @@ class PlanificadorDestroyAPIView(generics.DestroyAPIView):
     @conectar
     def get_object(self,connection):
         cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM planificadores WHERE (id_organizacion,id_evento)=(%s,%s)",(self.kwargs.get('id_organizacion'),self.kwargs.get('id_evento')))
+        cursor.execute("SELECT * FROM caj_planificadores WHERE (id_organizacion,id_evento)=(%s,%s)",(self.kwargs.get('id_organizacion'),self.kwargs.get('id_evento')))
         datos = cursor.fetchone()
         if datos:
             return Planificador.model(**datos)
@@ -34,5 +34,5 @@ class PlanificadorDestroyAPIView(generics.DestroyAPIView):
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM planificadores WHERE (id_organizacion,id_evento)=(%s,%s)",(instance.id_organizacion,instance.id_evento))
+        cursor.execute("DELETE FROM caj_planificadores WHERE (id_organizacion,id_evento)=(%s,%s)",(instance.id_organizacion,instance.id_evento))
         connection.commit()

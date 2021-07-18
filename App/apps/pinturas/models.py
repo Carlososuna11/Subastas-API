@@ -22,18 +22,18 @@ class Pintura_Artista:
 class Pintura:
     """Representación en Objetos de la entidad Catalogo_Pintura_Tienda"""
     def __init__(self,titulo:str,dimensionescm:str,estilo:str,
-        ano:datetime.date,imagen:str=None,nur:int=None,id_coleccionista:int=None,
+        ano:int,imagen:str=None,nur:int=None,id_coleccionista:int=None,
         id_organizacion:int=None,artistas:list=[],coleccionista:Coleccionista=None,organizacion:Organizacion=None):
         self.nur = nur
         self.titulo = titulo
         self.dimencionescm = dimensionescm
         self.estilo = estilo
-        self.ano = ano.year
+        self.ano = ano
         self.imagen = imagen
         self.id_coleccionista = id_coleccionista
         self.id_organizacion = id_organizacion
         self.artistas = [artista for artista in artistas if artista.id!=None]
-        self.coleccionista = None if coleccionista==None or coleccionista.dni == None else coleccionista
+        self.coleccionista = None if coleccionista==None or coleccionista.id == None else coleccionista
         self.organizacion = None if organizacion==None or organizacion.id == None else organizacion
 
     def normalize(self):

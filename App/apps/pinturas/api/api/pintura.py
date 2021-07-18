@@ -28,29 +28,29 @@ class PinturaListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         query_action = f"""SELECT 
-                        {', '.join([f'Catalogo_Pintura_Tienda.{i} as catalogo_{i}' for i in pintura])},
-                        {', '.join([f'P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])},
-                        {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                        {', '.join([f'caj_Catalogo_Pintura_Tienda.{i} as catalogo_{i}' for i in pintura])},
+                        {', '.join([f'caj_P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])},
+                        {', '.join([f'caj_coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
                         {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
                         {', '.join([f'pais_reside.{i} as pais_reside_{i}' for i in pais])},
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
                         {', '.join([f'organizacion_pais.{i} as organizacion_pais_{i}' for i in pais])}
-                        FROM Catalogo_Pintura_Tienda
-                        LEFT JOIN P_A
-                        ON P_A.id_pintura = Catalogo_Pintura_Tienda.nur
-                        LEFT JOIN artistas
-                        ON P_A.id_artista = artistas.id
-                        LEFT JOIN organizaciones
-                        ON organizaciones.id = Catalogo_Pintura_Tienda.id_organizacion
-                        LEFT JOIN paises as organizacion_pais
-                        ON organizacion_pais.id = organizaciones.id_pais
-                        LEFT JOIN coleccionistas
-                        ON coleccionistas.id = Catalogo_Pintura_Tienda.id_coleccionista
-                        LEFT JOIN paises as pais_nacio
-                        ON pais_nacio.id = coleccionistas.id_pais_nacio
-                        LEFT JOIN paises as pais_reside
-                        ON pais_reside.id = coleccionistas.id_pais_reside
+                        FROM caj_Catalogo_Pintura_Tienda
+                        LEFT JOIN caj_P_A
+                        ON caj_P_A.id_pintura = caj_Catalogo_Pintura_Tienda.nur
+                        LEFT JOIN caj_artistas
+                        ON caj_P_A.id_artista = caj_artistas.id
+                        LEFT JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_Catalogo_Pintura_Tienda.id_organizacion
+                        LEFT JOIN caj_paises as organizacion_pais
+                        ON organizacion_pais.id = caj_organizaciones.id_pais
+                        LEFT JOIN caj_coleccionistas
+                        ON caj_coleccionistas.id = caj_Catalogo_Pintura_Tienda.id_coleccionista
+                        LEFT JOIN caj_paises as pais_nacio
+                        ON pais_nacio.id = caj_coleccionistas.id_pais_nacio
+                        LEFT JOIN caj_paises as pais_reside
+                        ON pais_reside.id = caj_coleccionistas.id_pais_reside
                         """
         #print(query_action)
         cursor.execute(query_action)
@@ -76,13 +76,7 @@ class PinturaListAPIView(generics.ListAPIView):
                     paisResideOrganizacion[f'{i}'] = dato[f'organizacion_pais_{i}']
                 organizacionData['pais']= paisResideOrganizacion
                 for i in pintura:
-                    if i!= 'ano':
-                        catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
-                    else:
-                        if dato[f'catalogo_{i}'] != None:
-                            catalogoDato[f'{i}']= datetime.date(year=dato[f'catalogo_{i}'],month=1,day=1)
-                        else:
-                            catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
+                    catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
                 for i in coleccionista:
                     coleccionistaData[f'{i}'] = dato[f'coleccionista_{i}']
                 for i in pais:
@@ -127,30 +121,30 @@ class PinturaRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         query_action = f"""SELECT 
-                        {', '.join([f'Catalogo_Pintura_Tienda.{i} as catalogo_{i}' for i in pintura])},
-                        {', '.join([f'P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])},
-                        {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                        {', '.join([f'caj_Catalogo_Pintura_Tienda.{i} as catalogo_{i}' for i in pintura])},
+                        {', '.join([f'caj_P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])},
+                        {', '.join([f'caj_coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
                         {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
                         {', '.join([f'pais_reside.{i} as pais_reside_{i}' for i in pais])},
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
                         {', '.join([f'organizacion_pais.{i} as organizacion_pais_{i}' for i in pais])}
-                        FROM Catalogo_Pintura_Tienda
-                        LEFT JOIN P_A
-                        ON P_A.id_pintura = Catalogo_Pintura_Tienda.nur
-                        LEFT JOIN artistas
-                        ON P_A.id_artista = artistas.id
-                        LEFT JOIN organizaciones
-                        ON organizaciones.id = Catalogo_Pintura_Tienda.id_organizacion
-                        LEFT JOIN paises as organizacion_pais
-                        ON organizacion_pais.id = organizaciones.id_pais
-                        LEFT JOIN coleccionistas
-                        ON coleccionistas.id = Catalogo_Pintura_Tienda.id_coleccionista
-                        LEFT JOIN paises as pais_nacio
-                        ON pais_nacio.id = coleccionistas.id_pais_nacio
-                        LEFT JOIN paises as pais_reside
-                        ON pais_reside.id = coleccionistas.id_pais_reside
-                        WHERE Catalogo_Pintura_Tienda.nur = %s
+                        FROM caj_Catalogo_Pintura_Tienda
+                        LEFT JOIN caj_P_A
+                        ON caj_P_A.id_pintura = caj_Catalogo_Pintura_Tienda.nur
+                        LEFT JOIN caj_artistas
+                        ON caj_P_A.id_artista = caj_artistas.id
+                        LEFT JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_Catalogo_Pintura_Tienda.id_organizacion
+                        LEFT JOIN caj_paises as organizacion_pais
+                        ON organizacion_pais.id = caj_organizaciones.id_pais
+                        LEFT JOIN caj_coleccionistas
+                        ON caj_coleccionistas.id = caj_Catalogo_Pintura_Tienda.id_coleccionista
+                        LEFT JOIN caj_paises as pais_nacio
+                        ON pais_nacio.id = caj_coleccionistas.id_pais_nacio
+                        LEFT JOIN caj_paises as pais_reside
+                        ON pais_reside.id = caj_coleccionistas.id_pais_reside
+                        WHERE caj_Catalogo_Pintura_Tienda.nur = %s
                         """
         cursor.execute(query_action,(self.kwargs.get('nur'),))
         datos = cursor.fetchall()
@@ -175,13 +169,7 @@ class PinturaRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
                         paisResideOrganizacion[f'{i}'] = dato[f'organizacion_pais_{i}']
                     organizacionData['pais']= paisResideOrganizacion
                     for i in pintura:
-                        if i!= 'ano':
-                            catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
-                        else:
-                            if dato[f'catalogo_{i}'] != None:
-                                catalogoDato[f'{i}']= datetime.date(year=dato[f'catalogo_{i}'],month=1,day=1)
-                            else:
-                                catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
+                        catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
                     for i in coleccionista:
                         coleccionistaData[f'{i}'] = dato[f'coleccionista_{i}']
                     for i in pais:
@@ -205,5 +193,5 @@ class PinturaRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM Catalogo_Pintura_Tienda WHERE nur = %s",(instance.id,))
+        cursor.execute("DELETE FROM caj_Catalogo_Pintura_Tienda WHERE nur = %s",(instance.id,))
         connection.commit()

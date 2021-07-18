@@ -10,7 +10,7 @@ class ArtistaListAPIView(generics.ListAPIView):
     @conectar
     def get_queryset(self,connection):
         cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM artistas")
+        cursor.execute("SELECT * FROM caj_artistas")
         casas = [Artista.model(**dato) for dato in cursor]
         return casas
     
@@ -24,7 +24,7 @@ class ArtistaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     @conectar
     def get_object(self,connection):
         cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM artistas WHERE id=%s",(self.kwargs[self.lookup_field],))
+        cursor.execute("SELECT * FROM caj_artistas WHERE id=%s",(self.kwargs[self.lookup_field],))
         datos = cursor.fetchone()
         if datos:
             return Artista(**datos)
@@ -33,5 +33,5 @@ class ArtistaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM artistas WHERE id = %s",(instance.id,))
+        cursor.execute("DELETE FROM caj_artistas WHERE id = %s",(instance.id,))
         connection.commit()

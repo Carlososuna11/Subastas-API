@@ -3,7 +3,6 @@ from database.conexion import conectar
 from apps.eventos.api.serializers.costoEnvio import *
 from apps.eventos.models import CostoEnvio
 from django.http import Http404
-import inspect
 
 class CostoEnvioListAPIView(generics.ListAPIView):
     # """
@@ -18,11 +17,11 @@ class CostoEnvioListAPIView(generics.ListAPIView):
         pais = ['id','nombre','nacionalidad']
         costoEnvio = ['id','id_evento','costoExtra','id_pais']
         query_action = f"""SELECT 
-                    {', '.join([f'paises.{i} as pais_{i}' for i in pais])},
-                    {', '.join([f'costoEnvios.{i} as costoEnvio_{i}' for i in costoEnvio])}
-                    FROM costoEnvios
-                    INNER JOIN paises 
-                    ON paises.id = costoEnvios.id_pais
+                    {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])},
+                    {', '.join([f'caj_costoEnvios.{i} as costoEnvio_{i}' for i in costoEnvio])}
+                    FROM caj_costoEnvios
+                    INNER JOIN caj_paises 
+                    ON caj_paises.id = caj_costoEnvios.id_pais
                     """
         # query = self.request.query_params.get('id_pais',None)
         # query_action = f"""SELECT divisas.id as divisa_id, divisas.id_pais as divisa_id_pais, divisas.nombre as divisa_nombre,
@@ -72,12 +71,12 @@ class CostoEnvioRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
         pais = ['id','nombre','nacionalidad']
         costoEnvio = ['id','id_evento','costoExtra','id_pais']
         query_action = f"""SELECT 
-                    {', '.join([f'paises.{i} as pais_{i}' for i in pais])},
-                    {', '.join([f'costoEnvios.{i} as costoEnvio_{i}' for i in costoEnvio])}
-                    FROM costoEnvios
-                    INNER JOIN paises 
-                    ON paises.id = costoEnvios.id_pais
-                    WHERE costoEnvios.id = %s
+                    {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])},
+                    {', '.join([f'caj_costoEnvios.{i} as costoEnvio_{i}' for i in costoEnvio])}
+                    FROM caj_costoEnvios
+                    INNER JOIN caj_paises 
+                    ON caj_paises.id = caj_costoEnvios.id_pais
+                    WHERE caj_costoEnvios.id = %s
                     """
         cursor.execute(query_action,(self.kwargs.get('id'),))
         dato = cursor.fetchone()
@@ -95,6 +94,6 @@ class CostoEnvioRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM costoEnvios WHERE id = %s",(instance.id,))
+        cursor.execute("DELETE FROM caj_costoEnvios WHERE id = %s",(instance.id,))
         connection.commit()
 

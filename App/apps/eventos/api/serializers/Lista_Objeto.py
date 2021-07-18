@@ -15,7 +15,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
     @conectar
     def validate_nur_moneda(self,nur_moneda,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM Catalogo_Moneda_Tienda WHERE nur= %s"""
+        mysql_query = """SELECT * FROM caj_Catalogo_Moneda_Tienda WHERE nur= %s"""
         cursor.execute(mysql_query,(nur_moneda,))
         if cursor.fetchone():
             return nur_moneda
@@ -24,7 +24,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
     @conectar
     def validate_id_pintura(self,id_pintura,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM Catalogo_Pintura_Tienda WHERE nur= %s"""
+        mysql_query = """SELECT * FROM caj_Catalogo_Pintura_Tienda WHERE nur= %s"""
         cursor.execute(mysql_query,(id_pintura,))
         if cursor.fetchone():
             return id_pintura
@@ -49,43 +49,43 @@ class Lista_ObjetoSerializer(serializers.Serializer):
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         mysql_moneda_query = f"""SELECT 
-                        {', '.join([f'Catalogo_Moneda_Tienda.{i} as catalogo_{i}' for i in catalogo_moneda_tienda])},
-                        {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
-                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+                        {', '.join([f'caj_Catalogo_Moneda_Tienda.{i} as catalogo_{i}' for i in catalogo_moneda_tienda])},
+                        {', '.join([f'caj_monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'caj_divisas.{i} as divisa_{i}' for i in divisa])},
                         {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
                         {', '.join([f'moneda_pais.{i} as moneda_pais_{i}' for i in pais])},
-                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])}
-                        FROM Catalogo_Moneda_Tienda
-                        INNER JOIN monedas
-                        ON monedas.id = Catalogo_Moneda_Tienda.id_moneda
-                        INNER JOIN divisas
-                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
-                        INNER JOIN paises as `divisa_pais`
-                        ON divisas.id_pais = divisa_pais.id
-                        INNER JOIN paises as moneda_pais
-                        ON monedas.id_pais = moneda_pais.id
-                        LEFT JOIN M_A
-                        ON M_A.id_moneda = monedas.id
-                        LEFT JOIN artistas
-                        ON M_A.id_artista = artistas.id
-                        WHERE Catalogo_Moneda_Tienda.nur = %s
+                        {', '.join([f'caj_M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])}
+                        FROM caj_Catalogo_Moneda_Tienda
+                        INNER JOIN caj_monedas
+                        ON caj_monedas.id = caj_Catalogo_Moneda_Tienda.id_moneda
+                        INNER JOIN caj_divisas
+                        ON (caj_divisas.id,caj_divisas.id_pais) = (caj_monedas.id_divisa,caj_monedas.id_pais_divisa) 
+                        INNER JOIN caj_paises as `divisa_pais`
+                        ON caj_divisas.id_pais = divisa_pais.id
+                        INNER JOIN caj_paises as moneda_pais
+                        ON caj_monedas.id_pais = moneda_pais.id
+                        LEFT JOIN caj_M_A
+                        ON caj_M_A.id_moneda = caj_monedas.id
+                        LEFT JOIN caj_artistas
+                        ON caj_M_A.id_artista = caj_artistas.id
+                        WHERE caj_Catalogo_Moneda_Tienda.nur = %s
                         """
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         mysql_pintura_query = f"""SELECT 
-                        {', '.join([f'Catalogo_Pintura_Tienda.{i} as catalogo_{i}' for i in pintura])},
-                        {', '.join([f'P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])}
-                        FROM Catalogo_Pintura_Tienda
-                        LEFT JOIN P_A
-                        ON P_A.id_pintura = Catalogo_Pintura_Tienda.nur
-                        LEFT JOIN artistas
-                        ON P_A.id_artista = artistas.id
-                        WHERE Catalogo_Pintura_Tienda.nur = %s
+                        {', '.join([f'caj_Catalogo_Pintura_Tienda.{i} as catalogo_{i}' for i in pintura])},
+                        {', '.join([f'caj_P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])}
+                        FROM caj_Catalogo_Pintura_Tienda
+                        LEFT JOIN caj_P_A
+                        ON caj_P_A.id_pintura = caj_Catalogo_Pintura_Tienda.nur
+                        LEFT JOIN caj_artistas
+                        ON caj_P_A.id_artista = caj_artistas.id
+                        WHERE caj_Catalogo_Pintura_Tienda.nur = %s
                         """
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
-        mysql_insert_query = """INSERT INTO Lista_Objetos (id_evento, id_eventoParticipante, id_pintura, nur_moneda,
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysql_insert_query = """INSERT INTO caj_Lista_Objetos (id_evento, id_eventoParticipante, id_pintura, nur_moneda,
                             id_moneda, porcentajeGananciaMin, bid, ask, precioAlcanzado, orden, duracionmin, razonNoVenta, fechaIngresoParticipante,
                             id_coleccionistaParticipante, id_organizacionParticipante) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -104,13 +104,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
                     catalogoDato={}
                     artistasList = []
                     for i in pintura:
-                        if i!= 'ano':
-                            catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
-                        else:
-                            if dato[f'catalogo_{i}'] != None:
-                                catalogoDato[f'{i}']= datetime.date(year=dato[f'catalogo_{i}'],month=1,day=1)
-                            else:
-                                catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
+                        catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
                     catalogoDato['artistas'] = artistasList
                     id_pinturas.append(dato['catalogo_nur'])
                     pinturas[dato['catalogo_nur']]= catalogoDato
@@ -139,10 +133,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
                     for i in catalogo_moneda_tienda:
                         catalogoDato[f'{i}'] = dato[f'catalogo_{i}']
                     for i in moneda:
-                        if i != 'ano':
-                            monedaDato[f'{i}'] = dato[f'moneda_{i}']
-                        else:
-                            monedaDato[f'{i}'] = datetime.date(year=dato[f'moneda_{i}'],month=1,day=1)
+                        monedaDato[f'{i}'] = dato[f'moneda_{i}']
                     for i in divisa:
                         monedaDivisa[f'{i}'] = dato[f'divisa_{i}']
                     for i in pais:
@@ -180,7 +171,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
         instance.porcentajeGananciaMin = validated_data['porcentajeGananciaMin']
         instance.ask  = validated_data['precio']*(1+(validated_data['porcentajeGananciaMin']/100))
         instance.normalize()
-        mysql_update_query =  """UPDATE Lista_Objetos SET ask = %s, porcentajeGananciaMin = %s WHERE id = %s"""
+        mysql_update_query =  """UPDATE caj_Lista_Objetos SET ask = %s, porcentajeGananciaMin = %s WHERE id = %s"""
         cursor.execute(mysql_update_query,(instance.ask,instance.porcentajeGananciaMin,instance.id))
         connection.commit()
         return instance

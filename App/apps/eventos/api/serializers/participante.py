@@ -16,16 +16,16 @@ class ParticipanteSerializer(serializers.Serializer):
     @conectar
     def validate_id_pais(self,id_pais,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         cursor.execute(mysql_query,(id_pais,))
         if cursor.fetchone():
             return id_pais
-        raise serializers.ValidationError('El Pais no Existe')
+        raise serializers.ValidationError('El caj_Pais no Existe')
 
     @conectar
     def validate_id_evento(self,id_evento,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM eventos WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_eventos WHERE id= %s"""
         cursor.execute(mysql_query,(id_evento,))
         if cursor.fetchone():
             return id_evento
@@ -35,11 +35,11 @@ class ParticipanteSerializer(serializers.Serializer):
     @conectar
     def validate(self, attrs,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM clientes WHERE (id_coleccionista,
+        mysql_query = """SELECT * FROM caj_clientes WHERE (id_coleccionista,
         id_organizacion)= (%s, %s)"""
         cursor.execute(mysql_query,(attrs['id_coleccionista_cliente'],attrs['id_organizacion_cliente']))
         if cursor.fetchone():
-            mysql_query = """SELECT * FROM participantes WHERE (id_coleccionista_cliente,
+            mysql_query = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,
             id_organizacion_cliente,id_evento)= (%s, %s, %s)"""
             cursor.execute(mysql_query,(attrs['id_coleccionista_cliente'],attrs['id_organizacion_cliente'],attrs['id_evento']))
             if cursor.fetchone():
@@ -57,27 +57,27 @@ class ParticipanteSerializer(serializers.Serializer):
         cliente = ['fechaIngreso','numeroExpedienteUnico','id_coleccionista','id_organizacion']
         #query = self.request.query_params.get('id_pais',None)
         mysql_query_cliente = f"""SELECT 
-                        {', '.join([f'clientes.{i} as cliente_{i}' for i in cliente])},
-                        {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                        {', '.join([f'caj_clientes.{i} as cliente_{i}' for i in cliente])},
+                        {', '.join([f'caj_coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
                         {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
                         {', '.join([f'pais_reside.{i} as pais_reside_{i}' for i in pais])},
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
                         {', '.join([f'organizacion_pais.{i} as organizacion_pais_{i}' for i in pais])}
-                        FROM clientes
-                        INNER JOIN organizaciones
-                        ON organizaciones.id = clientes.id_organizacion
-                        INNER JOIN paises as organizacion_pais
-                        ON organizacion_pais.id = organizaciones.id_pais
-                        INNER JOIN coleccionistas
-                        ON coleccionistas.id = clientes.id_coleccionista
-                        INNER JOIN paises as pais_nacio
-                        ON pais_nacio.id = coleccionistas.id_pais_nacio
-                        INNER JOIN paises as pais_reside
-                        ON pais_reside.id = coleccionistas.id_pais_reside
-                        WHERE (clientes.id_coleccionista, clientes.id_organizacion) = (%s, %s)
+                        FROM caj_clientes
+                        INNER JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_clientes.id_organizacion
+                        INNER JOIN caj_paises as organizacion_pais
+                        ON organizacion_pais.id = caj_organizaciones.id_pais
+                        INNER JOIN caj_coleccionistas
+                        ON caj_coleccionistas.id = caj_clientes.id_coleccionista
+                        INNER JOIN caj_paises as pais_nacio
+                        ON pais_nacio.id = caj_coleccionistas.id_pais_nacio
+                        INNER JOIN caj_paises as pais_reside
+                        ON pais_reside.id = caj_coleccionistas.id_pais_reside
+                        WHERE (caj_clientes.id_coleccionista, caj_clientes.id_organizacion) = (%s, %s)
                         """
-        mysql_query_pais = """SELECT * FROM paises WHERE id= %s"""
-        mysql_insert_query = """INSERT INTO participantes (id_evento, fechaIngresoCliente, id_coleccionista_cliente,
+        mysql_query_pais = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysql_insert_query = """INSERT INTO caj_participantes (id_evento, fechaIngresoCliente, id_coleccionista_cliente,
         id_organizacion_cliente,id_pais) 
                                 VALUES (%s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)

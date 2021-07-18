@@ -11,7 +11,7 @@ class DivisaSerializer(serializers.Serializer):
     @conectar
     def validate_id_pais(self,id_pais,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         cursor.execute(mysql_query,(id_pais,))
         if cursor.fetchone():
             return id_pais
@@ -22,8 +22,8 @@ class DivisaSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
-        mysql_insert_query = """INSERT INTO divisas (nombre, id_pais) 
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysql_insert_query = """INSERT INTO caj_divisas (nombre, id_pais) 
                                 VALUES (%s, %s)"""
         cursor = connection.cursor(dictionary=True)
         divisa = Divisa(**validated_data)
@@ -48,7 +48,7 @@ class DivisaSerializer(serializers.Serializer):
         divisa.pop('id_pais')
         divisa.pop('pais')
         for key,value in divisa.items():
-            mysql_update_query =  f"""UPDATE divisas SET {key} """
+            mysql_update_query =  f"""UPDATE caj_divisas SET {key} """
             mysql_update_query+= """= %s WHERE (id, id_pais) = (%s, %s)"""
             print(mysql_update_query)
             cursor.execute(mysql_update_query,(value,instance.id,instance.id_pais))

@@ -10,7 +10,7 @@ class PaisSerializer(serializers.Serializer):
     @conectar
     def validate_nombre(self, nombre,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE nombre = %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE nombre = %s"""
         cursor.execute(mysql_query,(nombre,))
         if cursor.fetchone():
             raise serializers.ValidationError('El Nombre del Pais ya existe')
@@ -19,7 +19,7 @@ class PaisSerializer(serializers.Serializer):
     @conectar
     def validate_nacionalidad(self, nacionalidad,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE nacionalidad = %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE nacionalidad = %s"""
         cursor.execute(mysql_query,(nacionalidad,))
         if cursor.fetchone():
             raise serializers.ValidationError('El Nombre de la Nacionalidad ya existe')
@@ -27,7 +27,7 @@ class PaisSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
-        mysql_insert_query = """INSERT INTO paises (nombre, nacionalidad) 
+        mysql_insert_query = """INSERT INTO caj_paises (nombre, nacionalidad) 
                                 VALUES (%s, %s)"""
         cursor = connection.cursor()
         pais = Pais.model(**validated_data)
@@ -47,7 +47,7 @@ class PaisSerializer(serializers.Serializer):
         pais = instance.__dict__.copy()
         pais.pop('id')
         for key,value in pais.items():
-            mysql_update_query =  f"UPDATE paises SET {key} = %s WHERE id = %s"
+            mysql_update_query =  f"UPDATE caj_paises SET {key} = %s WHERE id = %s"
             cursor.execute(mysql_update_query,(value,instance.id))
         connection.commit()
         return instance

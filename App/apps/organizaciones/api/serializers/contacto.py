@@ -20,7 +20,7 @@ class ContactoSerializer(serializers.Serializer):
     @conectar
     def validate_id_organizacion(self,id_organizacion,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM organizaciones WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_organizaciones WHERE id= %s"""
         cursor.execute(mysql_query,(id_organizacion,))
         if cursor.fetchone():
             return id_organizacion
@@ -29,7 +29,7 @@ class ContactoSerializer(serializers.Serializer):
     @conectar
     def validate_dni(self,dni,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM contactos WHERE dni= %s"""
+        mysql_query = """SELECT * FROM caj_contactos WHERE dni= %s"""
         cursor.execute(mysql_query,(dni,))
         if cursor.fetchone():
             raise serializers.ValidationError('El DNI ya Existe')
@@ -38,7 +38,7 @@ class ContactoSerializer(serializers.Serializer):
     @conectar
     def validate_email(self,email,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM contactos WHERE email= %s"""
+        mysql_query = """SELECT * FROM caj_contactos WHERE email= %s"""
         cursor.execute(mysql_query,(email,))
         if cursor.fetchone():
             raise serializers.ValidationError('El email ya Existe')
@@ -47,7 +47,7 @@ class ContactoSerializer(serializers.Serializer):
     @conectar
     def validate_telefono(self,telefono,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM contactos WHERE telefono= %s"""
+        mysql_query = """SELECT * FROM caj_contactos WHERE telefono= %s"""
         cursor.execute(mysql_query,(telefono,))
         if cursor.fetchone():
             raise serializers.ValidationError('El telefono ya Existe')
@@ -60,7 +60,7 @@ class ContactoSerializer(serializers.Serializer):
     @conectar
     def create(self, validated_data:dict,connection):
         #mysql_query = """SELECT * FROM paises WHERE id= %s"""
-        mysql_insert_query = """INSERT INTO contactos (dni, nombre, segundoNombre,
+        mysql_insert_query = """INSERT INTO caj_contactos (dni, nombre, segundoNombre,
                                 apellido, segundoApellido, telefono, email, cargo, id_organizacion) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
@@ -78,26 +78,27 @@ class ContactoSerializer(serializers.Serializer):
                 contacto.email,contacto.cargo,contacto.id_organizacion)
         cursor.execute(mysql_insert_query,data)
         connection.commit()
+        contacto.id = cursor.lastrowid
         return contacto
 
     @conectar
     def update(self, instance:Contacto, validated_data:dict,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         for key,value in validated_data.items():
-                if key in ['id_organizacion','dni']:
+                if key in ['id_organizacion','id']:
                    pass
                 else:
                     setattr(instance,key,value)
                    
         instance.normalize()
         divisa = instance.__dict__.copy()
-        divisa.pop('dni')
+        divisa.pop('id')
         divisa.pop('id_organizacion')
         divisa
         for key,value in divisa.items():
-            mysql_update_query =  f"""UPDATE contactos SET {key} """
-            mysql_update_query+= """= %s WHERE dni = %s"""
+            mysql_update_query =  f"""UPDATE caj_contactos SET {key} """
+            mysql_update_query+= """= %s WHERE id = %s"""
             cursor.execute(mysql_update_query,(value,instance.dni))
         connection.commit()
         return instance

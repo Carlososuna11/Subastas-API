@@ -10,7 +10,7 @@ class Pintura_ArtistaSerializer(serializers.Serializer):
     @conectar
     def validate_id_pintura(self, id_pintura,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM Catalogo_Pintura_Tienda WHERE nur = %s"""
+        mysql_query = """SELECT * FROM caj_Catalogo_Pintura_Tienda WHERE nur = %s"""
         cursor.execute(mysql_query,(id_pintura,))
         if cursor.fetchone():
             return id_pintura    
@@ -20,7 +20,7 @@ class Pintura_ArtistaSerializer(serializers.Serializer):
     @conectar
     def validate_id_artista(self, id_artista,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM artistas WHERE id = %s"""
+        mysql_query = """SELECT * FROM caj_artistas WHERE id = %s"""
         cursor.execute(mysql_query,(id_artista,))
         if cursor.fetchone():
             return id_artista
@@ -29,7 +29,7 @@ class Pintura_ArtistaSerializer(serializers.Serializer):
     @conectar
     def validate(self,validated_data,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM P_A WHERE (id_pintura,id_artista) = (%s, %s)"""
+        mysql_query = """SELECT * FROM caj_P_A WHERE (id_pintura,id_artista) = (%s, %s)"""
         cursor.execute(mysql_query,(validated_data['id_pintura'],validated_data['id_artista']))
         if cursor.fetchone():
             raise serializers.ValidationError('Ya existe dicho artista para la Moneda')
@@ -37,7 +37,7 @@ class Pintura_ArtistaSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
-        mysql_insert_query = """INSERT INTO P_A (id_pintura, id_artista) 
+        mysql_insert_query = """INSERT INTO caj_P_A (id_pintura, id_artista) 
                                 VALUES (%s, %s)"""
         cursor = connection.cursor()
         pais = Pintura_Artista.model(**validated_data)

@@ -21,23 +21,23 @@ class MonedaListAPIView(generics.ListAPIView):
         pais = ['id','nombre','nacionalidad']
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
-        query_action = f"""SELECT {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
-                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+        query_action = f"""SELECT {', '.join([f'caj_monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'caj_divisas.{i} as divisa_{i}' for i in divisa])},
                         {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])},
-                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])}
-                        FROM monedas
-                        INNER JOIN divisas
-                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
-                        INNER JOIN paises as `divisa_pais`
-                        ON divisas.id_pais = divisa_pais.id
-                        INNER JOIN paises
-                        ON monedas.id_pais = paises.id
-                        LEFT JOIN M_A
-                        ON M_A.id_moneda = monedas.id
-                        LEFT JOIN artistas
-                        ON M_A.id_artista = artistas.id
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])},
+                        {', '.join([f'caj_M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])}
+                        FROM caj_monedas
+                        INNER JOIN caj_divisas
+                        ON (caj_divisas.id,caj_divisas.id_pais) = (caj_monedas.id_divisa,caj_monedas.id_pais_divisa) 
+                        INNER JOIN caj_paises as `divisa_pais`
+                        ON caj_divisas.id_pais = divisa_pais.id
+                        INNER JOIN caj_paises
+                        ON caj_monedas.id_pais = caj_paises.id
+                        LEFT JOIN caj_M_A
+                        ON caj_M_A.id_moneda = caj_monedas.id
+                        LEFT JOIN caj_artistas
+                        ON caj_M_A.id_artista = caj_artistas.id
                         """
         print(query_action)
         cursor.execute(query_action)
@@ -53,10 +53,7 @@ class MonedaListAPIView(generics.ListAPIView):
                 monedaPais = {}
                 artistasList = []
                 for i in moneda:
-                    if i != 'ano':
-                        monedaDato[f'{i}'] = dato[f'moneda_{i}']
-                    else:
-                        monedaDato[f'{i}'] = datetime.date(year=dato[f'moneda_{i}'],month=1,day=1)
+                    monedaDato[f'{i}'] = dato[f'moneda_{i}']
                 for i in divisa:
                     monedaDivisa[f'{i}'] = dato[f'divisa_{i}']
                 for i in pais:
@@ -93,24 +90,24 @@ class MonedaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         pais = ['id','nombre','nacionalidad']
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
-        query_action = f"""SELECT {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
-                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+        query_action = f"""SELECT {', '.join([f'caj_monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'caj_divisas.{i} as divisa_{i}' for i in divisa])},
                         {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])},
-                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])}
-                        FROM monedas
-                        INNER JOIN divisas
-                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
-                        INNER JOIN paises as `divisa_pais`
-                        ON divisas.id_pais = divisa_pais.id
-                        INNER JOIN paises
-                        ON monedas.id_pais = paises.id
-                        LEFT JOIN M_A
-                        ON M_A.id_moneda = monedas.id
-                        LEFT JOIN artistas
-                        ON M_A.id_artista = artistas.id
-                        WHERE monedas.id = %s
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])},
+                        {', '.join([f'caj_M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])}
+                        FROM caj_monedas
+                        INNER JOIN caj_divisas
+                        ON (caj_divisas.id,caj_divisas.id_pais) = (caj_monedas.id_divisa,caj_monedas.id_pais_divisa) 
+                        INNER JOIN caj_paises as `divisa_pais`
+                        ON caj_divisas.id_pais = divisa_pais.id
+                        INNER JOIN caj_paises
+                        ON caj_monedas.id_pais = caj_paises.id
+                        LEFT JOIN caj_M_A
+                        ON caj_M_A.id_moneda = caj_monedas.id
+                        LEFT JOIN caj_artistas
+                        ON caj_M_A.id_artista = caj_artistas.id
+                        WHERE caj_monedas.id = %s
                         """
         print(query_action)
         cursor.execute(query_action,(self.kwargs.get('id'),))
@@ -127,10 +124,7 @@ class MonedaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
                     monedaPais = {}
                     artistasList = []
                     for i in moneda:
-                        if i != 'ano':
-                            monedaDato[f'{i}'] = dato[f'moneda_{i}']
-                        else:
-                            monedaDato[f'{i}'] = datetime.date(year=dato[f'moneda_{i}'],month=1,day=1)
+                        monedaDato[f'{i}'] = dato[f'moneda_{i}']
                     for i in divisa:
                         monedaDivisa[f'{i}'] = dato[f'divisa_{i}']
                     for i in pais:
@@ -151,5 +145,5 @@ class MonedaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM monedas WHERE id = %s",(instance.id,))
+        cursor.execute("DELETE FROM caj_monedas WHERE id = %s",(instance.id,))
         connection.commit()

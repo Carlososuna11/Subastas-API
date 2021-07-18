@@ -27,20 +27,20 @@ class EventoListAPIView(generics.ListAPIView):
         #                 ON `Pais`.pais_id = `Evento`.organizacion_id_pais
         #                 """
         query_action =  f"""SELECT 
-                        {', '.join([f'eventos.{i} as evento_{i}' for i in evento])},
+                        {', '.join([f'caj_eventos.{i} as evento_{i}' for i in evento])},
                         {', '.join([f'pais_evento.{i} as pais_evento_{i}' for i in pais])},
-                        {', '.join([f'planificadores.{i} as planificador_{i}' for i in planificador])},
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])}
-                        FROM eventos
-                        LEFT JOIN paises as pais_evento
-                        ON pais_evento.id = eventos.id_pais
-                        LEFT JOIN planificadores
-                        ON planificadores.id_evento = eventos.id
-                        LEFT JOIN organizaciones
-                        ON organizaciones.id = planificadores.id_organizacion
-                        LEFT JOIN paises
-                        ON organizaciones.id_pais = paises.id
+                        {', '.join([f'caj_planificadores.{i} as planificador_{i}' for i in planificador])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])}
+                        FROM caj_eventos
+                        LEFT JOIN caj_paises as pais_evento
+                        ON pais_evento.id = caj_eventos.id_pais
+                        LEFT JOIN caj_planificadores
+                        ON caj_planificadores.id_evento = caj_eventos.id
+                        LEFT JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_planificadores.id_organizacion
+                        LEFT JOIN caj_paises
+                        ON caj_organizaciones.id_pais = caj_paises.id
                         """
         print(query_action)
         # if query:
@@ -104,21 +104,21 @@ class EventoRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         #                 ON `Pais`.pais_id = `Evento`.organizacion_id_pais
         #                 """
         query_action =  f"""SELECT 
-                        {', '.join([f'eventos.{i} as evento_{i}' for i in evento])},
+                        {', '.join([f'caj_eventos.{i} as evento_{i}' for i in evento])},
                         {', '.join([f'pais_evento.{i} as pais_evento_{i}' for i in pais])},
-                        {', '.join([f'planificadores.{i} as planificador_{i}' for i in planificador])},
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])}
-                        FROM eventos
-                        LEFT JOIN paises as pais_evento
-                        ON pais_evento.id = eventos.id_pais
-                        LEFT JOIN planificadores
-                        ON planificadores.id_evento = eventos.id
-                        LEFT JOIN organizaciones
-                        ON organizaciones.id = planificadores.id_organizacion
-                        LEFT JOIN paises
-                        ON organizaciones.id_pais = paises.id
-                        WHERE eventos.id = %s
+                        {', '.join([f'caj_planificadores.{i} as planificador_{i}' for i in planificador])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])}
+                        FROM caj_eventos
+                        LEFT JOIN caj_paises as pais_evento
+                        ON pais_evento.id = caj_eventos.id_pais
+                        LEFT JOIN caj_planificadores
+                        ON caj_planificadores.id_evento = caj_eventos.id
+                        LEFT JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_planificadores.id_organizacion
+                        LEFT JOIN caj_paises
+                        ON caj_organizaciones.id_pais = caj_paises.id
+                        WHERE caj_eventos.id = %s
                         """
         cursor = connection.cursor(dictionary=True)
         cursor.execute(query_action,(self.kwargs.get('id'),))
@@ -152,6 +152,6 @@ class EventoRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM eventos WHERE id = %s",(instance.id,))
+        cursor.execute("DELETE FROM caj_eventos WHERE id = %s",(instance.id,))
         connection.commit()
 

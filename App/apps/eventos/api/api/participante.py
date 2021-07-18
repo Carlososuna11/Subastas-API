@@ -21,26 +21,26 @@ class ParticipanteListAPIView(generics.ListAPIView):
         participante = ['id_evento','fechaIngresoCliente','id_coleccionista_cliente','id_organizacion_cliente','id_pais']
         #query = self.request.query_params.get('id_pais',None)
         query_cliente = f"""SELECT 
-                        {', '.join([f'participantes.{i} as participante_{i}' for i in participante])},
-                        {', '.join([f'clientes.{i} as cliente_{i}' for i in cliente])},
-                        {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                        {', '.join([f'caj_participantes.{i} as participante_{i}' for i in participante])},
+                        {', '.join([f'caj_clientes.{i} as cliente_{i}' for i in cliente])},
+                        {', '.join([f'caj_coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
                         {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
                         {', '.join([f'pais_reside.{i} as pais_reside_{i}' for i in pais])},
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
                         {', '.join([f'organizacion_pais.{i} as organizacion_pais_{i}' for i in pais])}
-                        FROM participantes
-                        INNER JOIN clientes
-                        ON (participantes.id_coleccionista_cliente,participantes.id_organizacion_cliente) = (clientes.id_coleccionista,clientes.id_organizacion)
-                        INNER JOIN organizaciones
-                        ON organizaciones.id = clientes.id_organizacion
-                        INNER JOIN paises as organizacion_pais
-                        ON organizacion_pais.id = organizaciones.id_pais
-                        INNER JOIN coleccionistas
-                        ON coleccionistas.id = clientes.id_coleccionista
-                        INNER JOIN paises as pais_nacio
-                        ON pais_nacio.id = coleccionistas.id_pais_nacio
-                        INNER JOIN paises as pais_reside
-                        ON pais_reside.id = coleccionistas.id_pais_reside
+                        FROM caj_participantes
+                        INNER JOIN caj_clientes
+                        ON (caj_participantes.id_coleccionista_cliente,caj_participantes.id_organizacion_cliente) = (caj_clientes.id_coleccionista,caj_clientes.id_organizacion)
+                        INNER JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_clientes.id_organizacion
+                        INNER JOIN caj_paises as organizacion_pais
+                        ON organizacion_pais.id = caj_organizaciones.id_pais
+                        INNER JOIN caj_coleccionistas
+                        ON caj_coleccionistas.id = caj_clientes.id_coleccionista
+                        INNER JOIN caj_paises as pais_nacio
+                        ON pais_nacio.id = caj_coleccionistas.id_pais_nacio
+                        INNER JOIN caj_paises as pais_reside
+                        ON pais_reside.id = caj_coleccionistas.id_pais_reside
                         """
         print(query_cliente)
         # if query:

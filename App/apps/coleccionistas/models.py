@@ -4,7 +4,7 @@ from apps.organizaciones.models import *
 
 class Coleccionista:
     """Representacion en Objeto de la Entidad Coleccionista"""
-    def __init__(self,dni:float,nombre:str,apellido:str,segundoApellido:str,
+    def __init__(self,dni:str,nombre:str,apellido:str,segundoApellido:str,
         telefono:str,email:str,fechaNacimiento:datetime.date,id_pais_nacio:int,
         id_pais_reside:int,segundoNombre:str=None,pais_nacio:Pais=None,pais_reside:Pais=None,id=None):
         self.id = id
@@ -22,7 +22,6 @@ class Coleccionista:
         self.pais_reside = pais_reside
 
     def normalize(self):
-        self.dni = self.dni.lower()
         self.nombre = self.nombre.lower()
         self.segundoNombre = None if self.segundoNombre==None else self.segundoNombre.lower()
         self.apellido = self.apellido.lower()

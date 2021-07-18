@@ -21,7 +21,7 @@ class ColeccionistaSerializer(serializers.Serializer):
     @conectar
     def validate_id_pais_nacio(self,id_pais_nacio,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         cursor.execute(mysql_query,(id_pais_nacio,))
         if cursor.fetchone():
             return id_pais_nacio
@@ -30,7 +30,7 @@ class ColeccionistaSerializer(serializers.Serializer):
     @conectar
     def validate_id_pais_reside(self,id_pais_reside,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         cursor.execute(mysql_query,(id_pais_reside,))
         if cursor.fetchone():
             return id_pais_reside
@@ -39,7 +39,7 @@ class ColeccionistaSerializer(serializers.Serializer):
     @conectar
     def validate_dni(self,dni,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM coleccionistas WHERE (dni,id_pais_nacio)= (%s,%s)"""
+        mysql_query = """SELECT * FROM caj_coleccionistas WHERE (dni,id_pais_nacio)= (%s,%s)"""
         cursor.execute(mysql_query,(dni,self._kwargs['data']['id_pais_nacio']))
         if cursor.fetchone():
             raise serializers.ValidationError('El DNI ya Existe')
@@ -48,7 +48,7 @@ class ColeccionistaSerializer(serializers.Serializer):
     @conectar
     def validate_email(self,email,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM coleccionistas WHERE email= %s"""
+        mysql_query = """SELECT * FROM caj_coleccionistas WHERE email= %s"""
         cursor.execute(mysql_query,(email,))
         if cursor.fetchone():
             raise serializers.ValidationError('El email ya Existe')
@@ -57,7 +57,7 @@ class ColeccionistaSerializer(serializers.Serializer):
     @conectar
     def validate_telefono(self,telefono,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM coleccionistas WHERE telefono= %s"""
+        mysql_query = """SELECT * FROM caj_coleccionistas WHERE telefono= %s"""
         cursor.execute(mysql_query,(telefono,))
         if cursor.fetchone():
             raise serializers.ValidationError('El telefono ya Existe')
@@ -71,8 +71,8 @@ class ColeccionistaSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
-        mysql_insert_query = """INSERT INTO coleccionistas (dni, nombre, segundoNombre,
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysql_insert_query = """INSERT INTO caj_coleccionistas (dni, nombre, segundoNombre,
                                 apellido, segundoApellido, telefono, email, fechaNacimiento, id_pais_nacio,
                                 id_pais_reside) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -101,7 +101,7 @@ class ColeccionistaSerializer(serializers.Serializer):
             'id_pais_reside':'pais_reside',
             'id_pais_nacio':'pais_nacio'
         }
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         for key,value in validated_data.items():
                 setattr(instance,key,value)
                 if key in ['id_pais_reside','id_pais_nacio']:
@@ -115,7 +115,7 @@ class ColeccionistaSerializer(serializers.Serializer):
         divisa.pop('pais_reside')
         divisa.pop('pais_nacio')
         for key,value in divisa.items():
-            mysql_update_query =  f"""UPDATE coleccionistas SET {key} """
+            mysql_update_query =  f"""UPDATE caj_coleccionistas SET {key} """
             mysql_update_query+= """= %s WHERE id = %s"""
             cursor.execute(mysql_update_query,(value,instance.id))
         connection.commit()

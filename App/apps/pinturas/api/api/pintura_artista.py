@@ -24,7 +24,7 @@ class Pintura_ArtistaDestroyAPIView(generics.DestroyAPIView):
     @conectar
     def get_object(self,connection):
         cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM P_A WHERE (id_pintura,id_artista)=(%s,%s)",(self.kwargs.get('id_pintura'),self.kwargs.get('id_artista')))
+        cursor.execute("SELECT * FROM caj_P_A WHERE (id_pintura,id_artista)=(%s,%s)",(self.kwargs.get('id_pintura'),self.kwargs.get('id_artista')))
         datos = cursor.fetchone()
         if datos:
             return Pintura_Artista.model(**datos)
@@ -33,5 +33,5 @@ class Pintura_ArtistaDestroyAPIView(generics.DestroyAPIView):
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM P_A WHERE (id_pintura,id_artista)=(%s,%s)",(instance.id_pintura,instance.id_artista))
+        cursor.execute("DELETE FROM caj_P_A WHERE (id_pintura,id_artista)=(%s,%s)",(instance.id_pintura,instance.id_artista))
         connection.commit()

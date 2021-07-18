@@ -13,7 +13,7 @@ class CostoEnvioSerializer(serializers.Serializer):
     @conectar
     def validate_id_pais(self,id_pais,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         cursor.execute(mysql_query,(id_pais,))
         if cursor.fetchone():
             return id_pais
@@ -22,7 +22,7 @@ class CostoEnvioSerializer(serializers.Serializer):
     @conectar
     def validate_id_evento(self,id_evento,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM eventos WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_eventos WHERE id= %s"""
         cursor.execute(mysql_query,(id_evento,))
         if cursor.fetchone():
             return id_evento
@@ -31,7 +31,7 @@ class CostoEnvioSerializer(serializers.Serializer):
     @conectar    
     def validate(self, attrs,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM costoEnvios WHERE (id_evento,id_pais) = (%s, %s)"""
+        mysql_query = """SELECT * FROM caj_costoEnvios WHERE (id_evento,id_pais) = (%s, %s)"""
         cursor.execute(mysql_query,(attrs['id_evento'],attrs['id_pais']))
         if cursor.fetchone():
             raise serializers.ValidationError('El costo de Envio para el pais Ya existe')
@@ -39,8 +39,8 @@ class CostoEnvioSerializer(serializers.Serializer):
 
     @conectar
     def create(self, validated_data:dict,connection):
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
-        mysql_insert_query = """INSERT INTO costoEnvios (id_evento,id_pais,costoExtra) 
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysql_insert_query = """INSERT INTO caj_costoEnvios (id_evento,id_pais,costoExtra) 
                                 VALUES (%s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
         costoEnvio = CostoEnvio.model(**validated_data)
@@ -55,7 +55,7 @@ class CostoEnvioSerializer(serializers.Serializer):
 
     @conectar
     def update(self, instance:CostoEnvio, validated_data:dict,connection):
-        mysql_query = """SELECT * FROM paises WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
         cursor = connection.cursor()
         for key,value in validated_data.items():
                 setattr(instance,key,value)
@@ -68,7 +68,7 @@ class CostoEnvioSerializer(serializers.Serializer):
         divisa.pop('id_evento')
         divisa.pop('pais')
         for key,value in divisa.items():
-            mysql_update_query =  f"""UPDATE costoEnvios SET {key} """
+            mysql_update_query =  f"""UPDATE caj_costoEnvios SET {key} """
             mysql_update_query+= """= %s WHERE (id,id_evento) = (%s, %s)"""
             print(mysql_update_query)
             cursor.execute(mysql_update_query,(value,instance.id,instance.id_evento))

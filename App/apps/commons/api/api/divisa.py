@@ -18,13 +18,13 @@ class DivisaListAPIView(generics.ListAPIView):
         query = self.request.query_params.get('id_pais',None)
         query_action = f"""SELECT divisas.id as divisa_id, divisas.id_pais as divisa_id_pais, divisas.nombre as divisa_nombre,
                             paises.id as pais_id, paises.nombre as pais_nombre, paises.nacionalidad as pais_nacionalidad 
-                        FROM divisas 
-                        INNER JOIN paises ON paises.id = divisas.id_pais"""
+                        FROM caj_divisas as divisas
+                        INNER JOIN caj_paises as paises ON paises.id = divisas.id_pais"""
         if query:
             query_action = """SELECT divisas.id as divisa_id, divisas.id_pais as divisa_id_pais, divisas.nombre as divisa_nombre,
                             paises.id as pais_id, paises.nombre as pais_nombre, paises.nacionalidad as pais_nacionalidad 
-                            FROM divisas 
-                            INNER JOIN paises ON paises.id = divisas.id_pais
+                            FROM caj_divisas as divisas
+                            INNER JOIN caj_paises as paises ON paises.id = divisas.id_pais
                             WHERE divisas.id_pais = %s
                             """
             cursor.execute(query_action,(query,))
@@ -66,7 +66,7 @@ class DivisaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         
         cursor = connection.cursor(dictionary=True)
         cursor.execute("""SELECT divisas.id as divisa_id, divisas.id_pais as divisa_id_pais, divisas.nombre as divisa_nombre,
-        paises.id as pais_id, paises.nombre as pais_nombre, paises.nacionalidad as pais_nacionalidad FROM divisas INNER JOIN paises ON paises.id = divisas.id_pais WHERE divisas.id=%s""",(self.kwargs.get('id'),))
+        paises.id as pais_id, paises.nombre as pais_nombre, paises.nacionalidad as pais_nacionalidad FROM caj_divisas as divisas INNER JOIN caj_paises as paises ON paises.id = divisas.id_pais WHERE divisas.id=%s""",(self.kwargs.get('id'),))
         dato = cursor.fetchone()
         if dato:
             divisa = {}
@@ -87,6 +87,6 @@ class DivisaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM divisas WHERE id = %s",(instance.id,))
+        cursor.execute("DELETE FROM caj_divisas WHERE id = %s",(instance.id,))
         connection.commit()
 

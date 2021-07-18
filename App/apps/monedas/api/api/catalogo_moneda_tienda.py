@@ -27,41 +27,41 @@ class Catalogo_Moneda_TiendaListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         query_action = f"""SELECT 
-                        {', '.join([f'Catalogo_Moneda_Tienda.{i} as catalogo_{i}' for i in catalogo_moneda_tienda])},
-                        {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
-                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+                        {', '.join([f'caj_Catalogo_Moneda_Tienda.{i} as catalogo_{i}' for i in catalogo_moneda_tienda])},
+                        {', '.join([f'caj_monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'caj_divisas.{i} as divisa_{i}' for i in divisa])},
                         {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
                         {', '.join([f'moneda_pais.{i} as moneda_pais_{i}' for i in pais])},
-                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])},
-                        {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                        {', '.join([f'caj_M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])},
+                        {', '.join([f'caj_coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
                         {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
                         {', '.join([f'pais_reside.{i} as pais_reside_{i}' for i in pais])},
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
                         {', '.join([f'organizacion_pais.{i} as organizacion_pais_{i}' for i in pais])}
-                        FROM Catalogo_Moneda_Tienda
-                        INNER JOIN monedas
-                        ON monedas.id = Catalogo_Moneda_Tienda.id_moneda
-                        INNER JOIN divisas
-                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
-                        INNER JOIN paises as `divisa_pais`
-                        ON divisas.id_pais = divisa_pais.id
-                        INNER JOIN paises as moneda_pais
-                        ON monedas.id_pais = moneda_pais.id
-                        LEFT JOIN M_A
-                        ON M_A.id_moneda = monedas.id
-                        LEFT JOIN artistas
-                        ON M_A.id_artista = artistas.id
-                        LEFT JOIN organizaciones
-                        ON organizaciones.id = Catalogo_Moneda_Tienda.id_organizacion
-                        LEFT JOIN paises as organizacion_pais
-                        ON organizacion_pais.id = organizaciones.id_pais
-                        LEFT JOIN coleccionistas
-                        ON coleccionistas.id = Catalogo_Moneda_Tienda.id_coleccionista
-                        LEFT JOIN paises as pais_nacio
-                        ON pais_nacio.id = coleccionistas.id_pais_nacio
-                        LEFT JOIN paises as pais_reside
-                        ON pais_reside.id = coleccionistas.id_pais_reside
+                        FROM caj_Catalogo_Moneda_Tienda
+                        INNER JOIN caj_monedas
+                        ON caj_monedas.id = caj_Catalogo_Moneda_Tienda.id_moneda
+                        INNER JOIN caj_divisas
+                        ON (caj_divisas.id,caj_divisas.id_pais) = (caj_monedas.id_divisa,caj_monedas.id_pais_divisa) 
+                        INNER JOIN caj_paises as `divisa_pais`
+                        ON caj_divisas.id_pais = divisa_pais.id
+                        INNER JOIN caj_paises as moneda_pais
+                        ON caj_monedas.id_pais = moneda_pais.id
+                        LEFT JOIN caj_M_A
+                        ON caj_M_A.id_moneda = caj_monedas.id
+                        LEFT JOIN caj_artistas
+                        ON caj_M_A.id_artista = caj_artistas.id
+                        LEFT JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_Catalogo_Moneda_Tienda.id_organizacion
+                        LEFT JOIN caj_paises as organizacion_pais
+                        ON organizacion_pais.id = caj_organizaciones.id_pais
+                        LEFT JOIN caj_coleccionistas
+                        ON caj_coleccionistas.id = caj_Catalogo_Moneda_Tienda.id_coleccionista
+                        LEFT JOIN caj_paises as pais_nacio
+                        ON pais_nacio.id = caj_coleccionistas.id_pais_nacio
+                        LEFT JOIN caj_paises as pais_reside
+                        ON pais_reside.id = caj_coleccionistas.id_pais_reside
                         """
         #print(query_action)
         cursor.execute(query_action)
@@ -153,42 +153,42 @@ class Catalogo_Moneda_TiendaRetriveDestroyAPIView(generics.RetrieveDestroyAPIVie
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         query_action = f"""SELECT 
-                        {', '.join([f'Catalogo_Moneda_Tienda.{i} as catalogo_{i}' for i in catalogo_moneda_tienda])},
-                        {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
-                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+                        {', '.join([f'caj_Catalogo_Moneda_Tienda.{i} as catalogo_{i}' for i in catalogo_moneda_tienda])},
+                        {', '.join([f'caj_monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'caj_divisas.{i} as divisa_{i}' for i in divisa])},
                         {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
                         {', '.join([f'moneda_pais.{i} as moneda_pais_{i}' for i in pais])},
-                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
-                        {', '.join([f'artistas.{i} as artista_{i}' for i in artista])},
-                        {', '.join([f'coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                        {', '.join([f'caj_M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'caj_artistas.{i} as artista_{i}' for i in artista])},
+                        {', '.join([f'caj_coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
                         {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
                         {', '.join([f'pais_reside.{i} as pais_reside_{i}' for i in pais])},
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
                         {', '.join([f'organizacion_pais.{i} as organizacion_pais_{i}' for i in pais])}
-                        FROM Catalogo_Moneda_Tienda
-                        INNER JOIN monedas
-                        ON monedas.id = Catalogo_Moneda_Tienda.id_moneda
-                        INNER JOIN divisas
-                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
-                        INNER JOIN paises as `divisa_pais`
-                        ON divisas.id_pais = divisa_pais.id
-                        INNER JOIN paises as moneda_pais
-                        ON monedas.id_pais = moneda_pais.id
-                        LEFT JOIN M_A
-                        ON M_A.id_moneda = monedas.id
-                        LEFT JOIN artistas
-                        ON M_A.id_artista = artistas.id
-                        LEFT JOIN organizaciones
-                        ON organizaciones.id = Catalogo_Moneda_Tienda.id_organizacion
-                        LEFT JOIN paises as organizacion_pais
-                        ON organizacion_pais.id = organizaciones.id_pais
-                        LEFT JOIN coleccionistas
-                        ON coleccionistas.id = Catalogo_Moneda_Tienda.id_coleccionista
-                        LEFT JOIN paises as pais_nacio
-                        ON pais_nacio.id = coleccionistas.id_pais_nacio
-                        LEFT JOIN paises as pais_reside
-                        ON pais_reside.id = coleccionistas.id_pais_reside
-                        WHERE Catalogo_Moneda_Tienda.nur = %s
+                        FROM caj_Catalogo_Moneda_Tienda
+                        INNER JOIN caj_monedas
+                        ON caj_monedas.id = caj_Catalogo_Moneda_Tienda.id_moneda
+                        INNER JOIN caj_divisas
+                        ON (caj_divisas.id,caj_divisas.id_pais) = (caj_monedas.id_divisa,caj_monedas.id_pais_divisa) 
+                        INNER JOIN caj_paises as `divisa_pais`
+                        ON caj_divisas.id_pais = divisa_pais.id
+                        INNER JOIN caj_paises as moneda_pais
+                        ON caj_monedas.id_pais = moneda_pais.id
+                        LEFT JOIN caj_M_A
+                        ON caj_M_A.id_moneda = caj_monedas.id
+                        LEFT JOIN caj_artistas
+                        ON caj_M_A.id_artista = caj_artistas.id
+                        LEFT JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_Catalogo_Moneda_Tienda.id_organizacion
+                        LEFT JOIN caj_paises as organizacion_pais
+                        ON organizacion_pais.id = caj_organizaciones.id_pais
+                        LEFT JOIN caj_coleccionistas
+                        ON caj_coleccionistas.id = caj_Catalogo_Moneda_Tienda.id_coleccionista
+                        LEFT JOIN caj_paises as pais_nacio
+                        ON pais_nacio.id = caj_coleccionistas.id_pais_nacio
+                        LEFT JOIN caj_paises as pais_reside
+                        ON pais_reside.id = caj_coleccionistas.id_pais_reside
+                        WHERE caj_Catalogo_Moneda_Tienda.nur = %s
                         """
         cursor.execute(query_action,(self.kwargs.get('nur'),))
         datos = cursor.fetchall()

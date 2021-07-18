@@ -19,17 +19,17 @@ class ContactoListAPIView(generics.ListAPIView):
         #query = self.request.query_params.get('id_pais',None)
         # pais = ['id','nombre','nacionalidad']
         query = self.request.query_params.get('id_organizacion',None)
-        contacto = ['dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+        contacto = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
                         'cargo','id_organizacion']
         if query:
             query_action = f"""SELECT * 
-                        FROM contactos 
+                        FROM caj_contactos 
                         where id_organizacion = %s
                         """
             cursor.execute(query_action,(query,))
         else:
             query_action = f"""SELECT * 
-                        FROM contactos
+                        FROM caj_contactos
                         """
             cursor.execute(query_action)
         # if query:
@@ -81,11 +81,11 @@ class ContactoRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
         #                 WHERE `Contacto`.coleccionista_dni = %s
         #                 """
         query_action = f"""SELECT * 
-                        FROM contactos
-                        WHERE dni = %s
+                        FROM caj_contactos
+                        WHERE id = %s
                         """
         cursor = connection.cursor(dictionary=True)
-        cursor.execute(query_action,(self.kwargs.get('dni'),))
+        cursor.execute(query_action,(self.kwargs.get('id'),))
         dato = cursor.fetchone()
         if dato:
             return Contacto.model(**dato)
@@ -94,6 +94,6 @@ class ContactoRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM contactos WHERE dni = %s",(instance.dni,))
+        cursor.execute("DELETE FROM caj_contactos WHERE id = %s",(instance.id,))
         connection.commit()
 

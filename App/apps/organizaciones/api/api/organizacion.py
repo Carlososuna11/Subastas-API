@@ -22,11 +22,11 @@ class OrganizacionListAPIView(generics.ListAPIView):
         #                 ON `Pais`.pais_id = `Organizacion`.organizacion_id_pais
         #                 """
         query_action =  f"""SELECT 
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])}
-                        FROM organizaciones
-                        INNER JOIN paises
-                        ON paises.id = organizaciones.id_pais
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])}
+                        FROM caj_organizaciones
+                        INNER JOIN caj_paises
+                        ON caj_paises.id = caj_organizaciones.id_pais
                         """
         print(query_action)
         # if query:
@@ -68,12 +68,12 @@ class OrganizacionRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIV
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
         query_action = f"""SELECT 
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])}
-                        FROM organizaciones
-                        INNER JOIN paises
-                        ON paises.id = organizaciones.id_pais
-                        WHERE organizaciones.id = %s
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])}
+                        FROM caj_organizaciones
+                        INNER JOIN caj_paises
+                        ON caj_paises.id = caj_organizaciones.id_pais
+                        WHERE caj_organizaciones.id = %s
                         """
         cursor = connection.cursor(dictionary=True)
         cursor.execute(query_action,(self.kwargs.get('id'),))

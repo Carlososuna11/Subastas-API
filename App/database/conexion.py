@@ -13,6 +13,6 @@ def conectar(funcion):
                 connection.close()
         except mysql.Error as error: 
             print(error)
-            
+            raise ValueError(error)
         return resultado
     return decorador

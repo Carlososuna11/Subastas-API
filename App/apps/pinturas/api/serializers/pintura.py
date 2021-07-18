@@ -2,6 +2,7 @@ from rest_framework import serializers
 from database.conexion import conectar 
 from database.jsonFormat import get_json
 from database.saveImage import saveImage
+from database.random_nur import random_nur
 from apps.commons.models import Pais
 from apps.pinturas.models import *
 import os
@@ -29,7 +30,7 @@ class PinturaSerializer(serializers.Serializer):
     @conectar
     def validate_id_organizacion(self,id_organizacion,connection):
         cursor = connection.cursor()
-        mysql_query = """SELECT * FROM organizaciones WHERE id= %s"""
+        mysql_query = """SELECT * FROM caj_organizaciones WHERE id= %s"""
         cursor.execute(mysql_query,(id_organizacion,))
         if cursor.fetchone():
             return id_organizacion
@@ -85,16 +86,17 @@ class PinturaSerializer(serializers.Serializer):
         #                 WHERE coleccionistas.dni = %s
         #                 """
         mysql_query_organizacion = f"""SELECT 
-                        {', '.join([f'organizaciones.{i} as organizacion_{i}' for i in organizacion])},
-                        {', '.join([f'paises.{i} as pais_{i}' for i in pais])}
-                        FROM organizaciones
-                        INNER JOIN paises
-                        ON paises.id = organizaciones.id_pais
-                        WHERE organizaciones.id = %s
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'caj_paises.{i} as pais_{i}' for i in pais])}
+                        FROM caj_organizaciones
+                        INNER JOIN caj_paises
+                        ON caj_paises.id = caj_organizaciones.id_pais
+                        WHERE caj_organizaciones.id = %s
                         """
-        mysql_insert_query = """INSERT INTO Catalogo_Pintura_Tienda (titulo, dimensionescm, estilo, ano, imagen, id_coleccionista, id_organizacion) 
-                                VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+        mysql_insert_query = """INSERT INTO caj_Catalogo_Pintura_Tienda (nur,titulo, dimensionescm, estilo, ano, imagen, id_coleccionista, id_organizacion) 
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
+        validated_data['nur'] = random_nur()
         catalogo = Pintura.model(**validated_data)
         catalogo.normalize()
         #-------coleccionista (si existe) ---------
@@ -126,16 +128,15 @@ class PinturaSerializer(serializers.Serializer):
         organizacionData['pais']= paisReside
         catalogo.organizacion = Organizacion.model(**organizacionData)
         #-------Insertar data--------
-        data = (catalogo.titulo, catalogo.dimencionescm, catalogo.estilo, catalogo.ano,
+        data = (catalogo.nur, catalogo.titulo, catalogo.dimencionescm, catalogo.estilo, catalogo.ano,
                 catalogo.imagen, catalogo.id_coleccionista,catalogo.id_organizacion)
         cursor.execute(mysql_insert_query,data)
         connection.commit()
-        catalogo.nur = cursor.lastrowid
         if 'imagen' in validated_data and validated_data['imagen']!= None:
             saveImage(validated_data['imagen'],'pintura',catalogo.nur)
             _,file_extension = os.path.splitext(str(validated_data['imagen']))
             catalogo.imagen =f"pintura{catalogo.nur}{file_extension}" 
-            mysql_update_query =  "UPDATE Catalogo_Pintura_Tienda SET imagen = %s WHERE nur = %s"
+            mysql_update_query =  "UPDATE caj_Catalogo_Pintura_Tienda SET imagen = %s WHERE nur = %s"
             cursor.execute(mysql_update_query,(catalogo.imagen,catalogo.nur))
             connection.commit()
         return catalogo
@@ -157,7 +158,7 @@ class PinturaSerializer(serializers.Serializer):
         divisa.pop('coleccionista')
         divisa.pop('organizacion')
         for key,value in divisa.items():
-            mysql_update_query =  f"""UPDATE Catalogo_Pintura_Tienda SET {key} """
+            mysql_update_query =  f"""UPDATE caj_Catalogo_Pintura_Tienda SET {key} """
             mysql_update_query+= """= %s WHERE nur = %s"""
             cursor.execute(mysql_update_query,(value,instance.dni))
         connection.commit()

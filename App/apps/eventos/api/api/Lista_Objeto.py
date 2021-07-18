@@ -29,38 +29,38 @@ class Lista_ObjetoListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         query_action = f"""SELECT 
-                        {', '.join([f'Lista_Objetos.{i} as lista_{i}' for i in lista_objeto])},
-                        {', '.join([f'Catalogo_Moneda_Tienda.{i} as catalogo_moneda_{i}' for i in catalogo_moneda_tienda])},
-                        {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
-                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+                        {', '.join([f'caj_Lista_Objetos.{i} as lista_{i}' for i in lista_objeto])},
+                        {', '.join([f'caj_Catalogo_Moneda_Tienda.{i} as catalogo_moneda_{i}' for i in catalogo_moneda_tienda])},
+                        {', '.join([f'caj_monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'caj_divisas.{i} as divisa_{i}' for i in divisa])},
                         {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
                         {', '.join([f'moneda_pais.{i} as moneda_pais_{i}' for i in pais])},
-                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'caj_M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
                         {', '.join([f'artistas_moneda.{i} as artista_moneda_{i}' for i in artista])},
-                        {', '.join([f'Catalogo_Pintura_Tienda.{i} as catalogo_pintura_{i}' for i in pintura])},
-                        {', '.join([f'P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
+                        {', '.join([f'caj_Catalogo_Pintura_Tienda.{i} as catalogo_pintura_{i}' for i in pintura])},
+                        {', '.join([f'caj_P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
                         {', '.join([f'artistas_pintura.{i} as artista_pintura_{i}' for i in artista])}
-                        FROM Lista_Objetos
-                        LEFT JOIN Catalogo_Moneda_Tienda
-                        ON Catalogo_Moneda_Tienda.nur = Lista_Objetos.nur_moneda
-                        LEFT JOIN monedas
-                        ON monedas.id = Catalogo_Moneda_Tienda.id_moneda
-                        LEFT JOIN divisas
-                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
-                        LEFT JOIN paises as `divisa_pais`
-                        ON divisas.id_pais = divisa_pais.id
-                        LEFT JOIN paises as moneda_pais
-                        ON monedas.id_pais = moneda_pais.id
-                        LEFT JOIN M_A
-                        ON M_A.id_moneda = monedas.id
-                        LEFT JOIN artistas as artistas_moneda
-                        ON M_A.id_artista = artistas_moneda.id
-                        LEFT JOIN Catalogo_Pintura_Tienda
-                        ON Lista_Objetos.id_pintura = Catalogo_Pintura_Tienda.nur
-                        LEFT JOIN P_A
-                        ON P_A.id_pintura = Catalogo_Pintura_Tienda.nur
-                        LEFT JOIN artistas as artistas_pintura
-                        ON P_A.id_artista = artistas_pintura.id                        
+                        FROM caj_Lista_Objetos
+                        LEFT JOIN caj_Catalogo_Moneda_Tienda
+                        ON caj_Catalogo_Moneda_Tienda.nur = caj_Lista_Objetos.nur_moneda
+                        LEFT JOIN caj_monedas
+                        ON caj_monedas.id = caj_Catalogo_Moneda_Tienda.id_moneda
+                        LEFT JOIN caj_divisas
+                        ON (caj_divisas.id,caj_divisas.id_pais) = (caj_monedas.id_divisa,caj_monedas.id_pais_divisa) 
+                        LEFT JOIN caj_paises as `divisa_pais`
+                        ON caj_divisas.id_pais = divisa_pais.id
+                        LEFT JOIN caj_paises as moneda_pais
+                        ON caj_monedas.id_pais = moneda_pais.id
+                        LEFT JOIN caj_M_A
+                        ON caj_M_A.id_moneda = caj_monedas.id
+                        LEFT JOIN caj_artistas as artistas_moneda
+                        ON caj_M_A.id_artista = artistas_moneda.id
+                        LEFT JOIN caj_Catalogo_Pintura_Tienda
+                        ON caj_Lista_Objetos.id_pintura = caj_Catalogo_Pintura_Tienda.nur
+                        LEFT JOIN caj_P_A
+                        ON caj_P_A.id_pintura = caj_Catalogo_Pintura_Tienda.nur
+                        LEFT JOIN caj_artistas as artistas_pintura
+                        ON caj_P_A.id_artista = artistas_pintura.id                        
                         """
         #print(query_action)
         cursor.execute(query_action)
@@ -88,10 +88,7 @@ class Lista_ObjetoListAPIView(generics.ListAPIView):
                     for i in catalogo_moneda_tienda:
                         catalogoDato[f'{i}'] = dato[f'catalogo_moneda_{i}']
                     for i in moneda:
-                        if i != 'ano':
-                            monedaDato[f'{i}'] = dato[f'moneda_{i}']
-                        else:
-                            monedaDato[f'{i}'] = datetime.date(year=dato[f'moneda_{i}'],month=1,day=1)
+                        monedaDato[f'{i}'] = dato[f'moneda_{i}']
                     for i in divisa:
                         monedaDivisa[f'{i}'] = dato[f'divisa_{i}']
                     for i in pais:
@@ -118,13 +115,7 @@ class Lista_ObjetoListAPIView(generics.ListAPIView):
                     for i in lista_objeto:
                         listaObjetoDato[f'{i}'] = dato[f'lista_{i}']
                     for i in pintura:
-                        if i!= 'ano':
-                            catalogoDato[f'{i}'] = dato[f'catalogo_pintura_{i}']
-                        else:
-                            if dato[f'catalogo_pintura_{i}'] != None:
-                                catalogoDato[f'{i}']= datetime.date(year=dato[f'catalogo_pintura_{i}'],month=1,day=1)
-                            else:
-                                catalogoDato[f'{i}'] = dato[f'catalogo_pintura_{i}']
+                        catalogoDato[f'{i}'] = dato[f'catalogo_pintura_{i}']
                     catalogoDato['artistas'] = artistasList
                     id_pinturas.append(dato['catalogo_pintura_nur'])
                     pinturas[dato['catalogo_pintura_nur']]= catalogoDato
@@ -166,39 +157,39 @@ class Lista_ObjetoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         query_action = f"""SELECT 
-                        {', '.join([f'Lista_Objetos.{i} as lista_{i}' for i in lista_objeto])},
-                        {', '.join([f'Catalogo_Moneda_Tienda.{i} as catalogo_moneda_{i}' for i in catalogo_moneda_tienda])},
-                        {', '.join([f'monedas.{i} as moneda_{i}' for i in moneda])},
-                        {', '.join([f'divisas.{i} as divisa_{i}' for i in divisa])},
+                        {', '.join([f'caj_Lista_Objetos.{i} as lista_{i}' for i in lista_objeto])},
+                        {', '.join([f'caj_Catalogo_Moneda_Tienda.{i} as catalogo_moneda_{i}' for i in catalogo_moneda_tienda])},
+                        {', '.join([f'caj_monedas.{i} as moneda_{i}' for i in moneda])},
+                        {', '.join([f'caj_divisas.{i} as divisa_{i}' for i in divisa])},
                         {', '.join([f'`divisa_pais`.{i} as divisa_pais_{i}' for i in pais])},
                         {', '.join([f'moneda_pais.{i} as moneda_pais_{i}' for i in pais])},
-                        {', '.join([f'M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
+                        {', '.join([f'caj_M_A.{i} as moneda_artista_{i}' for i in moneda_artista])},
                         {', '.join([f'artistas_moneda.{i} as artista_moneda_{i}' for i in artista])},
-                        {', '.join([f'Catalogo_Pintura_Tienda.{i} as catalogo_pintura_{i}' for i in pintura])},
-                        {', '.join([f'P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
+                        {', '.join([f'caj_Catalogo_Pintura_Tienda.{i} as catalogo_pintura_{i}' for i in pintura])},
+                        {', '.join([f'caj_P_A.{i} as pintura_artista_{i}' for i in pintura_artista])},
                         {', '.join([f'artistas_pintura.{i} as artista_pintura_{i}' for i in artista])}
-                        FROM Lista_Objetos
-                        LEFT JOIN Catalogo_Moneda_Tienda
-                        ON Catalogo_Moneda_Tienda.nur = Lista_Objetos.nur_moneda
-                        LEFT JOIN monedas
-                        ON monedas.id = Catalogo_Moneda_Tienda.id_moneda
-                        LEFT JOIN divisas
-                        ON (divisas.id,divisas.id_pais) = (monedas.id_divisa,monedas.id_pais_divisa) 
-                        LEFT JOIN paises as `divisa_pais`
-                        ON divisas.id_pais = divisa_pais.id
-                        LEFT JOIN paises as moneda_pais
-                        ON monedas.id_pais = moneda_pais.id
-                        LEFT JOIN M_A
-                        ON M_A.id_moneda = monedas.id
-                        LEFT JOIN artistas as artistas_moneda
-                        ON M_A.id_artista = artistas_moneda.id
-                        LEFT JOIN Catalogo_Pintura_Tienda
-                        ON Lista_Objetos.id_pintura = Catalogo_Pintura_Tienda.nur
-                        LEFT JOIN P_A
-                        ON P_A.id_pintura = Catalogo_Pintura_Tienda.nur
-                        LEFT JOIN artistas as artistas_pintura
-                        ON P_A.id_artista = artistas_pintura.id
-                        WHERE Lista_Objetos.id = %s                        
+                        FROM caj_Lista_Objetos
+                        LEFT JOIN caj_Catalogo_Moneda_Tienda
+                        ON caj_Catalogo_Moneda_Tienda.nur = caj_Lista_Objetos.nur_moneda
+                        LEFT JOIN caj_monedas
+                        ON caj_monedas.id = caj_Catalogo_Moneda_Tienda.id_moneda
+                        LEFT JOIN caj_divisas
+                        ON (caj_divisas.id,caj_divisas.id_pais) = (caj_monedas.id_divisa,caj_monedas.id_pais_divisa) 
+                        LEFT JOIN caj_paises as `divisa_pais`
+                        ON caj_divisas.id_pais = divisa_pais.id
+                        LEFT JOIN caj_paises as moneda_pais
+                        ON caj_monedas.id_pais = moneda_pais.id
+                        LEFT JOIN caj_M_A
+                        ON caj_M_A.id_moneda = caj_monedas.id
+                        LEFT JOIN caj_artistas as artistas_moneda
+                        ON caj_M_A.id_artista = artistas_moneda.id
+                        LEFT JOIN caj_Catalogo_Pintura_Tienda
+                        ON caj_Lista_Objetos.id_pintura = caj_Catalogo_Pintura_Tienda.nur
+                        LEFT JOIN caj_P_A
+                        ON caj_P_A.id_pintura = caj_Catalogo_Pintura_Tienda.nur
+                        LEFT JOIN caj_artistas as artistas_pintura
+                        ON caj_P_A.id_artista = artistas_pintura.id 
+                        WHERE caj_Lista_Objetos.id = %s                        
                         """
         cursor.execute(query_action,(self.kwargs.get('id'),))
         datos = cursor.fetchall()
@@ -225,10 +216,7 @@ class Lista_ObjetoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
                         for i in catalogo_moneda_tienda:
                             catalogoDato[f'{i}'] = dato[f'catalogo_moneda_{i}']
                         for i in moneda:
-                            if i != 'ano':
-                                monedaDato[f'{i}'] = dato[f'moneda_{i}']
-                            else:
-                                monedaDato[f'{i}'] = datetime.date(year=dato[f'moneda_{i}'],month=1,day=1)
+                            monedaDato[f'{i}'] = dato[f'moneda_{i}']
                         for i in divisa:
                             monedaDivisa[f'{i}'] = dato[f'divisa_{i}']
                         for i in pais:
@@ -255,13 +243,7 @@ class Lista_ObjetoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
                         for i in lista_objeto:
                             listaObjetoDato[f'{i}'] = dato[f'lista_{i}']
                         for i in pintura:
-                            if i!= 'ano':
-                                catalogoDato[f'{i}'] = dato[f'catalogo_pintura_{i}']
-                            else:
-                                if dato[f'catalogo_pintura_{i}'] != None:
-                                    catalogoDato[f'{i}']= datetime.date(year=dato[f'catalogo_pintura_{i}'],month=1,day=1)
-                                else:
-                                    catalogoDato[f'{i}'] = dato[f'catalogo_pintura_{i}']
+                            catalogoDato[f'{i}'] = dato[f'catalogo_pintura_{i}']
                         catalogoDato['artistas'] = artistasList
                         id_pinturas.append(dato['catalogo_pintura_nur'])
                         pinturas[dato['catalogo_pintura_nur']]= catalogoDato
@@ -277,5 +259,5 @@ class Lista_ObjetoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
     @conectar
     def perform_destroy(self, instance,connection):
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM Lista_Objetos WHERE id = %s",(instance.id,))
+        cursor.execute("DELETE FROM caj_Lista_Objetos WHERE id = %s",(instance.id,))
         connection.commit()
