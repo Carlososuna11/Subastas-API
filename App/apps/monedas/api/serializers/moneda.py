@@ -75,7 +75,8 @@ class MonedaSerializer(serializers.Serializer):
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
         imagen = validated_data.get('imagen',None)
-        validated_data.pop('imagen')
+        if validated_data.get('imagen',None):
+            validated_data.pop('imagen')
         moneda = Moneda(**validated_data)
         moneda.normalize()
         #---------Pais---------

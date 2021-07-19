@@ -100,7 +100,8 @@ class PinturaSerializer(serializers.Serializer):
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
         imagen = validated_data.get('imagen',None)
-        validated_data.pop('imagen')
+        if validated_data.get('imagen',None):
+            validated_data.pop('imagen')
         validated_data['nur'] = random_nur()
         catalogo = Pintura.model(**validated_data)
         catalogo.normalize()

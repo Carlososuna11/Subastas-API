@@ -1519,3 +1519,125 @@ INSERT INTO caj_P_A
         (id_pintura, id_artista)
         VALUES
         (10037,33);
+
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '2972315',
+        'Carlos',
+        'Alvaro',
+        'Osuna',
+        'Piñero',
+        '+58 4267343349',
+        'carlosalvaroosuna1@gmail.com',
+        '2001-09-07',
+        69,
+        69
+    );
+
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '30322538',
+        'Yuliana',
+        'Andrea',
+        'Osuna',
+        'Piñero',
+        '+58 4267343348',
+        'yulianaosuna@yopmail.com',
+        '2003-11-03',
+        69,
+        69
+    );
+
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '7272541',
+        'Andrés',
+        'Eduardo',
+        'Osuna',
+        'Sanabria',
+        '+58 4267343342',
+        'candresosuna@yopmail.com',
+        '1968-01-03',
+        69,
+        69
+    );
+
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '27671182',
+        'bryant',
+        'mckale',
+        'mitchell',
+        'cisneros',
+        '+58 4267343353',
+        'bratik121@gmail.com',
+        '2000-01-03',
+        69,
+        69
+    );
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        1,
+        1
+    ); 
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        1,
+        2
+    );
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        2,
+        1
+    );  
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        2,
+        3
+    ); 
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        3,
+        4
+    ); 
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        4,
+        1
+    );

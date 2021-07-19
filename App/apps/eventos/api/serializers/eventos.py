@@ -3,6 +3,7 @@ from database.conexion import conectar
 from database.jsonFormat import get_json
 from apps.commons.models import Pais
 from apps.eventos.models import *
+from database.task import  send_email_task
 
 required_formats = ['%d-%m-%Y']
 class EventoSerializer(serializers.Serializer):
@@ -102,6 +103,12 @@ class EventoSerializer(serializers.Serializer):
     @conectar
     def create(self, validated_data:dict,connection):
         mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
+        mysq_query_clientes_many = f"""SELECT caj_clientes.id_coleccionista, caj_coleccionistas.email 
+        FROM caj_clientes 
+        INNER JOIN caj_coleccionistas 
+        ON caj_clientes.id_coleccionista = caj_coleccionistas.id
+        WHERE caj_clientes.id_organizacion IN ({','.join([str(i) for i in validated_data['planificadores']])}) 
+        """
         mysql_insert_query = """INSERT INTO caj_eventos (inscripcionCliente, inscripcionClienteNuevo, fecha,
                                 status, tipo, tipoPuja, duracionHoras, lugar, id_pais) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
@@ -110,7 +117,14 @@ class EventoSerializer(serializers.Serializer):
         validated_data['status']='pendiente'
         planificadores = validated_data['planificadores']
         validated_data.pop('planificadores')
-        print(validated_data)
+        cursor.execute(mysq_query_clientes_many)
+        correos = list(set([cliente['email'] for cliente in cursor]))
+        send_email_task(correos,
+        {'fecha':validated_data['fecha'],
+        'costo':validated_data['inscripcionCliente'],
+        'tipo':validated_data['tipo'].capitalize(),
+        'tipoPuja':validated_data['tipoPuja'].capitalize()}
+        )
         evento = Evento.model(**validated_data)
         evento.normalize()
         #-------Pais en donde se hará el evento ---------
