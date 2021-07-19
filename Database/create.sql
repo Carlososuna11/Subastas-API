@@ -97,7 +97,8 @@ CREATE TABLE caj_organizaciones(
 );
 
 CREATE TABLE caj_contactos (
-    id_organizacion MEDIUMINT UNSIGNED NOT NULL,
+    id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    id_organizacion MEDIUMINT UNSIGNED NOT NULL ,
     dni VARCHAR(20) NOT NULL ,
     nombre VARCHAR(30) NOT NULL,
     segundoNombre VARCHAR(30),
@@ -106,7 +107,7 @@ CREATE TABLE caj_contactos (
     telefono VARCHAR(20) NOT NULL UNIQUE,
     email VARCHAR(50) NOT NULL UNIQUE,
     cargo VARCHAR(30) NOT NULL,
-    CONSTRAINT pk_caj_contactos PRIMARY KEY (dni,id_organizacion),
+    CONSTRAINT pk_caj_contactos PRIMARY KEY (id,id_organizacion),
     CONSTRAINT fk_organizacion FOREIGN KEY (id_organizacion)
         REFERENCES caj_organizaciones(id)
         ON DELETE CASCADE
