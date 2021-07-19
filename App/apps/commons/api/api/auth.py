@@ -52,13 +52,6 @@ class LoginView(APIView):
         return response
 
 class GETView(APIView):
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT, 
-        properties={
-            'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id del coleccionista o de la organizacion'),
-            'tipo': openapi.Schema(description='el tipo de usuario, este puede ser organizacion o coleccionista',type=openapi.TYPE_STRING),
-        }
-    ))
     @conectar
     def get(self, request,connection):
 # def validate(request,connection):
