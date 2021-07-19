@@ -27,6 +27,7 @@ packaging==20.9
 Pillow==8.2.0
 prompt-toolkit==3.0.19
 protobuf==3.17.3
+PyJWT==1.7.1
 pyparsing==2.4.7
 pyreportjasper==2.1.2
 pytz==2021.1

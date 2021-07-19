@@ -25,6 +25,7 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('',include('apps.commons.urls.divisa')),
+    path('',include('apps.commons.urls.auth')),
     path('',include('apps.commons.urls.pais')),
     path('',include('apps.commons.urls.artista')),
     path('',include('apps.monedas.urls.moneda')),
