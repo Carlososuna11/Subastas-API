@@ -5,7 +5,9 @@ from apps.monedas.api.serializers.catalogo_moneda_tienda import *
 from apps.commons.models import *
 from apps.monedas.models import *
 from django.http import Http404
-
+from rest_framework.exceptions import AuthenticationFailed
+from django.conf import settings
+import jwt, datetime
 class Catalogo_Moneda_TiendaListAPIView(generics.ListAPIView):
 
     serializer_class = Catalogo_Moneda_TiendaSerializer
@@ -256,6 +258,18 @@ class Catalogo_Moneda_TiendaOrganizacionListAPIView(generics.ListAPIView):
 class Catalogo_Moneda_TiendaCreateAPIView(generics.CreateAPIView):
     serializer_class = Catalogo_Moneda_TiendaSerializer
 
+    def post(self, request, *args, **kwargs):
+        token = request.COOKIES.get('x-token')
+        if not token:
+            raise AuthenticationFailed('No Autorizado')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('No Autorizado!')
+        if payload['tipo'] != 'organizacion':
+            raise AuthenticationFailed('No Autorizado!')
+        request.data['id_organizacion'] = payload['id']
+        return self.create(request, *args, **kwargs)
 class Catalogo_Moneda_TiendaRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
     serializer_class = Catalogo_Moneda_TiendaSerializer
     

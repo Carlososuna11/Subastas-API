@@ -47,7 +47,7 @@ class Organizacion:
 
 class Contacto:
     """Representacion en Objeto de la Entidad Contacto"""
-    def __init__(self,dni:float,nombre:str,apellido:str,segundoApellido:str,
+    def __init__(self,dni:str,nombre:str,apellido:str,segundoApellido:str,
         telefono:str,email:str,id_organizacion:int,cargo:str,segundoNombre:str=None,id:int=None):
         self.id = id
         self.dni = dni

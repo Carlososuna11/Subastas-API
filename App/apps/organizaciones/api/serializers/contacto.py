@@ -7,7 +7,7 @@ from apps.organizaciones.models import *
 
 required_formats = ['%d-%m-%Y']
 class ContactoSerializer(serializers.Serializer):
-    dni = serializers.IntegerField()
+    dni = serializers.CharField(max_length=20)
     nombre = serializers.CharField(max_length=30)
     segundoNombre = serializers.CharField(max_length=30,required=False)
     apellido = serializers.CharField(max_length=30)
