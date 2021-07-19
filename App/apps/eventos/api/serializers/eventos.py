@@ -117,14 +117,14 @@ class EventoSerializer(serializers.Serializer):
         validated_data['status']='pendiente'
         planificadores = validated_data['planificadores']
         validated_data.pop('planificadores')
-        cursor.execute(mysq_query_clientes_many)
-        correos = list(set([cliente['email'] for cliente in cursor]))
-        send_email_task(correos,
-        {'fecha':validated_data['fecha'],
-        'costo':validated_data['inscripcionCliente'],
-        'tipo':validated_data['tipo'].capitalize(),
-        'tipoPuja':validated_data['tipoPuja'].capitalize()}
-        )
+        # cursor.execute(mysq_query_clientes_many)
+        # correos = list(set([cliente['email'] for cliente in cursor]))
+        # send_email_task(correos,
+        # {'fecha':validated_data['fecha'],
+        # 'costo':validated_data['inscripcionCliente'],
+        # 'tipo':validated_data['tipo'].capitalize(),
+        # 'tipoPuja':validated_data['tipoPuja'].capitalize()}
+        # )
         evento = Evento.model(**validated_data)
         evento.normalize()
         #-------Pais en donde se hará el evento ---------
@@ -146,12 +146,14 @@ class EventoSerializer(serializers.Serializer):
     def update(self, instance:Evento, validated_data:dict,connection):
         cursor = connection.cursor()
         mysql_query = """SELECT * FROM caj_paises WHERE id= %s""" 
+        planificadores = validated_data.get('planificadores',None)
+        if planificadores:
+            validated_data.pop('planificadores')
         for key,value in validated_data.items():
                 setattr(instance,key,value)
                 if key in ['id_pais']:
                    cursor.execute(mysql_query,(instance.id_pais,))
                    setattr(instance,'pais',Pais.model(**cursor.fetchone()))
-                   
         instance.normalize()
         divisa = instance.__dict__.copy()
         divisa.pop('id')
