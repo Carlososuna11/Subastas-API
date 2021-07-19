@@ -108,7 +108,7 @@ class ContactoCreateAPIView(generics.CreateAPIView):
     serializer_class = ContactoSerializer
 
     def post(self, request, *args, **kwargs):
-        token = request.COOKIES.get('x-token')
+        token = request.META.get('HTTP_TOKEN')
         if not token:
             raise AuthenticationFailed('No Autorizado')
         try:
@@ -124,7 +124,7 @@ class ContactoRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     serializer_class = ContactoSerializer
     
     def put(self, request, *args, **kwargs):
-        token = request.COOKIES.get('x-token')
+        token = request.META.get('HTTP_TOKEN')
         if not token:
             raise AuthenticationFailed('No Autorizado')
         try:

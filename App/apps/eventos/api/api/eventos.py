@@ -170,7 +170,7 @@ class EventoCreateAPIView(generics.CreateAPIView):
     serializer_class = EventoSerializer
 
     def post(self, request, *args, **kwargs):
-        token = request.COOKIES.get('x-token')
+        token = request.META.get('HTTP_TOKEN')
         if not token:
             raise AuthenticationFailed('No Autorizado')
         try:

@@ -200,7 +200,7 @@ class PinturaCreateAPIView(generics.CreateAPIView):
     serializer_class = PinturaSerializer
 
     def post(self, request, *args, **kwargs):
-        token = request.COOKIES.get('x-token')
+        token = request.META.get('HTTP_TOKEN')
         if not token:
             raise AuthenticationFailed('No Autorizado')
         try:
@@ -216,7 +216,7 @@ class PinturaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PinturaSerializer
 
     def put(self, request, *args, **kwargs):
-        token = request.COOKIES.get('x-token')
+        token = request.META.get('HTTP_TOKEN')
         if not token:
             raise AuthenticationFailed('No Autorizado')
         try:

@@ -46,17 +46,24 @@ class LoginView(APIView):
         response = Response()
         response.set_cookie(key='x-token', value=token, httponly=True)
         response.data = {
-            'x-token': token
+            'TOKEN': token
         }
 
         return response
 
 class GETView(APIView):
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, 
+        properties={
+            'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='id del coleccionista o de la organizacion'),
+            'tipo': openapi.Schema(description='el tipo de usuario, este puede ser organizacion o coleccionista',type=openapi.TYPE_STRING),
+        }
+    ))
     @conectar
     def get(self, request,connection):
 # def validate(request,connection):
         cursor = connection.cursor(dictionary=True)
-        token = request.COOKIES.get('x-token')
+        token = request.META.get('HTTP_TOKEN')
         if not token:
             raise AuthenticationFailed('No Autorizado')
         try:
@@ -92,11 +99,11 @@ class GETView(APIView):
 #         return Response(serializer.data)
 
 
-class LogoutView(APIView):
-    def post(self, request):
-        response = Response()
-        response.delete_cookie('x-token')
-        response.data = {
-            'message': 'success'
-        }
-        return response
+# class LogoutView(APIView):
+#     def post(self, request):
+#         response = Response()
+#         response.delete_cookie('x-token')
+#         response.data = {
+#             'message': 'success'
+#         }
+#         return response
