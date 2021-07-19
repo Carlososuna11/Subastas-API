@@ -15,7 +15,8 @@ CREATE TABLE caj_divisas (
     nombre VARCHAR(30) NOT NULL,
     CONSTRAINT pk_divisa PRIMARY KEY (id,id_pais),
     CONSTRAINT fk_pais FOREIGN KEY (id_pais)
-        REFERENCES caj_paises(id)
+        REFERENCES caj_paises(id),
+    INDEX IDX_divisa_pais (id_pais)
 );
 
 CREATE TABLE caj_monedas (
@@ -40,7 +41,9 @@ CREATE TABLE caj_monedas (
     CONSTRAINT fk_paiscaj_monedas FOREIGN KEY (id_pais)
         REFERENCES caj_paises(id),
     CONSTRAINT fk_divisa FOREIGN KEY (id_divisa,id_pais_divisa)
-        REFERENCES caj_divisas(id,id_pais)
+        REFERENCES caj_divisas(id,id_pais),
+    INDEX IDX_caj_monedas_pais (id_pais),
+    INDEX IDX_caj_monedas_divisa (id_divisa,id_pais_divisa) 
 );
 
 CREATE TABLE caj_artistas (
@@ -59,7 +62,9 @@ CREATE TABLE caj_M_A (
         ON DELETE CASCADE,
     CONSTRAINT fk_artista_caj_M_A FOREIGN KEY (id_artista)
         REFERENCES caj_artistas(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    INDEX IDX_caj_M_A_moneda (id_moneda),
+    INDEX IDX_caj_M_A_artista (id_artista)
 );
 
 CREATE TABLE caj_coleccionistas (
@@ -78,7 +83,9 @@ CREATE TABLE caj_coleccionistas (
         REFERENCES caj_paises(id),
     CONSTRAINT fk_pais_reside FOREIGN KEY (id_pais_reside)
         REFERENCES caj_paises(id),
-    CONSTRAINT unique_coleccionista UNIQUE(id_pais_nacio,dni)
+    CONSTRAINT unique_coleccionista UNIQUE(id_pais_nacio,dni),
+    INDEX IDX_caj_coleccionistas_pais_nacio (id_pais_nacio),
+    INDEX IDX_caj_coleccionistas_pais_reside (id_pais_reside)
 );
 
 CREATE TABLE caj_organizaciones(
@@ -93,7 +100,8 @@ CREATE TABLE caj_organizaciones(
     emailCorporativo  VARCHAR(50) UNIQUE,
     id_pais TINYINT UNSIGNED NOT NULL,
     CONSTRAINT fk_pais_org FOREIGN KEY (id_pais)
-        REFERENCES caj_paises(id)
+        REFERENCES caj_paises(id),
+    INDEX IDX_caj_organizaciones_pais (id_pais)
 );
 
 CREATE TABLE caj_contactos (
@@ -110,7 +118,10 @@ CREATE TABLE caj_contactos (
     CONSTRAINT pk_caj_contactos PRIMARY KEY (id,id_organizacion),
     CONSTRAINT fk_organizacion FOREIGN KEY (id_organizacion)
         REFERENCES caj_organizaciones(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT unique_contacto UNIQUE(id_organizacion,dni),
+    INDEX IDX_caj_contactos_organizacion (id_organizacion)
+
 );
 
 CREATE TABLE caj_clientes (
@@ -123,7 +134,9 @@ CREATE TABLE caj_clientes (
         REFERENCES caj_coleccionistas(id),
     CONSTRAINT fk_organizacion_cliente FOREIGN KEY (id_organizacion)
         REFERENCES caj_organizaciones(id),
-    CONSTRAINT unique_cliente UNIQUE(id_coleccionista,id_organizacion)
+    CONSTRAINT unique_cliente UNIQUE(id_coleccionista,id_organizacion),
+    INDEX IDX_caj_clientes_organizacion (id_organizacion),
+    INDEX IDX_caj_clientes_coleccionista (id_coleccionista)
 );
 
 CREATE TABLE caj_Catalogo_Moneda_Tienda (
@@ -137,7 +150,10 @@ CREATE TABLE caj_Catalogo_Moneda_Tienda (
     CONSTRAINT fk_coleccionista_moneda FOREIGN KEY (id_coleccionista)
         REFERENCES caj_coleccionistas(id),
     CONSTRAINT fk_organizacion_moneda FOREIGN KEY (id_organizacion)
-        REFERENCES caj_organizaciones(id)   
+        REFERENCES caj_organizaciones(id),
+    INDEX IDX_caj_catalogo_moneda_tienda (id_moneda),
+    INDEX IDX_caj_catalogo_moneda_coleccionista (id_coleccionista),
+    INDEX IDX_caj_catalogo_moneda_organizacion (id_organizacion)   
 );
 
 CREATE TABLE caj_Catalogo_Pintura_Tienda (
@@ -152,7 +168,9 @@ CREATE TABLE caj_Catalogo_Pintura_Tienda (
     CONSTRAINT fk_coleccionista_pintura FOREIGN KEY (id_coleccionista)
         REFERENCES caj_coleccionistas(id),
     CONSTRAINT fk_organizacion_pintura FOREIGN KEY (id_organizacion)
-        REFERENCES caj_organizaciones(id)   
+        REFERENCES caj_organizaciones(id),
+    INDEX IDX_caj_catalogo_pintura_tienda (id_organizacion),
+    INDEX IDX_caj_catalogo_pintura_coleccionista (id_coleccionista)   
 );
 
 CREATE TABLE caj_P_A (
@@ -164,7 +182,9 @@ CREATE TABLE caj_P_A (
         ON DELETE CASCADE,
     CONSTRAINT fk_artista_P_A FOREIGN KEY (id_artista)
         REFERENCES caj_artistas(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    INDEX IDX_caj_p_a_pintura (id_pintura),
+    INDEX IDX_caj_p_a_artista (id_artista)
 );
 
 CREATE TABLE caj_eventos (
@@ -179,7 +199,8 @@ CREATE TABLE caj_eventos (
     lugar VARCHAR(100),
     id_pais TINYINT UNSIGNED,
     CONSTRAINT fk_pais_evento FOREIGN KEY (id_pais)
-        REFERENCES caj_paises(id)
+        REFERENCES caj_paises(id),
+    INDEX IDX_caj_eventos_pais (id_pais)
 );
 
 CREATE TABLE caj_planificadores (
@@ -191,7 +212,9 @@ CREATE TABLE caj_planificadores (
         ON DELETE CASCADE,
     CONSTRAINT fk_organizacion_planificador FOREIGN KEY (id_organizacion)
         REFERENCES caj_organizaciones(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    INDEX IDX_caj_planificadores_evento (id_evento),
+    INDEX IDX_caj_planificadores_organizacion (id_organizacion)
 );
 
 CREATE TABLE caj_participantes (
@@ -206,7 +229,10 @@ CREATE TABLE caj_participantes (
     CONSTRAINT fk_pais_envio FOREIGN KEY (id_pais)
         REFERENCES caj_paises(id),
     CONSTRAINT fk_cliente_participantes FOREIGN KEY (fechaIngresoCliente,id_coleccionista_cliente,id_organizacion_cliente)
-        REFERENCES caj_clientes(fechaIngreso,id_coleccionista,id_organizacion)
+        REFERENCES caj_clientes(fechaIngreso,id_coleccionista,id_organizacion),
+    INDEX IDX_caj_participantes_evento (id_evento),
+    INDEX IDX_caj_participantes_pais (id_pais),
+    INDEX IDX_caj_participantes_cliente(id_organizacion_cliente,id_coleccionista_cliente)
 );
 
 CREATE TABLE caj_costoEnvios (
@@ -219,7 +245,9 @@ CREATE TABLE caj_costoEnvios (
         REFERENCES caj_eventos(id),
     CONSTRAINT fk_pais_costoEnvio FOREIGN KEY (id_pais)
         REFERENCES caj_paises(id),
-    CONSTRAINT unique_costo_envio UNIQUE(id_pais,id_evento)
+    CONSTRAINT unique_costo_envio UNIQUE(id_pais,id_evento),
+    INDEX IDX_caj_costoEnvios_evento (id_evento),
+    INDEX IDX_caj_costoEnvios_pais (id_pais)
 );
 
 CREATE TABLE caj_Lista_Objetos (
@@ -247,7 +275,11 @@ CREATE TABLE caj_Lista_Objetos (
     CONSTRAINT fk_evento_pintura FOREIGN KEY (id_pintura)
         REFERENCES caj_Catalogo_Pintura_Tienda(nur),
     CONSTRAINT fk_evento_moneda FOREIGN KEY (nur_moneda,id_moneda)
-        REFERENCES caj_Catalogo_Moneda_Tienda(nur,id_moneda)
+        REFERENCES caj_Catalogo_Moneda_Tienda(nur,id_moneda),
+    INDEX IDX_caj_Lista_Objetos_evento (id_evento),
+    INDEX IDX_caj_Lista_Objetos_Participante (id_eventoParticipante,id_coleccionistaParticipante,id_organizacionParticipante,fechaIngresoParticipante),
+    INDEX IDX_caj_Lista_Objetos_pintura (id_pintura),
+    INDEX IDX_caj_Lista_Objetos_moneda (nur_moneda,id_moneda)
 );
 
 CREATE TABLE caj_facturas (
@@ -259,7 +291,8 @@ CREATE TABLE caj_facturas (
     id_coleccionistaParticipante MEDIUMINT UNSIGNED,
     id_organizacionParticipante MEDIUMINT UNSIGNED,
     CONSTRAINT fk_participante_factura FOREIGN KEY (fechaIngresoParticipante,id_coleccionistaParticipante,id_organizacionParticipante,id_evento)
-        REFERENCES caj_participantes(fechaIngresoCliente,id_coleccionista_cliente,id_organizacion_cliente,id_evento)
+        REFERENCES caj_participantes(fechaIngresoCliente,id_coleccionista_cliente,id_organizacion_cliente,id_evento),
+    INDEX IDX_caj_participantes_factura (id_evento,fechaIngresoParticipante,id_coleccionistaParticipante,id_organizacionParticipante)
 );
 
 CREATE TABLE caj_detFacturas (
@@ -272,5 +305,7 @@ CREATE TABLE caj_detFacturas (
     CONSTRAINT fk_detFacturas_objeto FOREIGN KEY (id_objeto,id_evento)
         REFERENCES caj_Lista_Objetos(id,id_evento),
     CONSTRAINT fk_factura_Det FOREIGN KEY (numeroFactura)
-        REFERENCES caj_facturas(numeroFactura)
+        REFERENCES caj_facturas(numeroFactura),
+    INDEX IDX_caj_detFacturas_evento (id_evento,id_objeto),
+    INDEX IDX_caj_detFacturas_factura (numeroFactura)
 );
