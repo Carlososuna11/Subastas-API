@@ -181,7 +181,9 @@ class EventoCreateAPIView(generics.CreateAPIView):
             raise AuthenticationFailed('No Autorizado!')
         planificadores  = request.data.get('planificadores',[])
         planificadores.append(payload['id'])
-        request.data['planificadores'] =  planificadores
+        request.data._mutable = True
+        request.data['planificadores'] = planificadores
+        request.data._mutable = False
         return self.create(request, *args, **kwargs)
 class EventoRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
 
