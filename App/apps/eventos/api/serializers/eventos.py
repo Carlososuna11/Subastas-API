@@ -142,29 +142,29 @@ class EventoSerializer(serializers.Serializer):
         connection.commit()
         return evento
 
-    @conectar
-    def update(self, instance:Evento, validated_data:dict,connection):
-        cursor = connection.cursor()
-        mysql_query = """SELECT * FROM caj_paises WHERE id= %s""" 
-        planificadores = validated_data.get('planificadores',None)
-        if planificadores:
-            validated_data.pop('planificadores')
-        for key,value in validated_data.items():
-                setattr(instance,key,value)
-                if key in ['id_pais']:
-                   cursor.execute(mysql_query,(instance.id_pais,))
-                   setattr(instance,'pais',Pais.model(**cursor.fetchone()))
-        instance.normalize()
-        divisa = instance.__dict__.copy()
-        divisa.pop('id')
-        divisa.pop('pais')
-        divisa.pop('planificadores')
-        for key,value in divisa.items():
-            mysql_update_query =  f"""UPDATE caj_eventos SET {key} """
-            mysql_update_query+= """= %s WHERE id = %s"""
-            cursor.execute(mysql_update_query,(value,instance.id))
-        connection.commit()
-        return instance
+    # @conectar
+    # def update(self, instance:Evento, validated_data:dict,connection):
+    #     cursor = connection.cursor()
+    #     mysql_query = """SELECT * FROM caj_paises WHERE id= %s""" 
+    #     planificadores = validated_data.get('planificadores',None)
+    #     if planificadores:
+    #         validated_data.pop('planificadores')
+    #     for key,value in validated_data.items():
+    #             setattr(instance,key,value)
+    #             if key in ['id_pais']:
+    #                cursor.execute(mysql_query,(instance.id_pais,))
+    #                setattr(instance,'pais',Pais.model(**cursor.fetchone()))
+    #     instance.normalize()
+    #     divisa = instance.__dict__.copy()
+    #     divisa.pop('id')
+    #     divisa.pop('pais')
+    #     divisa.pop('planificadores')
+    #     for key,value in divisa.items():
+    #         mysql_update_query =  f"""UPDATE caj_eventos SET {key} """
+    #         mysql_update_query+= """= %s WHERE id = %s"""
+    #         cursor.execute(mysql_update_query,(value,instance.id))
+    #     connection.commit()
+    #     return instance
 
     def to_representation(self, instance:Evento):
         instance.to_representation()

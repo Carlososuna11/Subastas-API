@@ -4,9 +4,13 @@ from apps.eventos.api.serializers import *
 from apps.commons.models import Pais
 from apps.organizaciones.models import *
 from django.http import Http404
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 import jwt, datetime
 from django.conf import settings
+from drf_yasg import openapi
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 
 class EventoListAPIView(generics.ListAPIView):
     serializer_class = EventoSerializer
@@ -179,7 +183,7 @@ class EventoCreateAPIView(generics.CreateAPIView):
         planificadores.append(payload['id'])
         request.data['planificadores'] =  planificadores
         return self.create(request, *args, **kwargs)
-class EventoRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+class EventoRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
 
     serializer_class = EventoSerializer
     
@@ -250,3 +254,32 @@ class EventoRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         cursor.execute("DELETE FROM caj_eventos WHERE id = %s",(instance.id,))
         connection.commit()
 
+class UpdatePricesView(APIView):
+
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, 
+        properties={
+            # 'id_evento': openapi.Schema(type=openapi.TYPE_INTEGER, description='id del evento'),
+            'inscripcionCliente': openapi.Schema(type=openapi.TYPE_NUMBER, description='inscripcion cliente'),
+            'inscripcionClienteNuevo': openapi.Schema(description='inscripcion cliente Nuevo',type=openapi.TYPE_NUMBER),
+        }
+    ))
+    @conectar
+    def post(self,request,id,connection):
+        cursor = connection.cursor(dictionary=True)
+        inscripcionCliente = request.data['inscripcionCliente']
+        inscripcionClienteNuevo = request.data.get('inscripcionClienteNuevo',None)
+        mysql_query_get = """SELECT * FROM caj_eventos WHERE id = %s"""
+        cursor.execute(mysql_query_get,(id,))
+        evento = cursor.fetchone()
+        if evento is None:
+            raise ValidationError('El evento No existe')
+        mysq_query_update = """UPDATE caj_eventos SET inscripcionCliente = %s, inscripcionClienteNuevo = %s WHERE id=%s"""
+        cursor.execute(mysq_query_update,(inscripcionCliente,inscripcionClienteNuevo,id))
+        connection.commit()
+        response = Response()
+        response.data = {
+            'sucess': 'Se han actualizado los precios'
+        }
+
+        return response
