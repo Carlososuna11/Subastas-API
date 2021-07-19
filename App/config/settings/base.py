@@ -71,6 +71,8 @@ CORS_ALLOW_METHODS = [
 ]
 ROOT_URLCONF = 'config.urls'
 
+CORS_ALLOW_HEADERS = ['TOKEN']
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
