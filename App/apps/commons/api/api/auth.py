@@ -46,7 +46,8 @@ class LoginView(APIView):
         response = Response()
         response.set_cookie(key='TOKEN', value=token, httponly=True)
         response.data = {
-            'TOKEN': token
+            'TOKEN': token,
+            'tipo':tipo
         }
 
         return response
