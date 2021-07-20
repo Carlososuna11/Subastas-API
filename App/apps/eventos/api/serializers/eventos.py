@@ -4,7 +4,7 @@ from database.jsonFormat import get_json
 from apps.commons.models import Pais
 from apps.eventos.models import *
 from database.task import  send_email_task
-required_formats = ['%d-%m-%Y']
+required_formats = ['%d-%m-%Y','%Y-%m-%d']
 class EventoSerializer(serializers.Serializer):
     inscripcionCliente = serializers.DecimalField(max_digits=13,decimal_places=2,min_value=0)
     inscripcionClienteNuevo = serializers.DecimalField(max_digits=13,decimal_places=2,required=False,min_value=0)
