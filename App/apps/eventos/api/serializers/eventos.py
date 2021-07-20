@@ -4,7 +4,6 @@ from database.jsonFormat import get_json
 from apps.commons.models import Pais
 from apps.eventos.models import *
 from database.task import  send_email_task
-
 required_formats = ['%d-%m-%Y']
 class EventoSerializer(serializers.Serializer):
     inscripcionCliente = serializers.DecimalField(max_digits=13,decimal_places=2,min_value=0)
@@ -43,6 +42,7 @@ class EventoSerializer(serializers.Serializer):
         mysq_query_clientes_many = f"""SELECT id_coleccionista FROM caj_clientes WHERE id_organizacion IN ({','.join([str(i) for i in planificadores])})"""
         mysql_query_evento = """SELECT id,fecha FROM caj_eventos"""
         mysql_query_evento_planificador = """SELECT id_evento from caj_planificadores WHERE id_organizacion = %s"""
+        mysql_query_organizacion_alcance = """SELECT alcance,id_pais FROM caj_organizaciones WHERE id = %s"""
 
         cursor.execute(mysql_query_evento)
         eventos = [evento for evento in cursor if evento['fecha'] == datetime.datetime.strptime(self._kwargs['data']['fecha'], '%d-%m-%Y').date()]
@@ -61,9 +61,12 @@ class EventoSerializer(serializers.Serializer):
                     if coleccionista['id_coleccionista'] in idsColeccionistas:
                         cursor.execute(mysql_query_organizacion,(organizacion['id_organizacion'],))
                         raise serializers.ValidationError(f"No se puede realizar el evento ya que para dicho dia ya existe un evento para algunos de los clientes de {cursor.fetchone()['nombre']}")
+        nacional = []
         for i in planificadores:
             cursor.execute(mysql_query_evento_planificador,(i,))
             eventos = cursor.fetchall()
+            cursor.execute(mysql_query_organizacion_alcance,(i,))
+            alcance = cursor.fetchone()
             if eventos:
                 cant_eventos_ano = []
                 ano = datetime.date.today().year
@@ -77,6 +80,11 @@ class EventoSerializer(serializers.Serializer):
                 if len(cant_eventos_ano)>5:
                     cursor.execute(mysql_query_organizacion,(i,))
                     raise serializers.ValidationError(f"{cursor.fetchone()['nombre']} Ya no puede realizar más eventos, son 5 Eventos por año")
+            if alcance['alcance'] == 'nacional':
+                if alcance['id_pais'] not in nacional:
+                    nacional.append(alcance['id_pais'])
+        if len(nacional)>1:
+            raise serializers.ValidationError("No se puede realizar el evento ya que Existen planificadores con alcance Nacional pero de distintos paises")
         return planificadores
                 
     def validate_tipo(self,tipo):

@@ -209,9 +209,7 @@ class PinturaCreateAPIView(generics.CreateAPIView):
             raise AuthenticationFailed('No Autorizado!')
         if payload['tipo'] != 'organizacion':
             raise AuthenticationFailed('No Autorizado!')
-        request.data._mutable = True
         request.data['id_organizacion'] = payload['id']
-        request.data._mutable = False
         return self.create(request, *args, **kwargs)
 
 class PinturaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -227,9 +225,7 @@ class PinturaRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
             raise AuthenticationFailed('No Autorizado!')
         if payload['tipo'] != 'organizacion':
             raise AuthenticationFailed('No Autorizado!')
-        request.data._mutable = True
         request.data['id_organizacion'] = payload['id']
-        request.data._mutable = False
         return self.update(request, *args, **kwargs)
 
     @conectar

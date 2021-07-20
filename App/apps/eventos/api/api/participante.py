@@ -4,7 +4,14 @@ from apps.eventos.api.serializers import *
 from apps.commons.models import Pais
 from apps.organizaciones.models import *
 from django.http import Http404
-
+from drf_yasg import openapi
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from django.conf import settings
+import jwt, datetime
+from apps.coleccionistas.api.serializers.cliente import *
 
 class ParticipanteListAPIView(generics.ListAPIView):
     serializer_class = ParticipanteSerializer
@@ -136,3 +143,91 @@ class ParticipanteCreateAPIView(generics.CreateAPIView):
 #         cursor.execute("DELETE FROM eventos WHERE id = %s",(instance.id,))
 #         connection.commit()
 
+class InscribirseView(APIView):
+
+    @conectar
+    def post(self, request,id_evento,connection):
+        cursor = connection.cursor(dictionary=True)
+        # tipo = request.data['tipo']
+        token = request.META.get('HTTP_TOKEN')
+        if not token:
+            raise AuthenticationFailed('No Autorizado')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('No Autorizado!')
+        if payload['tipo'] != 'coleccionista':
+            raise AuthenticationFailed('No Autorizado!')
+        mysql_query_get = """SELECT * from caj_coleccionistas WHERE id = %s"""
+        cursor.execute(mysql_query_get,(payload['id'],))
+        usuario  = cursor.fetchone()
+        fechaNacimiento = usuario['fechaNacimiento']
+        #validar mayor de edad
+        print((datetime.date.today() - fechaNacimiento).days/365)
+        if (datetime.date.today() - fechaNacimiento).days/365 < 21:
+            raise ValidationError('No eres Mayor de Edad')
+        mysql_query_get = """SELECT * FROM caj_eventos WHERE id = %s"""
+        cursor.execute(mysql_query_get,(id_evento,))
+        evento = cursor.fetchone()
+        if not(evento):
+            raise ValidationError('No existe el evento')
+        if evento['fecha'] < datetime.date.today():
+            raise ValidationError('El evento ya caducó')
+        if evento['status'] == 'cancelado':
+            raise ValidationError('El evento está cancelado')
+        if evento['tipo'] == 'virtual':
+            mysql_query_get = """SELECT id_organizacion FROM caj_planificadores WHERE id_evento = %s"""
+            cursor.execute(mysql_query_get,(id_evento,))
+            organizaciones = cursor.fetchall()
+            for i in organizaciones:
+                mysql_query_get = """SELECT * FROM caj_organizaciones WHERE id = %s"""
+                cursor.execute(mysql_query_get,(i['id_organizacion'],))
+                organizacion = cursor.fetchone()
+                if organizacion['alcance'] == 'nacional':
+                    if usuario['id_pais_reside'] != organizacion['id_pais']:
+                        mysql_query_get = """SELECT * FROM caj_paises WHERE id = %s"""
+                        cursor.execute(mysql_query_get,(organizacion['id_pais'],))
+                        raise ValidationError(f"Los organizadores del evento virtual solo tienen alcance en {cursor.fetchone()['nombre']} para realizar sus envios, por ende no puedes participar en este evento")
+        #---Paso validaciones -----
+        response = Response()
+        #response.set_cookie(key='x-token', value=token, httponly=True)
+
+        mysql_query_get = """SELECT id_organizacion FROM caj_planificadores WHERE id_evento = %s"""
+        cursor.execute(mysql_query_get,(id_evento,))
+        organizaciones = cursor.fetchall()
+        for organizacion in organizaciones:
+            mysql_query_get = """SELECT * FROM caj_clientes WHERE id_organizacion = %s AND id_coleccionista = %s"""
+            cursor.execute(mysql_query_get,(organizacion['id_organizacion'],usuario['id']))
+            cliente  = cursor.fetchone()
+            if not(cliente):
+                if evento['inscripcionClienteNuevo'] == None:
+                    raise ValidationError('El evento no admite nuevos clientes')
+                data = {
+                    'id_coleccionista':usuario['id'],
+                    'id_organizacion':organizacion['id_organizacion']
+                }
+                serializer = ClienteSerializer(data=data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+            cursor.execute(mysql_query_get,(organizacion['id_organizacion'],usuario['id']))
+            cliente  = cursor.fetchone()
+            mysql_query_get = """SELECT * FROM caj_participantes WHERE 
+                (id_coleccionista_cliente,id_organizacion_cliente,id_evento)=(%s,%s,%s)
+                """
+            print(cliente)
+            cursor.execute(mysql_query_get,(usuario['id'],cliente['id_organizacion'],id_evento))
+            participante = cursor.fetchone()
+            if  participante:
+                raise ValidationError('Ya participas en este evento')
+            mysql_insert_query = """INSERT INTO caj_participantes
+                (id_evento,fechaIngresoCliente,id_coleccionista_cliente,id_organizacion_cliente,id_pais)
+                VALUES (%s, %s, %s, %s, %s)"""
+            pais = None
+            if evento['tipo'] == 'virtual':
+                pais = usuario['id_pais_reside']
+            cursor.execute(mysql_insert_query,(id_evento,cliente['fechaIngreso'],usuario['id'],cliente['id_organizacion'],pais))
+        connection.commit()
+        response.data = {
+            'mensaje': 'Inscripcion exitosa'
+        }
+        return response

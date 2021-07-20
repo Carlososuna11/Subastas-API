@@ -28,7 +28,7 @@ class ClienteListAPIView(generics.ListAPIView):
                         {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
                         {', '.join([f'organizacion_pais.{i} as organizacion_pais_{i}' for i in pais])}
                         FROM caj_clientes
-                        INNER JOIN caj_caj_organizaciones
+                        INNER JOIN caj_organizaciones
                         ON caj_organizaciones.id = caj_clientes.id_organizacion
                         INNER JOIN caj_paises as organizacion_pais
                         ON organizacion_pais.id = caj_organizaciones.id_pais

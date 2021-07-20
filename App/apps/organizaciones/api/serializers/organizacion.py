@@ -47,9 +47,9 @@ class OrganizacionSerializer(serializers.Serializer):
         return telefonoPrincipal
 
     def validate_alcance(self,alcance):
-        if alcance.lower() in ['nacional','internacional','ambos']:
+        if alcance.lower() in ['nacional','internacional']:
             return alcance.lower()
-        raise serializers.ValidationError("El alcance no es Válido, solo puede ser 'nacional', 'internacional' o 'ambos' ")
+        raise serializers.ValidationError("El alcance no es Válido, solo puede ser 'nacional' o 'internacional' ")
 
     def validate_tipo(self,tipo):
         if tipo.lower() in ['galeria','tienda','otro']:
