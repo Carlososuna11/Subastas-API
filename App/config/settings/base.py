@@ -71,7 +71,7 @@ CORS_ALLOW_METHODS = [
 ]
 ROOT_URLCONF = 'config.urls'
 
-CORS_ALLOW_HEADERS = ['TOKEN']
+CORS_ALLOW_HEADERS = ['TOKEN', 'content-type']
 
 TEMPLATES = [
     {
