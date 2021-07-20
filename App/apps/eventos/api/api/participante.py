@@ -1,6 +1,8 @@
 from rest_framework import generics
 from database.conexion import conectar
 from apps.eventos.api.serializers import *
+from apps.coleccionistas.api.serializers import *
+from apps.organizaciones.api.serializers import * 
 from apps.commons.models import Pais
 from apps.organizaciones.models import *
 from django.http import Http404
@@ -14,8 +16,8 @@ import jwt, datetime
 from apps.coleccionistas.api.serializers.cliente import *
 
 class ParticipanteListAPIView(generics.ListAPIView):
-    serializer_class = ParticipanteSerializer
-
+    # serializer_class = ParticipanteSerializer
+    serializer_class = ColeccionistaSerializer
     @conectar
     def get_queryset(self,connection):
         cursor = connection.cursor(dictionary=True)
@@ -92,9 +94,98 @@ class ParticipanteListAPIView(generics.ListAPIView):
             organizacionData['pais']= paisReside
             participantes.append(participanteDato)
         organizaciones = [Participante.model(**dato) for dato in participantes]
+        coleccionistas = list(set([participante.cliente.coleccionista for participante in organizaciones]))
+        coleccionistas.sort(key=lambda x:x.id)
         organizaciones.sort(key=lambda x: x.fechaIngresoCliente)
-        return organizaciones
-    
+        # return organizaciones
+        return coleccionistas
+
+class ParticipantePorEventoListAPIView(generics.ListAPIView):
+    # serializer_class = ParticipanteSerializer
+    serializer_class = ColeccionistaSerializer
+
+    @conectar
+    def get_queryset(self,connection):
+        cursor = connection.cursor(dictionary=True)
+        pais = ['id','nombre','nacionalidad']
+        coleccionista = ['id','dni','nombre','segundoNombre','apellido','segundoApellido','telefono','email',
+                        'fechaNacimiento','id_pais_nacio','id_pais_reside']
+        organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
+                        'paginaWeb','emailCorporativo','id_pais']
+        cliente = ['fechaIngreso','numeroExpedienteUnico','id_coleccionista','id_organizacion']
+        participante = ['id_evento','fechaIngresoCliente','id_coleccionista_cliente','id_organizacion_cliente','id_pais']
+        #query = self.request.query_params.get('id_pais',None)
+        query_cliente = f"""SELECT 
+                        {', '.join([f'caj_participantes.{i} as participante_{i}' for i in participante])},
+                        {', '.join([f'caj_clientes.{i} as cliente_{i}' for i in cliente])},
+                        {', '.join([f'caj_coleccionistas.{i} as coleccionista_{i}' for i in coleccionista])},
+                        {', '.join([f'pais_nacio.{i} as pais_nacio_{i}' for i in pais])},
+                        {', '.join([f'pais_reside.{i} as pais_reside_{i}' for i in pais])},
+                        {', '.join([f'caj_organizaciones.{i} as organizacion_{i}' for i in organizacion])},
+                        {', '.join([f'organizacion_pais.{i} as organizacion_pais_{i}' for i in pais])}
+                        FROM caj_participantes
+                        INNER JOIN caj_clientes
+                        ON (caj_participantes.id_coleccionista_cliente,caj_participantes.id_organizacion_cliente) = (caj_clientes.id_coleccionista,caj_clientes.id_organizacion)
+                        INNER JOIN caj_organizaciones
+                        ON caj_organizaciones.id = caj_clientes.id_organizacion
+                        INNER JOIN caj_paises as organizacion_pais
+                        ON organizacion_pais.id = caj_organizaciones.id_pais
+                        INNER JOIN caj_coleccionistas
+                        ON caj_coleccionistas.id = caj_clientes.id_coleccionista
+                        INNER JOIN caj_paises as pais_nacio
+                        ON pais_nacio.id = caj_coleccionistas.id_pais_nacio
+                        INNER JOIN caj_paises as pais_reside
+                        ON pais_reside.id = caj_coleccionistas.id_pais_reside
+                        WHERE caj_participantes.id_evento = %s
+                        """
+        print(query_cliente)
+        # if query:
+        #     query_action = """SELECT divisas.id as divisa_id, divisas.id_pais as divisa_id_pais, divisas.nombre as divisa_nombre,
+        #                     paises.id as pais_id, paises.nombre as pais_nombre, paises.nacionalidad as pais_nacionalidad 
+        #                     FROM divisas 
+        #                     INNER JOIN paises ON paises.id = divisas.id_pais
+        #                     WHERE divisas.id_pais = %s
+        #                     """
+        #     cursor.execute(query_action,(query,))
+        # else:
+        cursor.execute(query_cliente,(self.kwargs.get('id'),))
+        #print(pais_quey,id_pais_query)
+        participantes = []
+        for dato in cursor:
+            participanteDato = {}
+            clienteDato={}
+            coleccionistaData = {}
+            paisNacio = {}
+            paisReside = {}
+            organizacionData = {}
+            paisResideOrganizacion = {}
+            for i in participante:
+                participanteDato[f'{i}'] = dato[f'participante_{i}']
+            for i in cliente:
+                clienteDato[f'{i}'] = dato[f'cliente_{i}']
+            for i in organizacion:
+                organizacionData[f'{i}'] = dato[f'organizacion_{i}']
+            for i in pais:
+                paisResideOrganizacion[f'{i}'] = dato[f'organizacion_pais_{i}']
+            organizacionData['pais']= paisResideOrganizacion
+            for i in coleccionista:
+                coleccionistaData[f'{i}'] = dato[f'coleccionista_{i}']
+            for i in pais:
+                paisReside[f'{i}'] = dato[f'pais_reside_{i}']
+                paisNacio[f'{i}'] = dato[f'pais_nacio_{i}']
+            coleccionistaData['pais_reside']= paisReside
+            coleccionistaData['pais_nacio']=paisNacio
+            clienteDato['coleccionista'] = coleccionistaData
+            clienteDato['organizacion'] = organizacionData
+            participanteDato['cliente'] = clienteDato
+            organizacionData['pais']= paisReside
+            participantes.append(participanteDato)
+        #Nada más por probar
+        organizaciones = [Participante.model(**dato) for dato in participantes]
+        organizaciones.sort(key=lambda x: x.fechaIngresoCliente)
+        coleccionistas = list(set([participante.cliente.coleccionista for participante in organizaciones]))
+        coleccionistas.sort(key=lambda x:x.id)
+        return coleccionistas
 
 class ParticipanteCreateAPIView(generics.CreateAPIView):
     serializer_class = ParticipanteSerializer
@@ -150,6 +241,8 @@ class InscribirseView(APIView):
         cursor = connection.cursor(dictionary=True)
         # tipo = request.data['tipo']
         token = request.META.get('HTTP_TOKEN')
+        if not token:
+            token = request.COOKIES.get('TOKEN')
         if not token:
             raise AuthenticationFailed('No Autorizado')
         try:

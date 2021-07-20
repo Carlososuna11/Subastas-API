@@ -29,6 +29,7 @@ urlpatterns = [
     path('',include('apps.commons.urls.pais')),
     path('',include('apps.commons.urls.artista')),
     path('',include('apps.monedas.urls.moneda')),
+    path('',include('apps.commons.urls.catalogo')),
     path('',include('apps.monedas.urls.catalogo_moneda_tienda')),
     path('',include('apps.monedas.urls.moneda_artista')),
     path('',include('apps.coleccionistas.urls.coleccionista')),
