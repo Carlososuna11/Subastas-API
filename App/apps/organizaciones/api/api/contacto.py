@@ -7,7 +7,8 @@ from django.http import Http404
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
 import jwt, datetime
-
+from rest_framework.response import Response
+from rest_framework import status
 class ContactoListAPIView(generics.ListAPIView):
     serializer_class = ContactoSerializer
 
@@ -112,14 +113,16 @@ class ContactoCreateAPIView(generics.CreateAPIView):
         if not token:
             token = request.COOKIES.get('TOKEN')
         if not token:
-            raise AuthenticationFailed('No Autorizado')
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('No Autorizado!')
-        if payload['tipo'] != 'organizacion':
-            raise AuthenticationFailed('No Autorizado!')
-        request.data['id_organizacion'] = payload['id']
+            if not(request.data.get('id_organizacion',None)):
+                return Response({'error':'Debe ingresar el token'},status=status.HTTP_400_BAD_REQUEST)
+        if token:
+            try:
+                payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+            except jwt.ExpiredSignatureError:
+                raise AuthenticationFailed('No Autorizado!')
+            if payload['tipo'] != 'organizacion':
+                raise AuthenticationFailed('No Autorizado!')
+            request.data['id_organizacion'] = payload['id']
         return self.create(request, *args, **kwargs)
 class ContactoRetriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
