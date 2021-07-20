@@ -44,7 +44,7 @@ class LoginView(APIView):
         }
         token = jwt.encode(payload,settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
         response = Response()
-        #response.set_cookie(key='x-token', value=token, httponly=True)
+        response.set_cookie(key='TOKEN', value=token, httponly=True)
         response.data = {
             'TOKEN': token
         }
@@ -56,7 +56,9 @@ class GETView(APIView):
     def get(self, request,connection):
 # def validate(request,connection):
         cursor = connection.cursor(dictionary=True)
-        token = request.META.get('HTTP_TOKEN')
+        token = request.META.get('HTTP_TOKEN',None)
+        if not token:
+            token = request.COOKIES.get('TOKEN')
         if not token:
             raise AuthenticationFailed('No Autorizado')
         try:
@@ -92,11 +94,11 @@ class GETView(APIView):
 #         return Response(serializer.data)
 
 
-# class LogoutView(APIView):
-#     def post(self, request):
-#         response = Response()
-#         response.delete_cookie('x-token')
-#         response.data = {
-#             'message': 'success'
-#         }
-#         return response
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response()
+        response.delete_cookie('TOKEN')
+        response.data = {
+            'message': 'success'
+        }
+        return response

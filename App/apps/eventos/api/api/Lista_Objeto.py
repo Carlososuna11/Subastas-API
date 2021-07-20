@@ -258,8 +258,7 @@ class Lista_Objeto_Por_Evento_ListAPIView(generics.ListAPIView):
         return monedas
 
 class Lista_ObjetoCreateAPIView(generics.CreateAPIView):
-    serializer_class = Lista_ObjetoSerializer
-
+    serializer_class = Orden_Lista_ObjetoSerializer
 class Lista_ObjetoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = Lista_ObjetoSerializer
     
@@ -387,5 +386,3 @@ class Lista_ObjetoRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
         cursor.execute("DELETE FROM caj_Lista_Objetos WHERE id = %s",(instance.id,))
         connection.commit()
 
-class Orden_ListaCreateAPIView(generics.CreateAPIView):
-    serializer_class = Orden_Lista_ObjetoSerializer

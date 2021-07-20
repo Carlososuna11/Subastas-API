@@ -261,6 +261,8 @@ class Catalogo_Moneda_TiendaCreateAPIView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         token = request.META.get('HTTP_TOKEN')
         if not token:
+            token = request.COOKIES.get('TOKEN')
+        if not token:
             raise AuthenticationFailed('No Autorizado')
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])

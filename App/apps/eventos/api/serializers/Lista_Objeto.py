@@ -11,6 +11,8 @@ class Lista_ObjetoSerializer(serializers.Serializer):
     id_evento = serializers.IntegerField()
     nur_moneda = serializers.IntegerField(required=False)
     id_pintura = serializers.IntegerField(required=False)
+    orden = serializers.IntegerField()
+    duracionmin = serializers.IntegerField()
 
     @conectar
     def validate_nur_moneda(self,nur_moneda,connection):
@@ -186,21 +188,26 @@ class Lista_ObjetoSerializer(serializers.Serializer):
         instance.to_representation()
         divisa = get_json(instance)
         return divisa
-
-class diccionario(serializers.Serializer):
-    id_objeto = serializers.IntegerField()
-    orden = serializers.IntegerField()
-    duracionmin = serializers.IntegerField()
+    
 class Orden_Lista_ObjetoSerializer(serializers.Serializer):
-    ordenes = diccionario(many=True)
+    ordenes = Lista_ObjetoSerializer(many=True)
     id_evento = serializers.IntegerField()
+
+    def validate_ordenes(self, ordenes):
+        for objeto in ordenes:
+            obj = Lista_ObjetoSerializer(data=objeto)
+            obj.is_valid(raise_exception=True)
+        return ordenes
 
     @conectar
     def validate(self,attrs,connection):
         cursor = connection.cursor(dictionary=True)
-        mysql_query_evento = """SELECT duracionHoras FROM caj_eventos WHERE id = %s"""
+        mysql_query_evento = """SELECT duracionHoras,tipo FROM caj_eventos WHERE id = %s"""
         cursor.execute(mysql_query_evento,(attrs['id_evento'],))
-        tiempoTotal = cursor.fetchone()['duracionHoras'] * 60
+        evento = cursor.fetchone()
+        if evento['tipo'] == 'virtual':
+            return attrs
+        tiempoTotal = evento['duracionHoras'] * 60
         orden = list(set([i['orden']  for i in attrs['ordenes']]))
         tiempo = sum([i['duracionmin'] for i in attrs['ordenes']])
         if tiempo > tiempoTotal:
@@ -209,20 +216,11 @@ class Orden_Lista_ObjetoSerializer(serializers.Serializer):
             raise serializers.ValidationError("Existen órdenes con mismo orden, por favor tengalo en cuenta")
         return attrs
 
-    @conectar
-    def create(self,validated_data,connection):
-        cursor = connection.cursor(dictionary=True)
-        mysql_update_query = """UPDATE caj_Lista_Objetos SET orden = %s, duracionmin = %s WHERE id = %s"""
+    def create(self,validated_data):
+        objetos = {}
         for i in validated_data['ordenes']:
-            cursor.execute(mysql_update_query,(i['orden'],i['duracionmin'] ,i['id_objeto']))
-        connection.commit()
-        return validated_data
-
-    @conectar
-    def update(self, instances, validated_data:dict,connection):
-        cursor = connection.cursor(dictionary=True)
-        mysql_update_query = """UPDATE caj_Lista_Objetos SET orden = %s, duracionmin = %s WHERE id = %s"""
-        for i in validated_data['ordenes']:
-            cursor.execute(mysql_update_query,(i['orden'],i['duracionmin'] ,i['id_objeto']))
-        connection.commit()
-        return validated_data
+            obj = Lista_ObjetoSerializer(data=i)
+            obj.is_valid(raise_exception=True)
+            obj.save()
+            objetos[obj.id] = obj.to_representation()
+        return objetos
