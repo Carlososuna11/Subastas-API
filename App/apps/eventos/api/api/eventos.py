@@ -121,6 +121,16 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         # token = 
+        token = self.request.META.get('HTTP_TOKEN')
+        if not token:
+            token = self.request.COOKIES.get('TOKEN')
+        if not token:
+            raise AuthenticationFailed('No Autorizado')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('No Autorizado!')
+        self.request.data['jwt'] = payload
         pais = ['id','nombre','nacionalidad']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
