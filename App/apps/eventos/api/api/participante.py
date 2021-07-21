@@ -284,7 +284,17 @@ class InscribirseView(APIView):
         #---Paso validaciones -----
         response = Response()
         #response.set_cookie(key='x-token', value=token, httponly=True)
-
+        #####Está inscrito en un evento ese dia
+        mysql_query_eventos = """SELECT * FROM caj_eventos WHERE fecha = %s"""
+        cursor.execute(mysql_query_eventos,(datetime.date.today(),))
+        eventos = cursor.fetchall()
+        mysql_query_participando = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_evento) = (%s,%s)"""
+        for i in eventos:
+            cursor.execute(mysql_query_participando,(payload['id'],i['id']))
+            if cursor.fetchone():
+                if i['id'] == id_evento:
+                    raise ValidationError('Ya participas en este evento')
+                raise ValidationError('Ya participas en un evento para ese dia')
         mysql_query_get = """SELECT id_organizacion FROM caj_planificadores WHERE id_evento = %s"""
         cursor.execute(mysql_query_get,(id_evento,))
         organizaciones = cursor.fetchall()
