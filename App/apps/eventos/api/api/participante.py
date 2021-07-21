@@ -286,7 +286,7 @@ class InscribirseView(APIView):
         #response.set_cookie(key='x-token', value=token, httponly=True)
         #####Está inscrito en un evento ese dia
         mysql_query_eventos = """SELECT * FROM caj_eventos WHERE fecha = %s"""
-        cursor.execute(mysql_query_eventos,(datetime.date.today(),))
+        cursor.execute(mysql_query_eventos,(evento['fecha'],))
         eventos = cursor.fetchall()
         mysql_query_participando = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_evento) = (%s,%s)"""
         for i in eventos:
