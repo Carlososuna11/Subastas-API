@@ -67,6 +67,7 @@ class OrganizacionSerializer(serializers.Serializer):
                                 alcance, tipo, telefonoPrincipal, paginaWeb, emailCorporativo, id_pais) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
+        validated_data['fundacion'] =validated_data['fundacion'].year
         organizacion = Organizacion.model(**validated_data)
         organizacion.normalize()
         #-------Pais de origen ---------
