@@ -368,16 +368,261 @@ class ComenzarEvento(APIView):
         evento = cursor.fetchone()
         if evento is None:
             raise ValidationError('El evento No existe')
-        # mysq_query_update = """UPDATE caj_eventos SET status = %s WHERE id=%s"""
-        # cursor.execute(mysq_query_update,('cancelado',id))
+        
         if evento['status']== 'cancelado':
             raise ValidationError('El evento ya esta cancelado')
-        if evento['status']=='finalizado':
+        if evento['status']=='realizado':
             raise ValidationError('El evento ya esta finalizado')
-        mysql_lista_Objetos = """"""
+        if evento['status']=='progreso':
+            raise ValidationError('El evento ya esta en progreso')
+        mysq_query_update = """UPDATE caj_eventos SET status = %s WHERE id=%s"""
+        cursor.execute(mysq_query_update,('progreso',id))
+        mysql_lista_Objetos = """SELECT * FROM caj_Lista_Objetos where id_evento = %s"""
+        cursor.execute(mysql_lista_Objetos,(id,))
+        objetos = cursor.fetchall()
+        if objetos is None:
+            raise ValidationError('No hay objetos para el evento')
+        mysql_insert_subasta_activa = """INSERT INTO caj_Subastas_Activas (id_evento,id_objeto,hora_inicio,hora_fin,cierre) VALUES (%s,%s,%s,%s,%s)"""
+        hora_inicio = datetime.datetime.now()
+        horax_inicio = datetime.datetime.now()
+        # hora_fin = hora_inicio + timedelta(minutes=30)
+        hora_fin = hora_inicio
+        for objeto in objetos:
+            if evento['tipo'] == 'virtual':
+                hora_fin = horax_inicio+ datetime.timedelta(minutes=float(objeto['duracionmin']))
+            else:
+                print(objeto['duracionmin'])
+                hora_fin = hora_fin +  datetime.timedelta(minutes=float(objeto['duracionmin']))
+            cursor.execute(mysql_insert_subasta_activa,(id,objeto['id'],hora_inicio,hora_fin,False))
+            if evento['tipo'] != 'virtual':
+                hora_inicio = hora_fin
         connection.commit()
         response = Response()
         response.data = {
-            'sucess': 'Se cancelado el Evento'
+            'sucess': 'Se ha Activado El evento'
         }
         return response
+
+class PujaDinamica(APIView):
+    
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, 
+        properties={
+            'precio': openapi.Schema(type=openapi.TYPE_NUMBER, description='precio a pujar'),
+        }
+    ))
+    @conectar
+    #necesito el token
+    def post(self,request,id,connection):
+        cursor = connection.cursor(dictionary=True)
+        precio = request.data['precio']
+        token = request.META.get('HTTP_TOKEN')
+        if not token:
+            token = request.COOKIES.get('TOKEN')
+        if not token:
+            raise AuthenticationFailed('No Autorizado')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('No Autorizado!')
+        if payload['tipo'] == 'organizacion':
+            raise AuthenticationFailed('No Autorizado!')
+        mysql_query_get = """SELECT * FROM caj_Lista_Objetos WHERE id = %s"""
+        cursor.execute(mysql_query_get,(id,))
+        objeto = cursor.fetchone()
+        mysql_query_subastaActiva = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s"""
+        cursor.execute(mysql_query_subastaActiva,(id,))
+        subastaActiva = cursor.fetchone()
+        tiempoActual = datetime.datetime.now()
+        if subastaActiva['hora_inicio'] <tiempoActual and tiempoActual < subastaActiva['hora_fin']:
+            if precio <= objeto['precioAlcanzado']:
+                raise ValidationError('No se puede pujar menos')
+            else:
+                mysql_cantidad_get = """SELECT * FROM caj_Logs_Subastas_Activas WHERE id_subasta_activa = %s"""
+                cursor.execute(mysql_cantidad_get,(subastaActiva['id'],))
+                precios = [i['precio'] for i in cursor.fetchall()] 
+                mysql_query_update_precio = """UPDATE caj_Lista_Objetos SET precioAlcanzado = %s WHERE id=%s"""
+                cursor.execute(mysql_query_update_precio,(precio,id))
+                mysql_query_update = """UPDATE caj_Lista_Objetos SET bid = %s WHERE id=%s"""
+                cursor.execute(mysql_query_update,((sum(precios)+precio)/(len(precios)+1),id))
+                mysql_insert_log = """INSERT INTO caj_Logs_Subastas_Activas (id_subasta_activa,id_coleccionista,precio,hora) VALUES (%s,%s,%s,%s)"""
+                cursor.execute(mysql_insert_log,(subastaActiva['id'],payload['id'],precio,tiempoActual))
+                connection.commit()
+        else:
+            raise ValidationError('No se puede pujar')
+        response = Response()
+        response.data = {
+            'sucess': 'Se ha pujado Exitosamente'
+        }
+        return response
+
+class PujaSobreCerrado(APIView):
+    @swagger_auto_schema(request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT, 
+        properties={
+            # 'kid_evento': openapi.Schema(type=openapi.TYPE_INTEGER, description='id del evento'),
+            'precio': openapi.Schema(type=openapi.TYPE_NUMBER, description='precio a pujar')
+        }
+    ))
+    @conectar
+    #necesito el token
+    def post(self,request,id,connection):
+        cursor = connection.cursor(dictionary=True)
+        precio = request.data['precio']
+        token = request.META.get('HTTP_TOKEN')
+        if not token:
+            token = request.COOKIES.get('TOKEN')
+        if not token:
+            raise AuthenticationFailed('No Autorizado')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('No Autorizado!')
+        if payload['tipo'] == 'organizacion':
+            raise AuthenticationFailed('No Autorizado!')
+        mysql_query_get = """SELECT * FROM caj_Lista_Objetos WHERE id = %s"""
+        cursor.execute(mysql_query_get,(id,))
+        objeto = cursor.fetchone()
+        mysql_query_subastaActiva = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s"""
+        cursor.execute(mysql_query_subastaActiva,(id,))
+        subastaActiva = cursor.fetchone()
+        tiempoActual = datetime.datetime.now()
+        if subastaActiva['hora_inicio'] <tiempoActual and tiempoActual < subastaActiva['hora_fin']:
+                mysql_log_get = """SELECT * FROM caj_Logs_Subastas_Activas WHERE (id_subasta_activa,id_coleccionista) = (%s,%s)"""
+                cursor.execute(mysql_log_get,(subastaActiva['id'],payload['id']))
+                if cursor.fetchone():
+                    raise ValidationError('Ya ha pujado')
+                if precio > objeto['precioAlcanzado']:
+                    mysql_query_update = """UPDATE caj_Lista_Objetos SET precioAlcanzado = %s WHERE id=%s"""
+                    cursor.execute(mysql_query_update,(precio,id))
+                mysql_cantidad_get = """SELECT * FROM caj_Logs_Subastas_Activas WHERE id_subasta_activa = %s"""
+                cursor.execute(mysql_cantidad_get,(subastaActiva['id'],))
+                precios = [i['precio'] for i in cursor.fetchall()] 
+                mysql_query_update = """UPDATE caj_Lista_Objetos SET bid = %s WHERE id=%s"""
+                cursor.execute(mysql_query_update,((sum(precios)+precio)/(len(precios)+1),id))
+                mysql_insert_log = """INSERT INTO caj_Logs_Subastas_Activas (id_subasta_activa,id_coleccionista,precio,hora) VALUES (%s,%s,%s,%s)"""
+                cursor.execute(mysql_insert_log,(subastaActiva['id'],payload['id'],precio,tiempoActual))
+                connection.commit()
+        else:
+            raise ValidationError('No se puede pujar')
+        response = Response()
+        response.data = {
+            'sucess': 'Se ha pujado Exitosamente'
+        }
+        return response
+
+
+class ActualizarStatus(APIView):
+    @conectar
+    def post(self,request,connection):
+        cursor = connection.cursor(dictionary=True)
+        mysql_query_get = """SELECT * FROM caj_Subastas_Activas WHERE cierre = %s"""
+        cursor.execute(mysql_query_get,(False,))
+        subastasActivas = cursor.fetchall()
+        for subastaActiva in subastasActivas:
+            if subastaActiva['hora_fin'] < datetime.datetime.now():
+                mysql_query_get_evento = """SELECT * FROM caj_eventos WHERE id = %s"""
+                cursor.execute(mysql_query_get_evento,(subastaActiva['id_evento'],))
+                evento = cursor.fetchone()
+                if evento['status'] == 'progreso':
+                    mysql_query_get = """SELECT * FROM caj_Logs_Subastas_Activas WHERE id_subasta_activa=%s"""
+                    cursor.execute(mysql_query_get,(subastaActiva['id'],))
+                    logs = cursor.fetchall()
+                    if logs:
+                        mysql_query_get_lista = """SELECT * FROM caj_Lista_Objetos WHERE id = %s"""
+                        cursor.execute(mysql_query_get_lista,(subastaActiva['id_objeto'],))
+                        objeto = cursor.fetchone()
+                        if objeto['precioAlcanzado'] < objeto['ask']:
+                            mysql_query_update = """UPDATE caj_Lista_Objetos SET razonNoVenta = %s WHERE id = %s"""
+                            cursor.execute(mysql_query_update,('inferior al ask',objeto['id']))
+                            continue
+                        logs = sorted(logs, key=lambda x: (-x['precio'], x['hora']))[0]
+                        # mysql_get_organizacion = """SELECT * FROM caj_Lista_O WHERE id = %s""")
+                        organizacion = None
+                        if objeto['nur_moneda']:
+                            mysql_query_get_moneda = """SELECT * FROM caj_Catalogo_Moneda_Tienda WHERE nur = %s"""
+                            cursor.execute(mysql_query_get_moneda,(objeto['nur_moneda'],))
+                            organizacion = cursor.fetchone()['id_organizacion']
+                        else:
+                            mysql_query_get_moneda = """SELECT * FROM caj_Catalogo_Pintura_Tienda WHERE nur = %s"""
+                            cursor.execute(mysql_query_get_moneda,(objeto['id_pintura'],))
+                            organizacion = cursor.fetchone()['id_organizacion']
+                        mysql_query_participante = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente, id_organizacion_cliente) = (%s,%s)"""
+                        cursor.execute(mysql_query_participante,(logs['id_coleccionista'],organizacion))
+                        participante = cursor.fetchone()
+                        mysql_update_objeto = """UPDATE caj_Lista_Objetos SET id_eventoParticipante= %s,fechaIngresoParticipante=%s,
+                        id_coleccionistaParticipante=%s,id_organizacionParticipante=%s WHERE id = %s"""
+                        cursor.execute(mysql_update_objeto,(participante['id_evento'],participante['fechaIngresoCliente'],participante['id_coleccionista_cliente'],organizacion,objeto['id']))
+                    else:
+                        mysql_query_update = """UPDATE caj_Lista_Objetos SET razonNoVenta = %s WHERE id = %s"""
+                        cursor.execute(mysql_query_update,('sin ofertas',subastaActiva['id_objeto']))
+                    mysql_query_update = """UPDATE caj_Subastas_Activas SET cierre = %s WHERE id = %s"""
+                    cursor.execute(mysql_query_update,(True,subastaActiva['id']))
+                connection.commit()
+        mysql_evento_get = """SELECT * FROM caj_eventos WHERE status = 'progreso'"""
+        cursor.execute(mysql_evento_get)
+        eventos = cursor.fetchall()
+        for evento in eventos:
+            mysql_query_subastas_activas = """SELECT * FROM caj_Subastas_Activas WHERE id_evento = %s AND cierre = %s"""
+            cursor.execute(mysql_query_subastas_activas,(evento['id'],False))
+            if not cursor.fetchall():
+                facturas = {} #uso id de participante como clave
+                #------Generar Facturas y actualizar status ----------
+                mysql_query_lista_objetos = """SELECT * FROM caj_Lista_Objetos WHERE id_evento = %s"""
+                cursor.execute(mysql_query_lista_objetos,(evento['id'],))
+                lista_objetos = cursor.fetchall()
+                for objeto in lista_objetos:
+                    if objeto['id_coleccionistaParticipante']:
+                        if not(facturas.get(objeto['id_eventoParticipante'],None)):
+                            facturas[objeto['id_eventoParticipante']] = []
+                        facturas[objeto['id_eventoParticipante']].append(objeto)
+                        if objeto['nur_moneda']:
+                            mysql_update_query = """UPDATE caj_Catalogo_Moneda_Tienda SET id_coleccionista =%s, id_organizacion=%s WHERE nur = %s"""
+                            cursor.execute(mysql_update_query,(objeto['id_coleccionistaParticipante'],None,objeto['nur_moneda']))
+                connection.commit()
+                for key,value in facturas.items():
+                    total = 0
+                    for objeto in value:
+                        total += objeto['precioAlcanzado']
+                    if evento['tipo'] == 'virtual':
+                        mysql_participante = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_organizacion_cliente) =( %s,%s)"""
+                        cursor.execute(mysql_participante,(objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante']))
+                        participante = cursor.fetchone()
+                        mysql_costo_envio = """SELECT * FROM caj_costoEnvios WHERE (id_evento,id_pais)=(%s,%s)"""
+                        cursor.execute(mysql_costo_envio,(evento['id'],participante['id_pais']))
+                        costo_envio = cursor.fetchone()
+                        if costo_envio:
+                            total += costo_envio['costoExtra']
+                    mysql_query_factura = """INSERT INTO caj_facturas (id_evento,fechaIngresoParticipante,fechaEmision,total,id_coleccionistaParticipante,id_organizacionParticipante) VALUES (%s,%s,%s,%s,%s,%s)"""
+                    cursor.execute(mysql_query_factura,(evento['id'],participante['fechaIngresoCliente'],datetime.date.today(),total,objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante']))
+                    connection.commit()
+                    id_Factura = cursor.lastrowid
+                    for objeto in value:
+                        mysql_insert_det_fact = """INSERT INTO caj_detFacturas (id_evento,id_objeto,numeroFactura,precio) VALUES (%s,%s,%s,%s)"""
+                        cursor.execute(mysql_insert_det_fact,(evento['id'],objeto['id'],id_Factura,objeto['precioAlcanzado']))
+                mysql_query_update = """UPDATE caj_eventos SET status = %s WHERE id = %s"""
+                cursor.execute(mysql_query_update,('terminado',evento['id']))
+                connection.commit()
+        connection.commit()
+        response = Response()
+        response.data = {
+            'sucess': 'Se ha actualizado los registros'
+        }
+        return response
+# class TerminarSubasta(APIView):
+
+#     @conectar
+#     def post(self,request,id,connection):
+#         cursor = connection.cursor(dictionary=True)
+#         token = request.META.get('HTTP_TOKEN')
+#         if not token:
+#             token = request.COOKIES.get('TOKEN')
+#         if not token:
+#             raise AuthenticationFailed('No Autorizado')
+#         try:
+#             payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+#         except jwt.ExpiredSignatureError:
+#             raise AuthenticationFailed('No Autorizado!')
+#         if payload['tipo'] != 'organizacion':
+#             raise AuthenticationFailed('No Autorizado!')
+        

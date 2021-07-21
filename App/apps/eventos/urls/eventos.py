@@ -8,4 +8,8 @@ urlpatterns = [
     path('evento/',EventoListAPIView.as_view()),
     path('evento/prices/<int:id>',UpdatePricesView.as_view()),
     path('evento/cancel/<int:id>',CancelEventView.as_view()),
+    path('evento/comenzar/<int:id>',ComenzarEvento.as_view()),
+    path('evento/pujadinamica/<int:id>',PujaDinamica.as_view()),
+    path('evento/pujasobrecerrado/<int:id>',PujaSobreCerrado.as_view()),
+    path('evento/actualizar/',ActualizarStatus.as_view()),
 ]

@@ -192,7 +192,7 @@ CREATE TABLE caj_eventos (
     inscripcionCliente DECIMAL(13,2) NOT NULL,
     inscripcionClienteNuevo DECIMAL(13,2),
     fecha DATE NOT NULL,
-    status VARCHAR(12) NOT NULL CHECK (status in ('realizado','pendiente','cancelado')),
+    status VARCHAR(12) NOT NULL CHECK (status in ('realizado','pendiente','progreso','cancelado')),
     tipo VARCHAR(12) NOT NULL CHECK (tipo in ('virtual','presencial')),
     tipoPuja VARCHAR(20) NOT NULL CHECK (tipoPuja in ('ascendente','sobre cerrado')),
     duracionHoras NUMERIC(1) NOT NULL,

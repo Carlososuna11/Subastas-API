@@ -21,7 +21,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
         cursor.execute(mysql_query,(nur_moneda,))
         if cursor.fetchone():
             return nur_moneda
-        raise serializers.ValidationError('La moneda no Existe')
+        raise serializers.ValidationError(f'La moneda con nur {nur_moneda} no Existe')
   
     @conectar
     def validate_id_pintura(self,id_pintura,connection):
@@ -30,15 +30,42 @@ class Lista_ObjetoSerializer(serializers.Serializer):
         cursor.execute(mysql_query,(id_pintura,))
         if cursor.fetchone():
             return id_pintura
-        raise serializers.ValidationError('La Pintura no Existe')
+        raise serializers.ValidationError(f'La Pintura con nur {id_pintura} no Existe')
 
     @conectar
     def validate(self,attrs,connection):
-        cursor = connection.cursor()
+        cursor = connection.cursor(dictionary=True)
         mysql_query = """SELECT * FROM caj_Lista_Objetos WHERE (nur_moneda =%s OR id_pintura =%s) AND id_evento =%s"""
+        # cursor.execute(mysql_query,(attrs.get('nur_moneda',None),attrs.get('id_pintura',None),attrs['id_evento']))
+        # if cursor.fetchone():
+        #     raise serializers.ValidationError(f"Ya existe este objeto con nur {attrs.get('nur_moneda',None) if attrs.get('nur_moneda',None)!=None else attrs.get('id_pintura',None)} para este evento")
+        mysql_query = """SELECT * FROM caj_Lista_Objetos WHERE (nur_moneda =%s OR id_pintura =%s) AND id_evento NOT IN (%s)"""
         cursor.execute(mysql_query,(attrs.get('nur_moneda',None),attrs.get('id_pintura',None),attrs['id_evento']))
-        if cursor.fetchone():
-            raise serializers.ValidationError('Ya existe este objeto para este evento')
+        mysql_query_evento = """SELECT * FROM caj_eventos where id = %s"""
+        lista = cursor.fetchall()
+        if lista:
+            for objeto in lista:
+                cursor.execute(mysql_query_evento,(objeto['id_evento'],))
+                evento = cursor.fetchone()
+                if evento['status'] == 'cancelado':
+                    continue
+                if evento['status'] == 'realizado':
+                    mysql_query_objeto = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s AND id_evento = %s"""
+                    cursor.execute(mysql_query_objeto,(objeto['id'],objeto['id_evento']))
+                    objetox = cursor.fetchone()
+                    tiempo = datetime.datetime.now()
+                    if objetox['fecha_fin'] < tiempo:
+                        continue
+                    else:
+                        if objeto['razonNoVenta'] != None:
+                            raise serializers.ValidationError(f"El objeto con nur {objeto['nur']} ya se vendio")
+                if evento['status'] == 'pendiente':
+                    #TODO:PREGUNTARLE A JOSE 
+                    continue
+        cursor.execute(mysql_query_evento,(attrs['id_evento'],))
+        evento = cursor.fetchone()
+        if evento['tipo'] == 'virtual':
+            attrs['duracionmin'] = evento['duracionHoras'] * 60
         return attrs
 
     @conectar
@@ -161,6 +188,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
                 monedas[dato['moneda_id']]['artistas'].append(artistaData)
             validated_data['moneda']=catalogo
         validated_data['bid'] = 0
+        validated_data['precioAlcanzado'] = 0
         validated_data['ask'] = validated_data['precio']*(1+(validated_data['porcentajeGananciaMin']/100))
         validated_data.pop('precio')
         objetos = Lista_Objeto.model(**validated_data)
@@ -219,7 +247,7 @@ class Orden_Lista_ObjetoSerializer(serializers.Serializer):
     @conectar
     def create(self,validated_data,connection):
         cursor = connection.cursor(dictionary=True)
-        mysql_delete_query = """DELETE * FROM caj_Lista_Objetos WHERE id_evento = %s"""
+        mysql_delete_query = """DELETE FROM caj_Lista_Objetos WHERE id_evento = %s"""
         cursor.execute(mysql_delete_query,(validated_data['id_evento'],))
         connection.commit()
         objetos = []

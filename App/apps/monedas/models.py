@@ -105,7 +105,7 @@ class Catalogo_Moneda_Tienda:
         if self.coleccionista!= None and self.coleccionista.id == None:
             self.coleccionista=None
         self.organizacion = organizacion
-        if self.coleccionista!= None and self.coleccionista.id == None:
+        if self.organizacion!= None and self.organizacion.id == None:
             self.organizacion = None
 
     def normalize(self):
