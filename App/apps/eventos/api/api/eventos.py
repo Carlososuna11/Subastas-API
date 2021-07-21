@@ -113,6 +113,14 @@ class EventoListAPIView(generics.ListAPIView):
                     if cursor.fetchone():
                         inscrito = True
                     evento['inscrito'] = inscrito
+            else:
+                mysql_query_get = """SELECT * FROM caj_planificadores WHERE id_organizacion = %s AND id_evento = %s"""
+                for evento in response.data:
+                    cursor.execute(mysql_query_get,(usuario['id'],evento['id']))
+                    inscrito = False
+                    if cursor.fetchone():
+                        inscrito = True
+                    evento['planificador'] = inscrito
         return super().finalize_response(request, response, *args, **kwargs)
 class EventoPorOrganizacionListAPIView(generics.ListAPIView):
     serializer_class = EventoSerializer
@@ -218,6 +226,14 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
                     if cursor.fetchone():
                         inscrito = True
                     evento['inscrito'] = inscrito
+            else:
+                mysql_query_get = """SELECT * FROM caj_planificadores WHERE id_organizacion = %s AND id_evento = %s"""
+                for evento in response.data:
+                    cursor.execute(mysql_query_get,(usuario['id'],evento['id']))
+                    inscrito = False
+                    if cursor.fetchone():
+                        inscrito = True
+                    evento['planificador'] = inscrito
         return super().finalize_response(request, response, *args, **kwargs)
 class EventoCreateAPIView(generics.CreateAPIView):
     serializer_class = EventoSerializer
