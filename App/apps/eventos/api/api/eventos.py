@@ -31,7 +31,17 @@ class EventoListAPIView(generics.ListAPIView):
             self.request.data['jwt'] = payload
         # if payload['tipo'] != 'coleccionista':
         #     raise AuthenticationFailed('No Autorizado!')
-        
+        msyql_get_eventos = """SELECT * FROM caj_eventos"""
+        cursor.execute(msyql_get_eventos)
+        eventos = cursor.fetchall()
+        if eventos:
+            for i in eventos:
+                if i['fecha'] < datetime.date.today():
+                    if i['status'] == 'pendiente':
+                        i['status'] = 'cancelado'
+                        mysql_update_evento = """UPDATE caj_eventos SET status = 'cancelado' WHERE id = %s"""
+                        cursor.execute(mysql_update_evento,(i['id']))
+            connection.commit()
         #query = self.request.query_params.get('id_pais',None)
         pais = ['id','nombre','nacionalidad']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
@@ -140,6 +150,17 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
             except jwt.ExpiredSignatureError:
                 raise AuthenticationFailed('No Autorizado!')
             self.request.data['jwt'] = payload
+        msyql_get_eventos = """SELECT * FROM caj_eventos"""
+        cursor.execute(msyql_get_eventos)
+        eventos = cursor.fetchall()
+        if eventos:
+            for i in eventos:
+                if i['fecha'] < datetime.date.today():
+                    if i['status'] == 'pendiente':
+                        i['status'] = 'cancelado'
+                        mysql_update_evento = """UPDATE caj_eventos SET status = 'cancelado' WHERE id = %s"""
+                        cursor.execute(mysql_update_evento,(i['id']))
+            connection.commit()
         pais = ['id','nombre','nacionalidad']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
