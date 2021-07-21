@@ -9,7 +9,7 @@ required_formats = ['%d-%m-%Y']
 class ColeccionistaSerializer(serializers.Serializer):
     dni = serializers.CharField(max_length=20)
     nombre = serializers.CharField(max_length=30)
-    segundoNombre = serializers.CharField(max_length=30,required=False)
+    segundoNombre = serializers.CharField(max_length=30,required=False,blank=True)
     apellido = serializers.CharField(max_length=30)
     segundoApellido = serializers.CharField(max_length=30)
     telefono = serializers.CharField(max_length=20)
@@ -77,6 +77,8 @@ class ColeccionistaSerializer(serializers.Serializer):
                                 id_pais_reside) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
+        if 'segundoNombre' in validated_data and validated_data['segundoNombre'] == '':
+            validated_data['segundoNombre'] = None
         coleccionista = Coleccionista.model(**validated_data)
         coleccionista.normalize()
         #-------Pais donde reside ---------

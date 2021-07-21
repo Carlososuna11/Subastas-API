@@ -9,7 +9,7 @@ required_formats = ['%d-%m-%Y']
 class ContactoSerializer(serializers.Serializer):
     dni = serializers.CharField(max_length=20)
     nombre = serializers.CharField(max_length=30)
-    segundoNombre = serializers.CharField(max_length=30,required=False)
+    segundoNombre = serializers.CharField(max_length=30,required=False,blank=True)
     apellido = serializers.CharField(max_length=30)
     segundoApellido = serializers.CharField(max_length=30)
     telefono = serializers.CharField(max_length=20)
@@ -64,6 +64,8 @@ class ContactoSerializer(serializers.Serializer):
                                 apellido, segundoApellido, telefono, email, cargo, id_organizacion) 
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor = connection.cursor(dictionary=True)
+        if 'segundoNombre' in validated_data and validated_data['segundoNombre'] == '':
+            validated_data['segundoNombre'] = None
         contacto = Contacto.model(**validated_data)
         contacto.normalize()
         # #-------Pais donde reside ---------
