@@ -109,9 +109,9 @@ class ContactoCreateAPIView(generics.CreateAPIView):
     serializer_class = ContactoSerializer
 
     def post(self, request, *args, **kwargs):
-        token = request.META.get('HTTP_TOKEN')
+        token = request.META.get('HTTP_TOKEN',None)
         if not token:
-            token = request.COOKIES.get('TOKEN')
+            token = request.COOKIES.get('TOKEN',None)
         if not token:
             if not(request.data.get('id_organizacion',None)):
                 return Response({'error':'Debe ingresar el token'},status=status.HTTP_400_BAD_REQUEST)
