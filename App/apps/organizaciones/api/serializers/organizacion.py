@@ -85,6 +85,8 @@ class OrganizacionSerializer(serializers.Serializer):
     def update(self, instance:Organizacion, validated_data:dict,connection):
         cursor = connection.cursor()
         mysql_query = """SELECT * FROM caj_paises WHERE id= %s"""
+        if 'fundacion' in validated_data:
+            validated_data['fundacion'] =validated_data['fundacion'].year
         for key,value in validated_data.items():
                 setattr(instance,key,value)
                 if key in ['id_pais']:
