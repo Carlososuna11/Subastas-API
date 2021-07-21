@@ -1,4 +1,4 @@
-DROP DATABASE subastas;
+DROP DATABASE IF EXISTS subastas;
 CREATE DATABASE subastas;
 
 USE subastas;
@@ -93,7 +93,7 @@ CREATE TABLE caj_organizaciones(
     nombre VARCHAR(50) NOT NULL,
     proposito TEXT NOT NULL,
     fundacion NUMERIC(4) NOT NULL,
-    alcance VARCHAR(15) NOT NULL CHECK (alcance in ('nacional','internacional','ambos')),
+    alcance VARCHAR(15) NOT NULL CHECK (alcance in ('nacional','internacional')),
     tipo VARCHAR(10) NOT NULL CHECK (tipo in ('galeria','tienda','otro')),
     telefonoPrincipal VARCHAR(20) NOT NULL UNIQUE,
     paginaWeb VARCHAR(50) UNIQUE,

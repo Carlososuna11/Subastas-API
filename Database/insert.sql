@@ -952,22 +952,22 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     2
     );
 
-INSERT INTO caj_Catalogo_Moneda_Tienda
+    INSERT INTO caj_Catalogo_Moneda_Tienda
     (id_moneda,nur,id_coleccionista,id_organizacion)
     VALUES
     (
     5,
-    10006,
+    10004,
     NULL,    
     2
     );
 
-INSERT INTO caj_Catalogo_Moneda_Tienda
+    INSERT INTO caj_Catalogo_Moneda_Tienda
     (id_moneda,nur,id_coleccionista,id_organizacion)
     VALUES
     (
     6,
-    10007,
+    10005,
     NULL,    
     2
     );
@@ -977,7 +977,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     7,
-    10008,
+    10006,
     NULL,    
     3
     );
@@ -987,7 +987,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     8,
-    10009,
+    10007,
     NULL,    
     3
     );
@@ -997,7 +997,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     9,
-    10010,
+    10008,
     NULL,    
     3
     );
@@ -1007,7 +1007,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     10,
-    10011,
+    10009,
     NULL,    
     4
     );
@@ -1017,7 +1017,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     11,
-    10012,
+    10010,
     NULL,    
     4
     );
@@ -1027,7 +1027,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     12,
-    10013,
+    10011,
     NULL,    
     4
     );
@@ -1037,7 +1037,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     13,
-    10014,
+    10012,
     NULL,    
     5
     );
@@ -1047,7 +1047,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     14,
-    10015,
+    10013,
     NULL,    
     5
     );
@@ -1057,7 +1057,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     15,
-    10016,
+    10014,
     NULL,    
     5
     );
@@ -1067,7 +1067,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     16,
-    10017,
+    10015,
     NULL,    
     6
     );
@@ -1077,7 +1077,7 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     17,
-    10018,
+    10016,
     NULL,    
     6
     );
@@ -1087,10 +1087,11 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     VALUES
     (
     18,
-    10019,
+    10017,
     NULL,    
     6
     );
+
 
 INSERT INTO caj_Catalogo_Pintura_Tienda
     (nur,titulo,dimensionescm,estilo,ano,imagen,id_coleccionista,id_organizacion)

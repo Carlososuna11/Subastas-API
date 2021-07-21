@@ -124,7 +124,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
             validated_data['pintura']=catalogo
         #------------Catalogo_Moneda_Tienda
         else:
-            cursor.execute(mysql_moneda_query,(validated_data['id_moneda'],))
+            cursor.execute(mysql_moneda_query,(validated_data['nur_moneda'],))
             catalogo = None
             monedas = {}
             datos = cursor.fetchall()
@@ -217,10 +217,11 @@ class Orden_Lista_ObjetoSerializer(serializers.Serializer):
         return attrs
 
     def create(self,validated_data):
-        objetos = {}
+        objetos = []
         for i in validated_data['ordenes']:
+            print(i)
             obj = Lista_ObjetoSerializer(data=i)
             obj.is_valid(raise_exception=True)
-            obj.save()
-            objetos[obj.id] = obj.to_representation()
-        return objetos
+            objetos.append(obj.save())
+        ordenes = {'ordenes':objetos,'id_evento':validated_data['id_evento']}
+        return ordenes
