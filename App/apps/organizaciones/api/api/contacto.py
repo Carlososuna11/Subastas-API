@@ -115,7 +115,8 @@ class ContactoCreateAPIView(generics.CreateAPIView):
         if not token:
             if not(request.data.get('id_organizacion',None)):
                 return Response({'error':'Debe ingresar el token'},status=status.HTTP_400_BAD_REQUEST)
-        else:
+        print(token)
+        if token:
             try:
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
             except jwt.ExpiredSignatureError:
