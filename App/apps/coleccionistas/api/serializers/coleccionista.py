@@ -9,7 +9,7 @@ required_formats = ['%d-%m-%Y']
 class ColeccionistaSerializer(serializers.Serializer):
     dni = serializers.CharField(max_length=20)
     nombre = serializers.CharField(max_length=30)
-    segundoNombre = serializers.CharField(max_length=30,required=False,blank=True)
+    segundoNombre = serializers.CharField(max_length=30,required=False,allow_blank=True)
     apellido = serializers.CharField(max_length=30)
     segundoApellido = serializers.CharField(max_length=30)
     telefono = serializers.CharField(max_length=20)
