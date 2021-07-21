@@ -216,7 +216,12 @@ class Orden_Lista_ObjetoSerializer(serializers.Serializer):
             raise serializers.ValidationError("Existen órdenes con mismo orden, por favor tengalo en cuenta")
         return attrs
 
-    def create(self,validated_data):
+    @conectar
+    def create(self,validated_data,connection):
+        cursor = connection.cursor(dictionary=True)
+        mysql_delete_query = """DELETE * FROM caj_Lista_Objetos WHERE id_evento = %s"""
+        cursor.execute(mysql_delete_query,(validated_data['id_evento'],))
+        connection.commit()
         objetos = []
         for i in validated_data['ordenes']:
             print(i)

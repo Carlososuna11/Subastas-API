@@ -187,3 +187,42 @@ class Lista_Objeto:
         if 'participante' in kwargs:
             kwargs['participante'] = Participante.model(**kwargs['participante'])
         return cls(**kwargs)
+
+class Factura:
+    def __init__(self,id_evento:int,fechaEmision:int,total:float,fechaIngresoParticipante:int,
+    id_coleccionistaParticipante:int,id_organizacionParticipante:int,numeroFactura:int=None):
+        self.id_evento = id_evento
+        self.numeroFactura = numeroFactura
+        self.fechaEmision = fechaEmision
+        self.total = total
+        self.fechaIngresoParticipante = fechaIngresoParticipante
+        self.id_coleccionistaParticipante = id_coleccionistaParticipante
+        self.id_organizacionParticipante = id_organizacionParticipante
+
+    def normalize(self):
+        pass
+
+    def to_representation(self):
+        pass
+
+    @classmethod
+    def model(cls, **kwargs):
+        return cls(**kwargs)
+
+class DetFactura:
+    def __init__(self,id_evento:int,id_objeto:int,numeroFactura:int,precio:float,id:int=None):
+        self.id_evento = id_evento
+        self.id_objeto = id_objeto
+        self.numeroFactura = numeroFactura
+        self.precio = precio
+        self.id = id
+    
+    def normalize(self):
+        pass
+
+    def to_representation(self):
+        pass
+
+    @classmethod
+    def model(cls, **kwargs):
+        return cls(**kwargs)

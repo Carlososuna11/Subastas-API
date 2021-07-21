@@ -357,3 +357,27 @@ class CancelEventView(APIView):
             'sucess': 'Se cancelado el Evento'
         }
         return response
+
+class ComenzarEvento(APIView):
+
+    @conectar
+    def post(self,request,id,connection):
+        cursor = connection.cursor(dictionary=True)
+        mysql_query_get = """SELECT * FROM caj_eventos WHERE id = %s"""
+        cursor.execute(mysql_query_get,(id,))
+        evento = cursor.fetchone()
+        if evento is None:
+            raise ValidationError('El evento No existe')
+        # mysq_query_update = """UPDATE caj_eventos SET status = %s WHERE id=%s"""
+        # cursor.execute(mysq_query_update,('cancelado',id))
+        if evento['status']== 'cancelado':
+            raise ValidationError('El evento ya esta cancelado')
+        if evento['status']=='finalizado':
+            raise ValidationError('El evento ya esta finalizado')
+        mysql_lista_Objetos = """"""
+        connection.commit()
+        response = Response()
+        response.data = {
+            'sucess': 'Se cancelado el Evento'
+        }
+        return response
