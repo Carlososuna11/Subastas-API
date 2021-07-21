@@ -19,16 +19,16 @@ class EventoListAPIView(generics.ListAPIView):
     def get_queryset(self,connection):
         cursor = connection.cursor(dictionary=True)
         # print(self.request.COOKIES.get('TOKEN'))
-        token = self.request.META.get('HTTP_TOKEN')
+        token = self.request.META.get('HTTP_TOKEN',None)
         if not token:
-            token = self.request.COOKIES.get('TOKEN')
-        if not token:
-            raise AuthenticationFailed('No Autorizado')
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('No Autorizado!')
-        self.request.data['jwt'] = payload
+            token = self.request.COOKIES.get('TOKEN',None)
+        self.request.data['jwt']= None
+        if token:    
+            try:
+                payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+            except jwt.ExpiredSignatureError:
+                raise AuthenticationFailed('No Autorizado!')
+            self.request.data['jwt'] = payload
         # if payload['tipo'] != 'coleccionista':
         #     raise AuthenticationFailed('No Autorizado!')
         
@@ -105,13 +105,14 @@ class EventoListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         mysql_query_get = """SELECT * FROM caj_participantes WHERE id_coleccionista_cliente = %s AND id_evento = %s"""
         usuario = self.request.data['jwt']
-        if usuario['tipo'] == 'coleccionista':
-            for evento in response.data:
-                cursor.execute(mysql_query_get,(usuario['id'],evento['id']))
-                inscrito = False
-                if cursor.fetchone():
-                    inscrito = True
-                evento['inscrito'] = inscrito
+        if usuario:
+            if usuario['tipo'] == 'coleccionista':
+                for evento in response.data:
+                    cursor.execute(mysql_query_get,(usuario['id'],evento['id']))
+                    inscrito = False
+                    if cursor.fetchone():
+                        inscrito = True
+                    evento['inscrito'] = inscrito
         return super().finalize_response(request, response, *args, **kwargs)
 class EventoPorOrganizacionListAPIView(generics.ListAPIView):
     serializer_class = EventoSerializer
@@ -121,16 +122,16 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         #query = self.request.query_params.get('id_pais',None)
         # token = 
-        token = self.request.META.get('HTTP_TOKEN')
+        token = self.request.META.get('HTTP_TOKEN',None)
         if not token:
-            token = self.request.COOKIES.get('TOKEN')
-        if not token:
-            raise AuthenticationFailed('No Autorizado')
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('No Autorizado!')
-        self.request.data['jwt'] = payload
+            token = self.request.COOKIES.get('TOKEN',None)
+        self.request.data['jwt']= None
+        if token:    
+            try:
+                payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+            except jwt.ExpiredSignatureError:
+                raise AuthenticationFailed('No Autorizado!')
+            self.request.data['jwt'] = payload
         pais = ['id','nombre','nacionalidad']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
                         'paginaWeb','emailCorporativo','id_pais']
@@ -209,13 +210,14 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         mysql_query_get = """SELECT * FROM caj_participantes WHERE id_coleccionista_cliente = %s AND id_evento = %s"""
         usuario = self.request.data['jwt']
-        if usuario['tipo'] == 'coleccionista':
-            for evento in response.data:
-                cursor.execute(mysql_query_get,(usuario['id'],evento['id']))
-                inscrito = False
-                if cursor.fetchone():
-                    inscrito = True
-                evento['inscrito'] = inscrito
+        if usuario:
+            if usuario['tipo'] == 'coleccionista':
+                for evento in response.data:
+                    cursor.execute(mysql_query_get,(usuario['id'],evento['id']))
+                    inscrito = False
+                    if cursor.fetchone():
+                        inscrito = True
+                    evento['inscrito'] = inscrito
         return super().finalize_response(request, response, *args, **kwargs)
 class EventoCreateAPIView(generics.CreateAPIView):
     serializer_class = EventoSerializer
