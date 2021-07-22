@@ -12,4 +12,7 @@ urlpatterns = [
     path('evento/pujadinamica/<int:id>',PujaDinamica.as_view()),
     path('evento/pujasobrecerrado/<int:id>',PujaSobreCerrado.as_view()),
     path('evento/actualizar/',ActualizarStatus.as_view()),
+    path('evento/getbysubasta/<int:id>',getEventobySubasta.as_view()),
+    path('evento/getpujadinamica/<int:id>',GetPujasDinamicaView.as_view()),
+    path('evento/getpujasobrecerrado/<int:id>',GetPujasSobreCerradoView.as_view()),
 ]

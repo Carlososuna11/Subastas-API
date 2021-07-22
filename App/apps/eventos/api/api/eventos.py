@@ -703,9 +703,9 @@ class ActualizarStatus(APIView):
         }
         return response
 
-class GetPujasView(APIView):
+class GetPujasDinamicaView(APIView):
     @conectar
-    def get(self, request,connection):
+    def get(self, request,id,connection):
 # def validate(request,connection):
         cursor = connection.cursor(dictionary=True)
         token = request.META.get('HTTP_TOKEN',None)
@@ -722,12 +722,151 @@ class GetPujasView(APIView):
             mysql_query_get = """SELECT * from caj_coleccionistas WHERE id = %s"""
         elif payload['tipo']=='organizacion':
             mysql_query_get = """SELECT * from caj_organizaciones WHERE id = %s"""
-
         cursor.execute(mysql_query_get,(payload['id'],))
         usuario = cursor.fetchone()
-        if usuario:
-            return Response({'tipo':payload['tipo'],'user':usuario})
-        raise AuthenticationFailed('No existe El usuario')
+        data = {}
+        if payload['tipo'] == 'coleccionista':
+            mysql_query_get = """SELECT * from caj_Lista_Objetos WHERE id = %s"""
+            cursor.execute(mysql_query_get,(id,))
+            lista_objetos = cursor.fetchone()
+            mysql_query_get = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_evento) = (%s,%s)"""
+            cursor.execute(mysql_query_get,(usuario['id'],lista_objetos['id_evento']))
+            participante = cursor.fetchone()
+            data['participante'] = False
+            if participante:
+                data['participante']=True
+            mysql_query_get = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s"""
+            cursor.execute(mysql_query_get,(lista_objetos['id'],))
+            subastaActiva = cursor.fetchone()
+            mysql_query_get = """SELECT caj_Logs_Subastas_Activas.precio,caj_Logs_Subastas_Activas.hora,
+            caj_coleccionistas.nombre,caj_coleccionistas.apellido
+            FROM caj_Logs_Subastas_Activas INNER JOIN caj_coleccionistas ON 
+            caj_coleccionistas.id = caj_Logs_Subastas_Activas.id_coleccionista
+            WHERE caj_Logs_Subastas_Activas.id_subasta_activa = %s"""
+            cursor.execute(mysql_query_get,(subastaActiva['id'],))
+            logs = cursor.fetchall()
+            data['hora_inicio'] = subastaActiva['hora_inicio']
+            data['hora_fin'] = subastaActiva['hora_fin']
+            data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
+            data['logs'] = logs
+            data['ask'] = lista_objetos['ask']
+            data['bid'] = lista_objetos['bid']
+            data['precio'] = lista_objetos['precioAlcanzado']
+            return Response(data)
+        mysql_query_get = """SELECT * from caj_Lista_Objetos WHERE id = %s"""
+        cursor.execute(mysql_query_get,(id,))
+        lista_objetos = cursor.fetchone()
+        mysql_query_get = """SELECT * FROM caj_planificadores WHERE (id_organizacion,id_evento) = (%s,%s)"""
+        cursor.execute(mysql_query_get,(usuario['id'],lista_objetos['id_evento']))
+        participante = cursor.fetchone()
+        data['planificador'] = False
+        if participante:
+            data['planificador']=True
+        mysql_query_get = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s"""
+        cursor.execute(mysql_query_get,(lista_objetos['id'],))
+        subastaActiva = cursor.fetchone()
+        mysql_query_get = """SELECT caj_Logs_Subastas_Activas.precio,caj_Logs_Subastas_Activas.hora,
+        caj_coleccionistas.nombre,caj_coleccionistas.apellido
+        FROM caj_Logs_Subastas_Activas INNER JOIN caj_coleccionistas ON 
+        caj_coleccionistas.id = caj_Logs_Subastas_Activas.id_coleccionista
+        WHERE caj_Logs_Subastas_Activas.id_subasta_activa = %s"""
+        cursor.execute(mysql_query_get,(subastaActiva['id'],))
+        logs = cursor.fetchall()
+        data['hora_inicio'] = subastaActiva['hora_inicio']
+        data['hora_fin'] = subastaActiva['hora_fin']
+        data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
+        data['logs'] = logs
+        data['ask'] = lista_objetos['ask']
+        data['bid'] = lista_objetos['bid']
+        data['precio'] = lista_objetos['precioAlcanzado']
+        return Response(data)
+
+class getEventobySubasta(APIView):
+
+    @conectar
+    def get(self, request,id,connection):
+        cursor = connection.cursor(dictionary=True)
+        mysql_get_evento = """SELECT * FROM caj_Lista_Objetos WHERE id = %s"""
+        cursor.execute(mysql_get_evento,(id,))
+        lista_objetos = cursor.fetchone()
+        mysql_get_evento = """SELECT * FROM caj_eventos WHERE id =%s """
+        cursor.execute(mysql_get_evento,(lista_objetos['id_evento'],))
+        evento = cursor.fetchone()
+        data = {'evento':evento}
+        return Response(data)
+class GetPujasSobreCerradoView(APIView):
+    @conectar
+    def get(self, request,id,connection):
+# def validate(request,connection):
+        cursor = connection.cursor(dictionary=True)
+        token = request.META.get('HTTP_TOKEN',None)
+        if not token:
+            token = request.COOKIES.get('TOKEN')
+        if not token:
+            raise AuthenticationFailed('No Autorizado')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('No Autorizado!')
+        mysql_query_get = ""
+        if payload['tipo'] == 'coleccionista':
+            mysql_query_get = """SELECT * from caj_coleccionistas WHERE id = %s"""
+        elif payload['tipo']=='organizacion':
+            mysql_query_get = """SELECT * from caj_organizaciones WHERE id = %s"""
+        cursor.execute(mysql_query_get,(payload['id'],))
+        usuario = cursor.fetchone()
+        data = {}
+        if payload['tipo'] == 'coleccionista':
+            mysql_query_get = """SELECT * from caj_Lista_Objetos WHERE id = %s"""
+            cursor.execute(mysql_query_get,(id,))
+            lista_objetos = cursor.fetchone()
+            mysql_query_get = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_evento) = (%s,%s)"""
+            cursor.execute(mysql_query_get,(usuario['id'],lista_objetos['id_evento']))
+            participante = cursor.fetchone()
+            data['participante'] = False
+            if participante:
+                data['participante']=True
+            mysql_query_get = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s"""
+            cursor.execute(mysql_query_get,(lista_objetos['id'],))
+            subastaActiva = cursor.fetchone()
+            mysql_query_get = """SELECT * FROM caj_Logs_Subastas_Activas WHERE (id_subasta_activa,id_coleccionista) = (%s,%s)"""
+            cursor.execute(mysql_query_get,(subastaActiva['id'],usuario['id']))
+            puja = cursor.fetchone()
+            data['hora_inicio'] = subastaActiva['hora_inicio']
+            data['hora_fin'] = subastaActiva['hora_fin']
+            data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
+            data['pujo'] = False
+            if puja:
+                data['pujo']=True
+                data['pujo_precio'] = puja['precio']
+            return Response(data)
+        mysql_query_get = """SELECT * from caj_Lista_Objetos WHERE id = %s"""
+        cursor.execute(mysql_query_get,(id,))
+        lista_objetos = cursor.fetchone()
+        mysql_query_get = """SELECT * FROM caj_planificadores WHERE (id_organizacion,id_evento) = (%s,%s)"""
+        cursor.execute(mysql_query_get,(usuario['id'],lista_objetos['id_evento']))
+        participante = cursor.fetchone()
+        data['planificador'] = False
+        if participante:
+            data['planificador']=True
+        mysql_query_get = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s"""
+        cursor.execute(mysql_query_get,(lista_objetos['id'],))
+        subastaActiva = cursor.fetchone()
+        mysql_query_get = """SELECT caj_Logs_Subastas_Activas.precio,caj_Logs_Subastas_Activas.hora,
+        caj_coleccionistas.nombre,caj_coleccionistas.apellido
+        FROM caj_Logs_Subastas_Activas INNER JOIN caj_coleccionistas ON 
+        caj_coleccionistas.id = caj_Logs_Subastas_Activas.id_coleccionista
+        WHERE caj_Logs_Subastas_Activas.id_subasta_activa = %s"""
+        cursor.execute(mysql_query_get,(subastaActiva['id'],))
+        logs = cursor.fetchall()
+        data['hora_inicio'] = subastaActiva['hora_inicio']
+        data['hora_fin'] = subastaActiva['hora_fin']
+        data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
+        data['logs'] = logs
+        data['ask'] = lista_objetos['ask']
+        data['bid'] = lista_objetos['bid']
+        data['precio'] = lista_objetos['precioAlcanzado']
+        return Response(data)
 # class TerminarSubasta(APIView):
 
 #     @conectar
