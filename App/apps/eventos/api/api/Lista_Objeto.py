@@ -141,7 +141,8 @@ class Lista_ObjetoListAPIView(generics.ListAPIView):
                 mysql_query = """SELECT * FROM caj_facturas WHERE (id_coleccionistaParticipante,id_organizacionParticipante,id_evento) = (%s,%s,%s)"""
                 cursor.execute(mysql_query, (objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante'],objeto['id_eventoParticipante']))
                 factura = cursor.fetchone()
-                objeto['factura'] = factura['numeroFactura']
+                if factura:
+                    objeto['factura'] = factura['numeroFactura']
             if objeto['nur_moneda']:
                 objeto['objeto'] = 'moneda'
             else:
@@ -288,7 +289,8 @@ class Lista_Objeto_Por_Evento_ListAPIView(generics.ListAPIView):
                 cursor.execute(mysql_query, (objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante'],objeto['id_eventoParticipante']))
                 print(objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante'],objeto['id_eventoParticipante'])
                 factura = cursor.fetchone()
-                objeto['factura'] = factura['numeroFactura']
+                if factura:
+                    objeto['factura'] = factura['numeroFactura']
             if objeto['nur_moneda']:
                 objeto['objeto'] = 'moneda'
             else:

@@ -9,13 +9,15 @@ class Lista_ObjetoSerializer(serializers.Serializer):
     precio = serializers.DecimalField(13,2,min_value=1)
     porcentajeGananciaMin = serializers.DecimalField(8,2,min_value=0)
     id_evento = serializers.IntegerField()
-    nur_moneda = serializers.IntegerField(required=False)
-    id_pintura = serializers.IntegerField(required=False)
+    nur_moneda = serializers.IntegerField(required=False,allow_null=True)
+    id_pintura = serializers.IntegerField(required=False,allow_null=True)
     orden = serializers.IntegerField()
     duracionmin = serializers.IntegerField()
 
     @conectar
     def validate_nur_moneda(self,nur_moneda,connection):
+        if nur_moneda == None:
+            return nur_moneda
         cursor = connection.cursor()
         mysql_query = """SELECT * FROM caj_Catalogo_Moneda_Tienda WHERE nur= %s"""
         cursor.execute(mysql_query,(nur_moneda,))
@@ -25,6 +27,8 @@ class Lista_ObjetoSerializer(serializers.Serializer):
   
     @conectar
     def validate_id_pintura(self,id_pintura,connection):
+        if id_pintura == None:
+            return id_pintura
         cursor = connection.cursor()
         mysql_query = """SELECT * FROM caj_Catalogo_Pintura_Tienda WHERE nur= %s"""
         cursor.execute(mysql_query,(id_pintura,))
@@ -54,7 +58,7 @@ class Lista_ObjetoSerializer(serializers.Serializer):
                     cursor.execute(mysql_query_objeto,(objeto['id'],objeto['id_evento']))
                     objetox = cursor.fetchone()
                     tiempo = datetime.datetime.now()
-                    if objetox['fecha_fin'] < tiempo:
+                    if objetox['hora_fin'] < tiempo:
                         continue
                     else:
                         if objeto['razonNoVenta'] != None:
@@ -224,7 +228,12 @@ class Orden_Lista_ObjetoSerializer(serializers.Serializer):
     def validate_ordenes(self, ordenes):
         ids = []
         for objeto in ordenes:
-            print(objeto)
+            if objeto.get('nur_moneda',None):
+                ids.append(objeto.get('nur_moneda'))
+            else:
+                ids.append(objeto.get('id_pintura'))
+        if len(set(ids)) != len(ordenes):
+            raise serializers.ValidationError("No se pueden agregar objetos con mismo nur")
         for objeto in ordenes:
             obj = Lista_ObjetoSerializer(data=objeto)
             obj.is_valid(raise_exception=True)
@@ -255,7 +264,7 @@ class Orden_Lista_ObjetoSerializer(serializers.Serializer):
         connection.commit()
         objetos = []
         for i in validated_data['ordenes']:
-            print(i)
+            #print(i)
             obj = Lista_ObjetoSerializer(data=i)
             obj.is_valid(raise_exception=True)
             objetos.append(obj.save())

@@ -779,7 +779,7 @@ class GetPujasDinamicaView(APIView):
             data['hora_inicio'] = subastaActiva['hora_inicio']
             data['hora_fin'] = subastaActiva['hora_fin']
             data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
-            data['comenzo'] = subastaActiva['hora_inicio'] > datetime.datetime.now() 
+            data['comenzo'] = subastaActiva['hora_inicio'] < datetime.datetime.now() 
             data['logs'] = logs
             data['ask'] = lista_objetos['ask']
             data['bid'] = lista_objetos['bid']
@@ -807,7 +807,7 @@ class GetPujasDinamicaView(APIView):
         data['hora_inicio'] = subastaActiva['hora_inicio']
         data['hora_fin'] = subastaActiva['hora_fin']
         data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
-        data['comenzo'] = subastaActiva['hora_inicio'] > datetime.datetime.now() 
+        data['comenzo'] = subastaActiva['hora_inicio'] < datetime.datetime.now() 
         data['logs'] = logs
         data['ask'] = lista_objetos['ask']
         data['bid'] = lista_objetos['bid']
@@ -869,7 +869,7 @@ class GetPujasSobreCerradoView(APIView):
             puja = cursor.fetchone()
             data['hora_inicio'] = subastaActiva['hora_inicio']
             data['hora_fin'] = subastaActiva['hora_fin']
-            data['comenzo'] = subastaActiva['hora_inicio'] > datetime.datetime.now() 
+            data['comenzo'] = subastaActiva['hora_inicio'] < datetime.datetime.now() 
             data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
             data['pujo'] = False
             if puja:
@@ -897,7 +897,7 @@ class GetPujasSobreCerradoView(APIView):
         logs = cursor.fetchall()
         data['hora_inicio'] = subastaActiva['hora_inicio']
         data['hora_fin'] = subastaActiva['hora_fin']
-        data['comenzo'] = subastaActiva['hora_inicio'] > datetime.datetime.now() 
+        data['comenzo'] = subastaActiva['hora_inicio'] < datetime.datetime.now() 
         data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
         data['logs'] = logs
         data['ask'] = lista_objetos['ask']
