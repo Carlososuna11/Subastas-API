@@ -11,7 +11,7 @@ from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
-
+import json
 class EventoListAPIView(generics.ListAPIView):
     serializer_class = EventoSerializer
 
@@ -19,7 +19,7 @@ class EventoListAPIView(generics.ListAPIView):
     def get_queryset(self,connection):
         cursor = connection.cursor(dictionary=True)
         # print(self.request.COOKIES.get('TOKEN'))
-        token = self.request.META.get('HTTP_TOKEN',None)
+        token = json.loads(self.request.META.get('HTTP_TOKEN',None))
         
         if not token:
             token = self.request.COOKIES.get('TOKEN',None)
