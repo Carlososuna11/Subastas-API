@@ -1633,7 +1633,7 @@ INSERT INTO caj_coleccionistas
         'Osuna',
         'Piñero',
         '+58 4267343349',
-        'carlosalvaroosuna1@gmail.com',
+        'carlosalvaroosuna1@yopmail.com',
         '1993-09-07',
         69,
         69
@@ -1687,7 +1687,7 @@ INSERT INTO caj_coleccionistas
         'mitchell',
         'cisneros',
         '+58 4267343353',
-        'bratik121@gmail.com',
+        'bratik121@yopmail.com',
         '1993-01-03',
         69,
         69
@@ -1704,7 +1704,7 @@ INSERT INTO caj_coleccionistas
         'gonzalez',
         'salazar',
         '+58 4262016960',
-        'alfredosantiago2014@gmail.com',
+        'alfredosantiago2014@yopmail.com',
         '1993-01-03',
         69,
         69
@@ -1721,7 +1721,7 @@ INSERT INTO caj_coleccionistas
         'di pietro',
         'zambrano',
         '+58 4262016360',
-        'dijose29@gmail.com',
+        'dijose29@yopmail.com',
         '1993-01-03',
         69,
         69
@@ -1738,7 +1738,7 @@ INSERT INTO caj_coleccionistas
         'sanchéz',
         'de acebay',
         '+58 4264518652',
-        'tomassanchezacebey@gmail.com',
+        'tomassanchezacebey@yopmail.com',
         '1993-01-03',
         69,
         69
@@ -1755,7 +1755,7 @@ INSERT INTO caj_coleccionistas
         'arriaga',
         'ruiz',
         '+58 4264563',
-        'arriaga1410@gmail.com',
+        'arriaga1410@yopmail.com',
         '1993-01-03',
         69,
         69
