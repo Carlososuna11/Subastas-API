@@ -19,8 +19,8 @@ class EventoListAPIView(generics.ListAPIView):
     def get_queryset(self,connection):
         cursor = connection.cursor(dictionary=True)
         # print(self.request.COOKIES.get('TOKEN'))
-        token = json.loads(self.request.META.get('HTTP_TOKEN',None))
-        
+        token = self.request.META.get('HTTP_TOKEN',None)
+        print(type(token))
         if not token:
             token = self.request.COOKIES.get('TOKEN',None)
         self.request.data['jwt']= None
@@ -275,7 +275,7 @@ class EventoCreateAPIView(generics.CreateAPIView):
     serializer_class = EventoSerializer
 
     def post(self, request, *args, **kwargs):
-        token = request.META.get('HTTP_TOKEN')
+        token = request.META.get('HTTP_TOKEN',None)
         if not token:
             token = request.COOKIES.get('TOKEN')
         if not token:
@@ -502,7 +502,7 @@ class PujaDinamica(APIView):
     def post(self,request,id,connection):
         cursor = connection.cursor(dictionary=True)
         precio = request.data['precio']
-        token = request.META.get('HTTP_TOKEN')
+        token =request.META.get('HTTP_TOKEN',None)
         if not token:
             token = request.COOKIES.get('TOKEN')
         if not token:
