@@ -133,7 +133,7 @@ class EventoListAPIView(generics.ListAPIView):
                     evento['planificador'] = inscrito
                     evento['esHoy'] = False
                     evento['planificador'] = inscrito
-                    if evento['fecha'] == datetime.date.today():
+                    if evento['fecha'] == datetime.date.today().strftime('%d-%m-%Y'):
                         evento['esHoy'] = True
         return super().finalize_response(request, response, *args, **kwargs)
 class EventoPorOrganizacionListAPIView(generics.ListAPIView):
@@ -261,7 +261,7 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
                     evento['esHoy'] = False
                     evento['planificador'] = inscrito
                     print(evento['fecha'])
-                    if evento['fecha'] == datetime.date.today():
+                    if evento['fecha'] == datetime.date.today().strftime('%d-%m-%Y'):
                         evento['esHoy'] = True
         return super().finalize_response(request, response, *args, **kwargs)
 class EventoCreateAPIView(generics.CreateAPIView):
