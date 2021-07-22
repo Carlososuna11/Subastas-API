@@ -638,6 +638,9 @@ class ActualizarStatus(APIView):
                         mysql_query_get_lista = """SELECT * FROM caj_Lista_Objetos WHERE id = %s"""
                         cursor.execute(mysql_query_get_lista,(subastaActiva['id_objeto'],))
                         objeto = cursor.fetchone()
+                        objeto['precioAlcanzado'] = float(objeto['precioAlcanzado'])
+                        objeto['bid'] = float(objeto['bid'])
+                        objeto['ask'] = float(objeto['ask'])
                         if objeto['precioAlcanzado'] < objeto['ask']:
                             mysql_query_update = """UPDATE caj_Lista_Objetos SET razonNoVenta = %s WHERE id = %s"""
                             cursor.execute(mysql_query_update,('inferior al ask',objeto['id']))
