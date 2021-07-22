@@ -133,9 +133,15 @@ class Lista_ObjetoListAPIView(generics.ListAPIView):
 
     @conectar
     def finalize_response(self, request, response,connection, *args, **kwargs):
-        # cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(dictionary=True)
         # mysql_get_ask_objeto = """SELECT ask FROM caj_Lista_Objetos WHERE ()"""
         for objeto in response.data:
+            objeto['factura'] = None
+            if objeto['id_coleccionistaParticipante']:
+                mysql_query = """SELECT * FROM caj_facturas WHERE (id_coleccionistaParticipante,id_organizacionParticipante,id_evento) = (%s,%s,%s)"""
+                cursor.execute(mysql_query, (objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante'],objeto['id_eventoParticipante']))
+                factura = cursor.fetchone()
+                objeto['factura'] = factura['numeroFactura']
             if objeto['nur_moneda']:
                 objeto['objeto'] = 'moneda'
             else:
@@ -272,15 +278,24 @@ class Lista_Objeto_Por_Evento_ListAPIView(generics.ListAPIView):
 
     @conectar
     def finalize_response(self, request, response,connection, *args, **kwargs):
-        # cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(dictionary=True)
         # mysql_get_ask_objeto = """SELECT ask FROM caj_Lista_Objetos WHERE ()"""
         for objeto in response.data:
+            objeto['factura'] = None
+            if objeto['id_coleccionistaParticipante']:
+                mysql_query = """SELECT * FROM caj_facturas WHERE (id_coleccionistaParticipante,id_organizacionParticipante,id_evento) = (%s,%s,%s)"""
+                cursor.execute(mysql_query, (objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante'],objeto['id_eventoParticipante']))
+                factura = cursor.fetchone()
+                objeto['factura'] = factura['numeroFactura']
             if objeto['nur_moneda']:
                 objeto['objeto'] = 'moneda'
             else:
                 objeto['objeto'] = 'pintura'
-            objeto['precio'] = f"{float(objeto['ask'])/(1+float(objeto['porcentajeGananciaMin'])/100):.2f}"
+            objeto['precio'] =  f"{float(objeto['ask'])/(1+float(objeto['porcentajeGananciaMin'])/100):.2f}" 
+
         return super().finalize_response(request, response, *args, **kwargs)
+
+
 
 class Lista_ObjetoCreateAPIView(generics.CreateAPIView):
     serializer_class = Orden_Lista_ObjetoSerializer

@@ -15,4 +15,5 @@ urlpatterns = [
     path('evento/getbysubasta/<int:id>',getEventobySubasta.as_view()),
     path('evento/getpujadinamica/<int:id>',GetPujasDinamicaView.as_view()),
     path('evento/getpujasobrecerrado/<int:id>',GetPujasSobreCerradoView.as_view()),
+    path('evento/facturas/<int:id>',GETFacturaView.as_view()),
 ]

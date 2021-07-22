@@ -508,7 +508,7 @@ class PujaDinamica(APIView):
     #necesito el token
     def post(self,request,id,connection):
         cursor = connection.cursor(dictionary=True)
-        precio = request.data['precio']
+        precio = float(request.data['precio'])
         token =request.META.get('HTTP_TOKEN',None)
         if token == 'false':
             token = None
@@ -568,7 +568,7 @@ class PujaSobreCerrado(APIView):
     #necesito el token
     def post(self,request,id,connection):
         cursor = connection.cursor(dictionary=True)
-        precio = request.data['precio']
+        precio = float(request.data['precio'])
         token = request.META.get('HTTP_TOKEN')
         if token == 'false':
             token = None
@@ -884,6 +884,48 @@ class GetPujasSobreCerradoView(APIView):
         data['bid'] = lista_objetos['bid']
         data['precio'] = lista_objetos['precioAlcanzado']
         return Response(data)
+
+
+class GETFacturaView(APIView):
+    @conectar
+    def get(self, request,id,connection):
+# def validate(request,connection):
+        cursor = connection.cursor(dictionary=True)
+        mysql_query_get = """SELECT * from caj_facturas WHERE numeroFactura = %s"""
+        cursor.execute(mysql_query_get,(id,))
+        factura = cursor.fetchone()
+        mysql_query_get_det_factura = """SELECT * FROM caj_detFacturas WHERE numeroFactura = %s"""
+        cursor.execute(mysql_query_get_det_factura,(id,))
+        det_factura = cursor.fetchall()
+        data = {'factura':factura}
+        mysql_query_get_id_objeto = """SELECT * FROM caj_Lista_Objetos WHERE id = %s"""
+        mysql_query_get_moneda = """SELECT * FROM caj_Catalogo_Moneda_Tienda WHERE nur = %s"""
+        mysql_query_get_moneda_obk = """SELECT * FROM caj_Catalogo_Moneda_Tienda WHERE id = %s"""
+        mysql_query_get_moneda = """SELECT * FROM caj_Catalogo_Pintura_Tienda WHERE nur = %s"""
+        detallelista = []
+        for detalle in det_factura:
+            det = {'detalle':detalle}
+            cursor.execute(mysql_query_get_id_objeto,(detalle['id_objeto'],))
+            objeto = cursor.fetchone()
+            if objeto['nur_moneda']:
+                det['objeto'] = 'moneda'
+                cursor.execute(mysql_query_get_moneda,(objeto['nur_moneda'],))
+                catMoneda = cursor.fetchone()
+                cursor.execute(mysql_query_get_moneda_obk,(catMoneda['id_moneda'],))
+                moneda = cursor.fetchone()
+                det['moneda'] = {'catalogo':catMoneda,'moneda':moneda}
+            else:
+                det['objeto'] = 'pintura'
+                cursor.execute(mysql_query_get_moneda,(objeto['id_pintura'],))
+                catPintura = cursor.fetchone()
+                det['pintura'] = {'catalogo':catPintura}
+            detallelista.append(det)
+        data['detalle'] = detallelista
+        return Response(data)
+        # if usuario:
+        #     return Response({'tipo':payload['tipo'],'user':usuario})
+        # raise AuthenticationFailed('No existe El usuario')
+
 # class TerminarSubasta(APIView):
 
 #     @conectar
