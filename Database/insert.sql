@@ -1938,6 +1938,8 @@ INSERT INTO caj_facturas
     VALUES
     ('2021-07-18',500,'2021-07-18',1,1,3);
 
+
+
 INSERT INTO caj_Lista_Objetos
     (id_evento,id_eventoParticipante,
     id_pintura,nur_moneda,id_moneda,
@@ -1960,3 +1962,8 @@ INSERT INTO caj_Lista_Objetos
     '2021-07-18',
     1,
     1);
+
+INSERT INTO caj_detFacturas
+    (id_evento,id_objeto,numeroFactura,precio)
+    VALUES
+    (3,1,1,500);

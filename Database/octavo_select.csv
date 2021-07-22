@@ -1,0 +1,9 @@
+id,dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,fechaNacimiento,id_pais_nacio,id_pais_reside
+1,2972315,Carlos,Alvaro,Osuna,Piñero,"+58 4267343349",carlosalvaroosuna1@gmail.com,1993-09-07,69,69
+2,30322538,Yuliana,Andrea,Osuna,Piñero,"+58 4267343348",yulianaosuna@yopmail.com,1993-11-03,69,69
+3,7272541,Andrés,Eduardo,Osuna,Sanabria,"+58 4267343342",candresosuna@yopmail.com,1968-01-03,69,69
+4,27671182,bryant,mckale,mitchell,cisneros,"+58 4267343353",bratik121@gmail.com,1993-01-03,69,69
+5,28303703,alfredo,santiago,gonzalez,salazar,"+58 4262016960",alfredosantiago2014@gmail.com,1993-01-03,69,69
+6,29698518,jose,antonio,"di pietro",zambrano,"+58 4262016360",dijose29@gmail.com,1993-01-03,69,69
+7,7852645,tomás,"de jesus",sanchéz,"de acebay","+58 4264518652",tomassanchezacebey@gmail.com,1993-01-03,69,69
+8,7452522,carlos,josé,arriaga,ruiz,"+58 4264563",arriaga1410@gmail.com,1993-01-03,69,69
