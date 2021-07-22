@@ -974,7 +974,7 @@ INSERT INTO caj_contactos
     NULL,
     'gonzalez',
     'ruiz',
-    '+58 424789561',
+    '+58 424789234',
     'filomena@gmai.com',
     'relaciones'
     );
@@ -1607,8 +1607,8 @@ INSERT INTO caj_Catalogo_Pintura_Tienda
         'expresionismo abstracto',
         1948,
         NULL,
-        1,
-        NULL
+        NULL,
+        1
     );
      
 
@@ -1638,6 +1638,9 @@ INSERT INTO caj_coleccionistas
         69,
         69
     );
+
+UPDATE caj_Catalogo_Pintura_Tienda SET id_coleccionista = 1, id_organizacion = NULL 
+WHERE nur = 10037;
 
 INSERT INTO caj_coleccionistas 
     (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
@@ -1717,7 +1720,7 @@ INSERT INTO caj_coleccionistas
         'antonio',
         'di pietro',
         'zambrano',
-        '+58 4262016960',
+        '+58 4262016360',
         'dijose29@gmail.com',
         '1993-01-03',
         69,
@@ -1852,11 +1855,12 @@ INSERT INTO caj_eventos
     (inscripcionCliente,inscripcionClienteNuevo,fecha,
     status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
     VALUES
-    (150,
+    (
+    150,
     250,
     '2021-07-29',
     'pendiente',
-    'virtual'
+    'virtual',
     'ascendente',
     5,
     'ucab',
@@ -1875,7 +1879,7 @@ INSERT INTO caj_eventos
     700,
     '2021-07-25',
     'pendiente',
-    'prensecial'
+    'presencial',
     'sobre cerrado',
     6,
     'Torre el silecio',
@@ -1889,7 +1893,7 @@ INSERT INTO caj_eventos
     700,
     '2021-07-18',
     'realizado',
-    'prensecial'
+    'presencial',
     'sobre cerrado',
     6,
     'Torre el silecio',
@@ -1898,41 +1902,41 @@ INSERT INTO caj_eventos
 INSERT INTO caj_planificadores
     (id_evento,id_organizacion)
     VALUES
-    (1,1);
+    (2,1);
 
 INSERT INTO caj_planificadores
     (id_evento,id_organizacion)
     VALUES
-    (2,1);
+    (3,1);
 
 INSERT INTO caj_participantes
     (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
     id_organizacion_cliente,id_pais)
     VALUES
-    (1,'2021-07-18',1,1,69)
+    (1,'2021-07-18',1,1,69);
 
 INSERT INTO caj_participantes
     (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
     id_organizacion_cliente,id_pais)
     VALUES
-    (2,'2021-07-18',1,1,69)
+    (2,'2021-07-18',1,1,69);
 
 INSERT INTO caj_participantes
     (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
     id_organizacion_cliente,id_pais)
     VALUES
-    (3,'2021-07-18',1,1,69)
+    (3,'2021-07-18',1,1,69);
 
 INSERT INTO caj_costoEnvios 
     (id_evento,costoExtra,id_pais)
     VALUES
-    (1,100,69)
+    (1,100,69);
 
 INSERT INTO caj_facturas
     (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
     id_organizacionParticipante,id_evento)
     VALUES
-    ('2021-07-18',500,'2021-07-18',1,1,3)
+    ('2021-07-18',500,'2021-07-18',1,1,3);
 
 INSERT INTO caj_Lista_Objetos
     (id_evento,id_eventoParticipante,
@@ -1949,6 +1953,7 @@ INSERT INTO caj_Lista_Objetos
     50,
     500,
     200,
+    500,
     1,
     40,
     NULL,
