@@ -540,7 +540,7 @@ class PujaDinamica(APIView):
             else:
                 mysql_cantidad_get = """SELECT * FROM caj_Logs_Subastas_Activas WHERE id_subasta_activa = %s"""
                 cursor.execute(mysql_cantidad_get,(subastaActiva['id'],))
-                precios = [i['precio'] for i in cursor.fetchall()] 
+                precios = [float(i['precio']) for i in cursor.fetchall()] 
                 mysql_query_update_precio = """UPDATE caj_Lista_Objetos SET precioAlcanzado = %s WHERE id=%s"""
                 cursor.execute(mysql_query_update_precio,(precio,id))
                 mysql_query_update = """UPDATE caj_Lista_Objetos SET bid = %s WHERE id=%s"""
@@ -603,7 +603,7 @@ class PujaSobreCerrado(APIView):
                     cursor.execute(mysql_query_update,(precio,id))
                 mysql_cantidad_get = """SELECT * FROM caj_Logs_Subastas_Activas WHERE id_subasta_activa = %s"""
                 cursor.execute(mysql_cantidad_get,(subastaActiva['id'],))
-                precios = [i['precio'] for i in cursor.fetchall()] 
+                precios = [float(i['precio']) for i in cursor.fetchall()] 
                 mysql_query_update = """UPDATE caj_Lista_Objetos SET bid = %s WHERE id=%s"""
                 cursor.execute(mysql_query_update,((sum(precios)+precio)/(len(precios)+1),id))
                 mysql_insert_log = """INSERT INTO caj_Logs_Subastas_Activas (id_subasta_activa,id_coleccionista,precio,hora) VALUES (%s,%s,%s,%s)"""
