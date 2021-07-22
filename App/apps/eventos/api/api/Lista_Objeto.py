@@ -140,8 +140,7 @@ class Lista_ObjetoListAPIView(generics.ListAPIView):
                 objeto['objeto'] = 'moneda'
             else:
                 objeto['objeto'] = 'pintura'
-            print(objeto)
-            objeto['precio'] = objeto['ask']/(1+objeto['porcentajeGananciaMin']/100) 
+            objeto['precio'] = float(objeto['ask'])/(1+float(objeto['porcentajeGananciaMin'])/100) 
 
         return super().finalize_response(request, response, *args, **kwargs)
     
@@ -280,7 +279,7 @@ class Lista_Objeto_Por_Evento_ListAPIView(generics.ListAPIView):
                 objeto['objeto'] = 'moneda'
             else:
                 objeto['objeto'] = 'pintura'
-            objeto['precio'] = objeto['ask']/(1+objeto['porcentajeGananciaMin']/100) 
+            objeto['precio'] = float(objeto['ask'])/(1+float(objeto['porcentajeGananciaMin'])/100) 
         return super().finalize_response(request, response, *args, **kwargs)
 
 class Lista_ObjetoCreateAPIView(generics.CreateAPIView):
