@@ -131,6 +131,10 @@ class EventoListAPIView(generics.ListAPIView):
                     if cursor.fetchone():
                         inscrito = True
                     evento['planificador'] = inscrito
+                    evento['esHoy'] = False
+                    evento['planificador'] = inscrito
+                    if evento['fecha'] == datetime.now().date():
+                        evento['esHoy'] = True
         return super().finalize_response(request, response, *args, **kwargs)
 class EventoPorOrganizacionListAPIView(generics.ListAPIView):
     serializer_class = EventoSerializer
@@ -254,7 +258,10 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
                     inscrito = False
                     if cursor.fetchone():
                         inscrito = True
+                    evento['esHoy'] = False
                     evento['planificador'] = inscrito
+                    if evento['fecha'] == datetime.now().date():
+                        evento['esHoy'] = True
         return super().finalize_response(request, response, *args, **kwargs)
 class EventoCreateAPIView(generics.CreateAPIView):
     serializer_class = EventoSerializer
