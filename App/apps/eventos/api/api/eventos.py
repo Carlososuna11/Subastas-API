@@ -40,7 +40,7 @@ class EventoListAPIView(generics.ListAPIView):
                     if i['status'] == 'pendiente':
                         i['status'] = 'cancelado'
                         mysql_update_evento = """UPDATE caj_eventos SET status = 'cancelado' WHERE id = %s"""
-                        cursor.execute(mysql_update_evento,(i['id']))
+                        cursor.execute(mysql_update_evento,(i['id'],))
             connection.commit()
         #query = self.request.query_params.get('id_pais',None)
         pais = ['id','nombre','nacionalidad']
@@ -159,7 +159,7 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
                     if i['status'] == 'pendiente':
                         i['status'] = 'cancelado'
                         mysql_update_evento = """UPDATE caj_eventos SET status = 'cancelado' WHERE id = %s"""
-                        cursor.execute(mysql_update_evento,(i['id']))
+                        cursor.execute(mysql_update_evento,(i['id'],))
             connection.commit()
         pais = ['id','nombre','nacionalidad']
         organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
