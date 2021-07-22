@@ -644,6 +644,7 @@ class ActualizarStatus(APIView):
                         if objeto['precioAlcanzado'] < objeto['ask']:
                             mysql_query_update = """UPDATE caj_Lista_Objetos SET razonNoVenta = %s WHERE id = %s"""
                             cursor.execute(mysql_query_update,('inferior al ask',objeto['id']))
+                            connection.commit()
                             continue
                         logs = sorted(logs, key=lambda x: (-x['precio'], x['hora']))[0]
                         # mysql_get_organizacion = """SELECT * FROM caj_Lista_O WHERE id = %s""")
@@ -662,9 +663,11 @@ class ActualizarStatus(APIView):
                         mysql_update_objeto = """UPDATE caj_Lista_Objetos SET id_eventoParticipante= %s,fechaIngresoParticipante=%s,
                         id_coleccionistaParticipante=%s,id_organizacionParticipante=%s WHERE id = %s"""
                         cursor.execute(mysql_update_objeto,(participante['id_evento'],participante['fechaIngresoCliente'],participante['id_coleccionista_cliente'],organizacion,objeto['id']))
+                        connection.commit()
                     else:
                         mysql_query_update = """UPDATE caj_Lista_Objetos SET razonNoVenta = %s WHERE id = %s"""
                         cursor.execute(mysql_query_update,('sin ofertas',subastaActiva['id_objeto']))
+                        connection.commit()
                     mysql_query_update = """UPDATE caj_Subastas_Activas SET cierre = %s WHERE id = %s"""
                     cursor.execute(mysql_query_update,(True,subastaActiva['id']))
                 connection.commit()
@@ -688,7 +691,7 @@ class ActualizarStatus(APIView):
                         if objeto['nur_moneda']:
                             mysql_update_query = """UPDATE caj_Catalogo_Moneda_Tienda SET id_coleccionista =%s, id_organizacion=%s WHERE nur = %s"""
                             cursor.execute(mysql_update_query,(objeto['id_coleccionistaParticipante'],None,objeto['nur_moneda']))
-                connection.commit()
+                    connection.commit()
                 for key,value in facturas.items():
                     total = 0
                     for objeto in value:
