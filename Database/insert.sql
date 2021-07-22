@@ -1842,14 +1842,6 @@ INSERT INTO caj_clientes
         1
     );
 
-INSERT INTO caj_clientes
-    (fechaIngreso,id_coleccionista,id_organizacion)
-    VALUES
-    (
-        '2021-07-18',
-        8,
-        1
-    ); 
 
 INSERT INTO caj_eventos
     (inscripcionCliente,inscripcionClienteNuevo,fecha,
