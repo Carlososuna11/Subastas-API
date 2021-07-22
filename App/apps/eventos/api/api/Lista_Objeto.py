@@ -130,6 +130,19 @@ class Lista_ObjetoListAPIView(generics.ListAPIView):
         monedas = [Lista_Objeto.model(**dato) for dato in lista_obj]
         monedas.sort(key=lambda x: x.id)
         return monedas
+
+    @conectar
+    def finalize_response(self, request, response,connection, *args, **kwargs):
+        # cursor = connection.cursor(dictionary=True)
+        # mysql_get_ask_objeto = """SELECT ask FROM caj_Lista_Objetos WHERE ()"""
+        for objeto in response.data:
+            if objeto['nur_moneda']:
+                objeto['objeto'] = 'moneda'
+            else:
+                objeto['objeto'] = 'pintura'
+            objeto['precio'] = objeto['ask']/(1+objeto['porcentajeGananciaMin']/100) 
+
+        return super().finalize_response(request, response, *args, **kwargs)
     
 class Lista_Objeto_Por_Evento_ListAPIView(generics.ListAPIView):
 
@@ -256,6 +269,18 @@ class Lista_Objeto_Por_Evento_ListAPIView(generics.ListAPIView):
         monedas = [Lista_Objeto.model(**dato) for dato in lista_obj]
         monedas.sort(key=lambda x: x.id)
         return monedas
+
+    @conectar
+    def finalize_response(self, request, response,connection, *args, **kwargs):
+        # cursor = connection.cursor(dictionary=True)
+        # mysql_get_ask_objeto = """SELECT ask FROM caj_Lista_Objetos WHERE ()"""
+        for objeto in response.data:
+            if objeto['nur_moneda']:
+                objeto['objeto'] = 'moneda'
+            else:
+                objeto['objeto'] = 'pintura'
+            objeto['precio'] = objeto['ask']/(1+objeto['porcentajeGananciaMin']/100) 
+        return super().finalize_response(request, response, *args, **kwargs)
 
 class Lista_ObjetoCreateAPIView(generics.CreateAPIView):
     serializer_class = Orden_Lista_ObjetoSerializer
