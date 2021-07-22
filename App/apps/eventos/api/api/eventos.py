@@ -20,7 +20,8 @@ class EventoListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         # print(self.request.COOKIES.get('TOKEN'))
         token = self.request.META.get('HTTP_TOKEN',None)
-        print(type(token))
+        if token == 'false':
+            token = None
         if not token:
             token = self.request.COOKIES.get('TOKEN',None)
         self.request.data['jwt']= None
@@ -150,6 +151,8 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
         #query = self.request.query_params.get('id_pais',None)
         # token = 
         token = self.request.META.get('HTTP_TOKEN',None)
+        if token == 'false':
+            token = None
         if not token:
             token = self.request.COOKIES.get('TOKEN',None)
         self.request.data['jwt']= None
@@ -276,6 +279,8 @@ class EventoCreateAPIView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         token = request.META.get('HTTP_TOKEN',None)
+        if token == 'false':
+            token = None
         if not token:
             token = request.COOKIES.get('TOKEN')
         if not token:
@@ -297,6 +302,8 @@ class EventoRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
     @conectar
     def get_object(self,connection):
         token = self.request.META.get('HTTP_TOKEN',None)
+        if token == 'false':
+            token = None
         if not token:
             token = self.request.COOKIES.get('TOKEN',None)
         self.request.data['jwt']= None
@@ -503,6 +510,8 @@ class PujaDinamica(APIView):
         cursor = connection.cursor(dictionary=True)
         precio = request.data['precio']
         token =request.META.get('HTTP_TOKEN',None)
+        if token == 'false':
+            token = None
         if not token:
             token = request.COOKIES.get('TOKEN')
         if not token:
@@ -561,6 +570,8 @@ class PujaSobreCerrado(APIView):
         cursor = connection.cursor(dictionary=True)
         precio = request.data['precio']
         token = request.META.get('HTTP_TOKEN')
+        if token == 'false':
+            token = None
         if not token:
             token = request.COOKIES.get('TOKEN')
         if not token:
@@ -711,6 +722,8 @@ class GetPujasDinamicaView(APIView):
 # def validate(request,connection):
         cursor = connection.cursor(dictionary=True)
         token = request.META.get('HTTP_TOKEN',None)
+        if token == 'false':
+            token = None
         if not token:
             token = request.COOKIES.get('TOKEN')
         if not token:
@@ -802,6 +815,8 @@ class GetPujasSobreCerradoView(APIView):
 # def validate(request,connection):
         cursor = connection.cursor(dictionary=True)
         token = request.META.get('HTTP_TOKEN',None)
+        if token == 'false':
+            token = None
         if not token:
             token = request.COOKIES.get('TOKEN')
         if not token:
