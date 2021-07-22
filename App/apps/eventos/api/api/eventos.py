@@ -567,7 +567,7 @@ class PujaSobreCerrado(APIView):
     @conectar
     #necesito el token
     def post(self,request,id,connection):
-        cursor = connection.cursor(dictionary=True,buffered=True)
+        cursor = connection.cursor(dictionary=True)
         precio = float(request.data['precio'])
         token = request.META.get('HTTP_TOKEN')
         if token == 'false':
@@ -657,8 +657,8 @@ class ActualizarStatus(APIView):
                             mysql_query_get_moneda = """SELECT * FROM caj_Catalogo_Pintura_Tienda WHERE nur = %s"""
                             cursor.execute(mysql_query_get_moneda,(objeto['id_pintura'],))
                             organizacion = cursor.fetchone()['id_organizacion']
-                        mysql_query_participante = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente, id_organizacion_cliente) = (%s,%s)"""
-                        cursor.execute(mysql_query_participante,(logs['id_coleccionista'],organizacion))
+                        mysql_query_participante = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente, id_organizacion_cliente,id_evento) = (%s,%s,%s)"""
+                        cursor.execute(mysql_query_participante,(logs['id_coleccionista'],organizacion,evento['id']))
                         participante = cursor.fetchone()
                         mysql_update_objeto = """UPDATE caj_Lista_Objetos SET id_eventoParticipante= %s,fechaIngresoParticipante=%s,
                         id_coleccionistaParticipante=%s,id_organizacionParticipante=%s WHERE id = %s"""
