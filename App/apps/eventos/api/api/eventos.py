@@ -20,11 +20,13 @@ class EventoListAPIView(generics.ListAPIView):
         cursor = connection.cursor(dictionary=True)
         # print(self.request.COOKIES.get('TOKEN'))
         token = self.request.META.get('HTTP_TOKEN',None)
+        
         if not token:
             token = self.request.COOKIES.get('TOKEN',None)
         self.request.data['jwt']= None
         if token:    
             try:
+                print(token)
                 payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
             except jwt.ExpiredSignatureError:
                 raise AuthenticationFailed('No Autorizado!')

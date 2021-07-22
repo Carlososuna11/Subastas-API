@@ -125,14 +125,14 @@ class EventoSerializer(serializers.Serializer):
         validated_data['status']='pendiente'
         planificadores = validated_data['planificadores']
         validated_data.pop('planificadores')
-        # cursor.execute(mysq_query_clientes_many)
-        # correos = list(set([cliente['email'] for cliente in cursor]))
-        # send_email_task(correos,
-        # {'fecha':validated_data['fecha'],
-        # 'costo':validated_data['inscripcionCliente'],
-        # 'tipo':validated_data['tipo'].capitalize(),
-        # 'tipoPuja':validated_data['tipoPuja'].capitalize()}
-        # )
+        cursor.execute(mysq_query_clientes_many)
+        correos = list(set([cliente['email'] for cliente in cursor]))
+        send_email_task(correos,
+        {'fecha':validated_data['fecha'],
+        'costo':validated_data['inscripcionCliente'],
+        'tipo':validated_data['tipo'].capitalize(),
+        'tipoPuja':validated_data['tipoPuja'].capitalize()}
+        )
         evento = Evento.model(**validated_data)
         evento.normalize()
         #-------Pais en donde se hará el evento ---------
