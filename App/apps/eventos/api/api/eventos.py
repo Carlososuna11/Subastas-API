@@ -697,8 +697,8 @@ class ActualizarStatus(APIView):
                     for objeto in value:
                         total += objeto['precioAlcanzado']
                     if evento['tipo'] == 'virtual':
-                        mysql_participante = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_organizacion_cliente) =( %s,%s)"""
-                        cursor.execute(mysql_participante,(objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante']))
+                        mysql_participante = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_organizacion_cliente,id_evento) =( %s,%s,%s)"""
+                        cursor.execute(mysql_participante,(objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante'],evento['id']))
                         participante = cursor.fetchone()
                         mysql_costo_envio = """SELECT * FROM caj_costoEnvios WHERE (id_evento,id_pais)=(%s,%s)"""
                         cursor.execute(mysql_costo_envio,(evento['id'],participante['id_pais']))
