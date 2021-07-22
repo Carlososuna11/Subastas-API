@@ -722,8 +722,8 @@ class ActualizarStatus(APIView):
                         for objeto in value2:
                             mysql_insert_det_fact = """INSERT INTO caj_detFacturas (id_evento,id_objeto,numeroFactura,precio) VALUES (%s,%s,%s,%s)"""
                             cursor.execute(mysql_insert_det_fact,(evento['id'],objeto['id'],id_Factura,objeto['precioAlcanzado']))
-            mysql_query_update = """UPDATE caj_eventos SET status = %s WHERE id = %s"""
-            cursor.execute(mysql_query_update,('realizado',evento['id']))
+                        mysql_query_update = """UPDATE caj_eventos SET status = %s WHERE id = %s"""
+                        cursor.execute(mysql_query_update,('realizado',evento['id']))
             connection.commit()
         connection.commit()
         response = Response()
