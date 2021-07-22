@@ -123,6 +123,9 @@ class EventoListAPIView(generics.ListAPIView):
                     if cursor.fetchone():
                         inscrito = True
                     evento['inscrito'] = inscrito
+                    evento['esHoy'] = False
+                    if evento['fecha'] == datetime.date.today().strftime('%d-%m-%Y'):
+                        evento['esHoy'] = True
             else:
                 mysql_query_get = """SELECT * FROM caj_planificadores WHERE id_organizacion = %s AND id_evento = %s"""
                 for evento in response.data:
@@ -251,6 +254,9 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
                     if cursor.fetchone():
                         inscrito = True
                     evento['inscrito'] = inscrito
+                    evento['esHoy'] = False
+                    if evento['fecha'] == datetime.date.today().strftime('%d-%m-%Y'):
+                        evento['esHoy'] = True
             else:
                 mysql_query_get = """SELECT * FROM caj_planificadores WHERE id_organizacion = %s AND id_evento = %s"""
                 for evento in response.data:
@@ -260,7 +266,6 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
                         inscrito = True
                     evento['esHoy'] = False
                     evento['planificador'] = inscrito
-                    print(evento['fecha'])
                     if evento['fecha'] == datetime.date.today().strftime('%d-%m-%Y'):
                         evento['esHoy'] = True
         return super().finalize_response(request, response, *args, **kwargs)
@@ -289,6 +294,16 @@ class EventoRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
     
     @conectar
     def get_object(self,connection):
+        token = self.request.META.get('HTTP_TOKEN',None)
+        if not token:
+            token = self.request.COOKIES.get('TOKEN',None)
+        self.request.data['jwt']= None
+        if token:    
+            try:
+                payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+            except jwt.ExpiredSignatureError:
+                raise AuthenticationFailed('No Autorizado!')
+            self.request.data['jwt'] = payload
         pais = ['id','nombre','nacionalidad']
         # organizacion = ['id','nombre','proposito','fundacion','alcance','tipo','telefonoPrincipal',
         #                 'paginaWeb','emailCorporativo','id_pais']
@@ -354,6 +369,30 @@ class EventoRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
         cursor.execute("DELETE FROM caj_eventos WHERE id = %s",(instance.id,))
         connection.commit()
 
+    @conectar
+    def finalize_response(self, request, response,connection, *args, **kwargs):
+        cursor = connection.cursor(dictionary=True)
+        mysql_query_get = """SELECT * FROM caj_participantes WHERE id_coleccionista_cliente = %s AND id_evento = %s"""
+        usuario = self.request.data['jwt']
+        evento = response.data
+        if usuario:
+            if usuario['tipo'] == 'coleccionista':
+                cursor.execute(mysql_query_get,(usuario['id'],evento['id']))
+                inscrito = False
+                if cursor.fetchone():
+                    inscrito = True
+                evento['inscrito'] = inscrito
+            else:
+                mysql_query_get = """SELECT * FROM caj_planificadores WHERE id_organizacion = %s AND id_evento = %s"""
+                cursor.execute(mysql_query_get,(usuario['id'],evento['id']))
+                inscrito = False
+                if cursor.fetchone():
+                    inscrito = True
+                evento['planificador'] = inscrito
+        evento['esHoy'] = False
+        if evento['fecha'] == datetime.date.today().strftime('%d-%m-%Y'):
+            evento['esHoy'] = True
+        return super().finalize_response(request, response, *args, **kwargs)
 class UpdatePricesView(APIView):
 
     @swagger_auto_schema(request_body=openapi.Schema(
@@ -472,9 +511,14 @@ class PujaDinamica(APIView):
             raise AuthenticationFailed('No Autorizado!')
         if payload['tipo'] == 'organizacion':
             raise AuthenticationFailed('No Autorizado!')
+        #-----Es participante------
         mysql_query_get = """SELECT * FROM caj_Lista_Objetos WHERE id = %s"""
         cursor.execute(mysql_query_get,(id,))
         objeto = cursor.fetchone()
+        mysql_participante_get = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_evento)= (%s,%s)"""
+        cursor.execute(mysql_participante_get,(payload['id'],objeto['id_evento']))
+        if cursor.fetchone() is None:
+            raise AuthenticationFailed('No Participas a este Evento')
         mysql_query_subastaActiva = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s"""
         cursor.execute(mysql_query_subastaActiva,(id,))
         subastaActiva = cursor.fetchone()
@@ -528,6 +572,10 @@ class PujaSobreCerrado(APIView):
         mysql_query_get = """SELECT * FROM caj_Lista_Objetos WHERE id = %s"""
         cursor.execute(mysql_query_get,(id,))
         objeto = cursor.fetchone()
+        mysql_participante_get = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_evento)= (%s,%s)"""
+        cursor.execute(mysql_participante_get,(payload['id'],objeto['id_evento']))
+        if cursor.fetchone() is None:
+            raise AuthenticationFailed('No Participas a este Evento')
         mysql_query_subastaActiva = """SELECT * FROM caj_Subastas_Activas WHERE id_objeto = %s"""
         cursor.execute(mysql_query_subastaActiva,(id,))
         subastaActiva = cursor.fetchone()
@@ -646,7 +694,7 @@ class ActualizarStatus(APIView):
                         mysql_insert_det_fact = """INSERT INTO caj_detFacturas (id_evento,id_objeto,numeroFactura,precio) VALUES (%s,%s,%s,%s)"""
                         cursor.execute(mysql_insert_det_fact,(evento['id'],objeto['id'],id_Factura,objeto['precioAlcanzado']))
                 mysql_query_update = """UPDATE caj_eventos SET status = %s WHERE id = %s"""
-                cursor.execute(mysql_query_update,('terminado',evento['id']))
+                cursor.execute(mysql_query_update,('realizado',evento['id']))
                 connection.commit()
         connection.commit()
         response = Response()
@@ -654,6 +702,32 @@ class ActualizarStatus(APIView):
             'sucess': 'Se ha actualizado los registros'
         }
         return response
+
+class GetPujasView(APIView):
+    @conectar
+    def get(self, request,connection):
+# def validate(request,connection):
+        cursor = connection.cursor(dictionary=True)
+        token = request.META.get('HTTP_TOKEN',None)
+        if not token:
+            token = request.COOKIES.get('TOKEN')
+        if not token:
+            raise AuthenticationFailed('No Autorizado')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithm=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('No Autorizado!')
+        mysql_query_get = ""
+        if payload['tipo'] == 'coleccionista':
+            mysql_query_get = """SELECT * from caj_coleccionistas WHERE id = %s"""
+        elif payload['tipo']=='organizacion':
+            mysql_query_get = """SELECT * from caj_organizaciones WHERE id = %s"""
+
+        cursor.execute(mysql_query_get,(payload['id'],))
+        usuario = cursor.fetchone()
+        if usuario:
+            return Response({'tipo':payload['tipo'],'user':usuario})
+        raise AuthenticationFailed('No existe El usuario')
 # class TerminarSubasta(APIView):
 
 #     @conectar
