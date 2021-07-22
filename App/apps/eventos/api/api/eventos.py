@@ -678,7 +678,7 @@ class ActualizarStatus(APIView):
             mysql_query_subastas_activas = """SELECT * FROM caj_Subastas_Activas WHERE id_evento = %s AND cierre = %s"""
             cursor.execute(mysql_query_subastas_activas,(evento['id'],False))
             if not cursor.fetchall():
-                facturas = {} #uso id de participante como clave
+                facturas = {} #uso id organizacion y eventop de participante como clave
                 #------Generar Facturas y actualizar status ----------
                 mysql_query_lista_objetos = """SELECT * FROM caj_Lista_Objetos WHERE id_evento = %s"""
                 cursor.execute(mysql_query_lista_objetos,(evento['id'],))
@@ -693,25 +693,35 @@ class ActualizarStatus(APIView):
                             cursor.execute(mysql_update_query,(objeto['id_coleccionistaParticipante'],None,objeto['nur_moneda']))
                     connection.commit()
                 for key,value in facturas.items():
-                    total = 0
+                    fatcs = {}
+                    total = {}
                     for objeto in value:
-                        total += objeto['precioAlcanzado']
-                    if evento['tipo'] == 'virtual':
+                        if not fatcs.get((objeto['id_organizacionParticipante'],objeto['id_coleccionistaParticipante']),None):
+                            fatcs[(objeto['id_organizacionParticipante'],objeto['id_coleccionistaParticipante'])] = [] 
+                        if not total.get((objeto['id_organizacionParticipante'],objeto['id_coleccionistaParticipante']),None):
+                            total[(objeto['id_organizacionParticipante'],objeto['id_coleccionistaParticipante'])] = 0
+                        total[(objeto['id_organizacionParticipante'],objeto['id_coleccionistaParticipante'])] += objeto['precioAlcanzado']
+                        fatcs[(objeto['id_organizacionParticipante'],objeto['id_coleccionistaParticipante'])].append(objeto)
                         mysql_participante = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_organizacion_cliente,id_evento) =( %s,%s,%s)"""
                         cursor.execute(mysql_participante,(objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante'],evento['id']))
                         participante = cursor.fetchone()
-                        mysql_costo_envio = """SELECT * FROM caj_costoEnvios WHERE (id_evento,id_pais)=(%s,%s)"""
-                        cursor.execute(mysql_costo_envio,(evento['id'],participante['id_pais']))
-                        costo_envio = cursor.fetchone()
-                        if costo_envio:
-                            total += costo_envio['costoExtra']
-                    mysql_query_factura = """INSERT INTO caj_facturas (id_evento,fechaIngresoParticipante,fechaEmision,total,id_coleccionistaParticipante,id_organizacionParticipante) VALUES (%s,%s,%s,%s,%s,%s)"""
-                    cursor.execute(mysql_query_factura,(evento['id'],participante['fechaIngresoCliente'],datetime.date.today(),total,objeto['id_coleccionistaParticipante'],objeto['id_organizacionParticipante']))
-                    connection.commit()
-                    id_Factura = cursor.lastrowid
-                    for objeto in value:
-                        mysql_insert_det_fact = """INSERT INTO caj_detFacturas (id_evento,id_objeto,numeroFactura,precio) VALUES (%s,%s,%s,%s)"""
-                        cursor.execute(mysql_insert_det_fact,(evento['id'],objeto['id'],id_Factura,objeto['precioAlcanzado']))
+                        if evento['tipo'] == 'virtual':
+                            mysql_costo_envio = """SELECT * FROM caj_costoEnvios WHERE (id_evento,id_pais)=(%s,%s)"""
+                            cursor.execute(mysql_costo_envio,(evento['id'],participante['id_pais']))
+                            costo_envio = cursor.fetchone()
+                            if costo_envio:
+                                total[(objeto['id_organizacionParticipante'],objeto['id_coleccionistaParticipante'])] += costo_envio['costoExtra']
+                    for key2,value2 in fatcs.items():
+                        mysql_participante = """SELECT * FROM caj_participantes WHERE (id_coleccionista_cliente,id_organizacion_cliente,id_evento) =( %s,%s,%s)"""
+                        cursor.execute(mysql_participante,(key2[1],key2[0],evento['id']))
+                        participante = cursor.fetchone()
+                        mysql_query_factura = """INSERT INTO caj_facturas (id_evento,fechaIngresoParticipante,fechaEmision,total,id_coleccionistaParticipante,id_organizacionParticipante) VALUES (%s,%s,%s,%s,%s,%s)"""
+                        cursor.execute(mysql_query_factura,(evento['id'],participante['fechaIngresoCliente'],datetime.date.today(),total[key2],key2[1],key2[0]))
+                        connection.commit()
+                        id_Factura = cursor.lastrowid
+                        for objeto in value2:
+                            mysql_insert_det_fact = """INSERT INTO caj_detFacturas (id_evento,id_objeto,numeroFactura,precio) VALUES (%s,%s,%s,%s)"""
+                            cursor.execute(mysql_insert_det_fact,(evento['id'],objeto['id'],id_Factura,objeto['precioAlcanzado']))
                 mysql_query_update = """UPDATE caj_eventos SET status = %s WHERE id = %s"""
                 cursor.execute(mysql_query_update,('realizado',evento['id']))
                 connection.commit()
@@ -769,6 +779,7 @@ class GetPujasDinamicaView(APIView):
             data['hora_inicio'] = subastaActiva['hora_inicio']
             data['hora_fin'] = subastaActiva['hora_fin']
             data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
+            data['comenzo'] = subastaActiva['hora_inicio'] > datetime.datetime.now() 
             data['logs'] = logs
             data['ask'] = lista_objetos['ask']
             data['bid'] = lista_objetos['bid']
@@ -796,6 +807,7 @@ class GetPujasDinamicaView(APIView):
         data['hora_inicio'] = subastaActiva['hora_inicio']
         data['hora_fin'] = subastaActiva['hora_fin']
         data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
+        data['comenzo'] = subastaActiva['hora_inicio'] > datetime.datetime.now() 
         data['logs'] = logs
         data['ask'] = lista_objetos['ask']
         data['bid'] = lista_objetos['bid']
@@ -857,6 +869,7 @@ class GetPujasSobreCerradoView(APIView):
             puja = cursor.fetchone()
             data['hora_inicio'] = subastaActiva['hora_inicio']
             data['hora_fin'] = subastaActiva['hora_fin']
+            data['comenzo'] = subastaActiva['hora_inicio'] > datetime.datetime.now() 
             data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
             data['pujo'] = False
             if puja:
@@ -884,6 +897,7 @@ class GetPujasSobreCerradoView(APIView):
         logs = cursor.fetchall()
         data['hora_inicio'] = subastaActiva['hora_inicio']
         data['hora_fin'] = subastaActiva['hora_fin']
+        data['comenzo'] = subastaActiva['hora_inicio'] > datetime.datetime.now() 
         data['activa'] = subastaActiva['hora_fin'] > datetime.datetime.now()
         data['logs'] = logs
         data['ask'] = lista_objetos['ask']

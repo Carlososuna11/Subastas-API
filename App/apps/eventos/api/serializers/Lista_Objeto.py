@@ -222,6 +222,9 @@ class Orden_Lista_ObjetoSerializer(serializers.Serializer):
     id_evento = serializers.IntegerField()
 
     def validate_ordenes(self, ordenes):
+        ids = []
+        for objeto in ordenes:
+            print(objeto)
         for objeto in ordenes:
             obj = Lista_ObjetoSerializer(data=objeto)
             obj.is_valid(raise_exception=True)
