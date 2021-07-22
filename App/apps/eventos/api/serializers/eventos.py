@@ -28,7 +28,7 @@ class EventoSerializer(serializers.Serializer):
 
     def validate_fecha(self,fecha):
         print(fecha)
-        if fecha <= datetime.date.today():
+        if fecha < datetime.date.today():
             raise serializers.ValidationError("La fecha debe ser mayor a la fecha actual")
         return fecha
 
