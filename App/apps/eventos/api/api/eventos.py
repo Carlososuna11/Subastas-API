@@ -567,7 +567,7 @@ class PujaSobreCerrado(APIView):
     @conectar
     #necesito el token
     def post(self,request,id,connection):
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor(dictionary=True,buffered=True)
         precio = float(request.data['precio'])
         token = request.META.get('HTTP_TOKEN')
         if token == 'false':
