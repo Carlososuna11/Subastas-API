@@ -260,6 +260,7 @@ class EventoPorOrganizacionListAPIView(generics.ListAPIView):
                         inscrito = True
                     evento['esHoy'] = False
                     evento['planificador'] = inscrito
+                    print(evento['fecha'])
                     if evento['fecha'] == datetime.date.today():
                         evento['esHoy'] = True
         return super().finalize_response(request, response, *args, **kwargs)

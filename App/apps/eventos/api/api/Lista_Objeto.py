@@ -140,6 +140,7 @@ class Lista_ObjetoListAPIView(generics.ListAPIView):
                 objeto['objeto'] = 'moneda'
             else:
                 objeto['objeto'] = 'pintura'
+            print(objeto)
             objeto['precio'] = objeto['ask']/(1+objeto['porcentajeGananciaMin']/100) 
 
         return super().finalize_response(request, response, *args, **kwargs)
