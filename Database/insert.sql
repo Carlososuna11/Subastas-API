@@ -823,6 +823,24 @@ INSERT INTO caj_organizaciones
     36
     );
 
+INSERT INTO caj_contactos
+    (id_organizacion,dni,nombre,segundoNombre,apellido,segundoApellido,telefono,
+    email,cargo)
+    VALUES
+    (
+    1,
+    '29772315',
+    'carlos',
+    'alvaro',
+    'osuna',
+    'piñero',
+    '+58 4267343349',
+    'carlosalvaroosuna1@gmai.com',
+    'relaciones publicas'
+    );
+
+
+
 INSERT INTO caj_organizaciones 
     (nombre,proposito,fundacion,alcance,tipo,telefonoPrincipal,
     paginaweb,emailCorporativo,id_pais)
@@ -838,6 +856,23 @@ INSERT INTO caj_organizaciones
     'info@christies.com',
     23
     );
+
+INSERT INTO caj_contactos
+    (id_organizacion,dni,nombre,segundoNombre,apellido,segundoApellido,telefono,
+    email,cargo)
+    VALUES
+    (
+    2,
+    '3033102',
+    'luis',
+    'antonio',
+    'cocio',
+    'ruiz',
+    '+58 424332546',
+    'luiscocio@gmai.com',
+    'relaciones publicas'
+    );
+
 
 INSERT INTO caj_organizaciones 
     (nombre,proposito,fundacion,alcance,tipo,telefonoPrincipal,
@@ -858,6 +893,23 @@ Mesas de comedor de madera maciza natural reciclada, antiguos mesas de centro in
     22
     );
 
+INSERT INTO caj_contactos
+    (id_organizacion,dni,nombre,segundoNombre,apellido,segundoApellido,telefono,
+    email,cargo)
+    VALUES
+    (
+    3,
+    '7531598',
+    'maria',
+    NULL,
+    'garcia',
+    'ruiz',
+    '+58 42426855',
+    'mariagarcia@gmai.com',
+    'relaciones'
+    );
+
+
 INSERT INTO caj_organizaciones 
     (nombre,proposito,fundacion,alcance,tipo,telefonoPrincipal,
     paginaweb,emailCorporativo,id_pais)
@@ -873,6 +925,23 @@ INSERT INTO caj_organizaciones
     'presse@carrerivegauche.com',
     28
     );
+
+INSERT INTO caj_contactos
+    (id_organizacion,dni,nombre,segundoNombre,apellido,segundoApellido,telefono,
+    email,cargo)
+    VALUES
+    (
+    4,
+    '7474598',
+    'luisa',
+    NULL,
+    'gonzalez',
+    'ruiz',
+    '+58 424789561',
+    'luisa@gmai.com',
+    'relaciones'
+    );
+
 
 INSERT INTO caj_organizaciones 
     (nombre,proposito,fundacion,alcance,tipo,telefonoPrincipal,
@@ -894,6 +963,22 @@ Siempre estaremos abiertos a recibir cualquier tipo de sugerencias y comentarios
     69
     );
 
+INSERT INTO caj_contactos
+    (id_organizacion,dni,nombre,segundoNombre,apellido,segundoApellido,telefono,
+    email,cargo)
+    VALUES
+    (
+    5,
+    '123598',
+    'filomena',
+    NULL,
+    'gonzalez',
+    'ruiz',
+    '+58 424789561',
+    'filomena@gmai.com',
+    'relaciones'
+    );
+
 INSERT INTO caj_organizaciones 
     (nombre,proposito,fundacion,alcance,tipo,telefonoPrincipal,
     paginaweb,emailCorporativo,id_pais)
@@ -910,6 +995,22 @@ Varía a su vez su ubicación, a la calle Gonzalo de Córdoba nº 5 actualmente,
     'https://finumas.es/',
     'info@finumas.es',
     22
+    );
+
+INSERT INTO caj_contactos
+    (id_organizacion,dni,nombre,segundoNombre,apellido,segundoApellido,telefono,
+    email,cargo)
+    VALUES
+    (
+    6,
+    '747123',
+    'jose',
+    NULL,
+    'gonzalez',
+    'ruiz',
+    '+58 424782361',
+    'jose@gmail.com',
+    'relaciones'
     );
 
 INSERT INTO caj_Catalogo_Moneda_Tienda
@@ -1506,8 +1607,8 @@ INSERT INTO caj_Catalogo_Pintura_Tienda
         'expresionismo abstracto',
         1948,
         NULL,
-        NULL,
-        6
+        1,
+        NULL
     );
      
 
@@ -1533,7 +1634,7 @@ INSERT INTO caj_coleccionistas
         'Piñero',
         '+58 4267343349',
         'carlosalvaroosuna1@gmail.com',
-        '2001-09-07',
+        '1993-09-07',
         69,
         69
     );
@@ -1550,7 +1651,7 @@ INSERT INTO caj_coleccionistas
         'Piñero',
         '+58 4267343348',
         'yulianaosuna@yopmail.com',
-        '2003-11-03',
+        '1993-11-03',
         69,
         69
     );
@@ -1584,7 +1685,75 @@ INSERT INTO caj_coleccionistas
         'cisneros',
         '+58 4267343353',
         'bratik121@gmail.com',
-        '2000-01-03',
+        '1993-01-03',
+        69,
+        69
+    );
+
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '28303703',
+        'alfredo',
+        'santiago',
+        'gonzalez',
+        'salazar',
+        '+58 4262016960',
+        'alfredosantiago2014@gmail.com',
+        '1993-01-03',
+        69,
+        69
+    );
+
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '29698518',
+        'jose',
+        'antonio',
+        'di pietro',
+        'zambrano',
+        '+58 4262016960',
+        'dijose29@gmail.com',
+        '1993-01-03',
+        69,
+        69
+    );
+
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '7852645',
+        'tomás',
+        'de jesus',
+        'sanchéz',
+        'de acebay',
+        '+58 4264518652',
+        'tomassanchezacebey@gmail.com',
+        '1993-01-03',
+        69,
+        69
+    );
+
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '7452522',
+        'carlos',
+        'josé',
+        'arriaga',
+        'ruiz',
+        '+58 4264563',
+        'arriaga1410@gmail.com',
+        '1993-01-03',
         69,
         69
     );
@@ -1642,3 +1811,147 @@ INSERT INTO caj_clientes
         4,
         1
     );
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        5,
+        1
+    );
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        6,
+        1
+    );
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        7,
+        1
+    );
+
+INSERT INTO caj_clientes
+    (fechaIngreso,id_coleccionista,id_organizacion)
+    VALUES
+    (
+        '2021-07-18',
+        8,
+        1
+    ); 
+
+INSERT INTO caj_eventos
+    (inscripcionCliente,inscripcionClienteNuevo,fecha,
+    status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
+    VALUES
+    (150,
+    250,
+    '2021-07-29',
+    'pendiente',
+    'virtual'
+    'ascendente',
+    5,
+    'ucab',
+    69);
+
+INSERT INTO caj_planificadores
+    (id_evento,id_organizacion)
+    VALUES
+    (1,1);
+
+INSERT INTO caj_eventos
+    (inscripcionCliente,inscripcionClienteNuevo,fecha,
+    status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
+    VALUES
+    (500,
+    700,
+    '2021-07-25',
+    'pendiente',
+    'prensecial'
+    'sobre cerrado',
+    6,
+    'Torre el silecio',
+    69);
+
+INSERT INTO caj_eventos
+    (inscripcionCliente,inscripcionClienteNuevo,fecha,
+    status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
+    VALUES
+    (500,
+    700,
+    '2021-07-18',
+    'realizado',
+    'prensecial'
+    'sobre cerrado',
+    6,
+    'Torre el silecio',
+    69);
+
+INSERT INTO caj_planificadores
+    (id_evento,id_organizacion)
+    VALUES
+    (1,1);
+
+INSERT INTO caj_planificadores
+    (id_evento,id_organizacion)
+    VALUES
+    (2,1);
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (1,'2021-07-18',1,1,69)
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (2,'2021-07-18',1,1,69)
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (3,'2021-07-18',1,1,69)
+
+INSERT INTO caj_costoEnvios 
+    (id_evento,costoExtra,id_pais)
+    VALUES
+    (1,100,69)
+
+INSERT INTO caj_facturas
+    (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante,id_evento)
+    VALUES
+    ('2021-07-18',500,'2021-07-18',1,1,3)
+
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (3,
+    3,
+    10037,
+    NULL,
+    NULL,
+    50,
+    500,
+    200,
+    1,
+    40,
+    NULL,
+    '2021-07-18',
+    1,
+    1);
