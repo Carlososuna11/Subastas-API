@@ -162,3 +162,15 @@ LEFT JOIN caj_Catalogo_Pintura_Tienda
 ON caj_Lista_Objetos.id_pintura = caj_Catalogo_Pintura_Tienda.nur
 WHERE caj_detFacturas.numeroFactura = 3
 ORDER BY "TIPO DE OBJETO", caj_Lista_Objetos.precioAlcanzado DESC;
+
+SELECT
+CONCAT(caj_coleccionistas.nombre,' ',COALESCE(caj_coleccionistas.segundoNombre,''),' ',caj_coleccionistas.apellido,' ', caj_coleccionistas.segundoApellido) as "Nombre del Coleccionista",
+caj_clientes.fechaIngreso as "Fecha Ingreso",
+caj_coleccionistas.dni as "DNI",
+caj_paises.nacionalidad as "Nacionalidad"
+from caj_clientes
+INNER JOIN caj_coleccionistas
+ON caj_clientes.id_coleccionista = caj_coleccionistas.id
+INNER JOIN caj_paises
+ON caj_paises.id = caj_coleccionistas.id_pais_nacio
+WHERE caj_clientes.id = $P{id_cliente}

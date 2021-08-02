@@ -1991,7 +1991,7 @@ INSERT INTO caj_eventos
     (500,
     700,
     '2021-07-29',
-    'pendiente',
+    'realizado',
     'presencial',
     'sobre cerrado',
     6,
