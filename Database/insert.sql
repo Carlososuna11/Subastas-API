@@ -2244,6 +2244,10 @@ INSERT INTO caj_detFacturas
     VALUES
     (4,7,3,750);
 
+INSERT INTO caj_costoEnvios 
+    (id_evento,costoExtra,id_pais)
+    VALUES
+    (6,100,69);
 
 -- EVENTO 6
 -- LISTA OBJETOS 8
@@ -2298,7 +2302,7 @@ INSERT INTO caj_facturas
     (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
     id_organizacionParticipante,id_evento)
     VALUES
-    ('2021-08-1',1640,'2021-07-1',1,1,6);
+    ('2021-08-1',1740,'2021-07-1',1,1,6);
 -- Factura y det Factura
 INSERT INTO caj_detFacturas
     (id_evento,id_objeto,numeroFactura,precio)
@@ -2334,11 +2338,14 @@ INSERT INTO caj_Lista_Objetos
     '2021-07-1',
     1,
     2);
+
+
+
 INSERT INTO caj_facturas
     (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
     id_organizacionParticipante,id_evento)
     VALUES
-    ('2021-08-1',720,'2021-07-1',1,2,6);
+    ('2021-08-1',820,'2021-07-1',1,2,6);
 
 INSERT INTO caj_detFacturas
     (id_evento,id_objeto,numeroFactura,precio)
