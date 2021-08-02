@@ -841,6 +841,23 @@ INSERT INTO caj_contactos
 
 
 
+INSERT INTO caj_coleccionistas 
+    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
+    fechaNacimiento,id_pais_nacio,id_pais_reside)
+    VALUES
+    (
+        '2972315',
+        'Carlos',
+        'Alvaro',
+        'Osuna',
+        'Piñero',
+        '+58 4267343349',
+        'carlosalvaroosuna1@yopmail.com',
+        '1993-09-07',
+        69,
+        69
+    );
+
 INSERT INTO caj_organizaciones 
     (nombre,proposito,fundacion,alcance,tipo,telefonoPrincipal,
     paginaweb,emailCorporativo,id_pais)
@@ -1049,8 +1066,8 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     (
     4,
     10003,
-    NULL,    
-    2
+    1,    
+    NULL
     );
 
     INSERT INTO caj_Catalogo_Moneda_Tienda
@@ -1059,8 +1076,8 @@ INSERT INTO caj_Catalogo_Moneda_Tienda
     (
     5,
     10004,
-    NULL,    
-    2
+    1,    
+    NULL
     );
 
     INSERT INTO caj_Catalogo_Moneda_Tienda
@@ -1228,8 +1245,8 @@ INSERT INTO caj_Catalogo_Pintura_Tienda
         'postguerra',
         1864,
         NULL,
-        NULL,
-        1
+        1,
+        NULL
     );
 
 INSERT INTO caj_artistas
@@ -1252,8 +1269,8 @@ INSERT INTO caj_Catalogo_Pintura_Tienda
         'nature morte',
         1890,
         NULL,
-        NULL,
-        1
+        1,
+        NULL
     );
 
 INSERT INTO caj_artistas
@@ -1276,8 +1293,8 @@ INSERT INTO caj_Catalogo_Pintura_Tienda
         'expresionismo',
         1962,
         NULL,
-        NULL,
-        2
+        1,
+        NULL
     );
 
 INSERT INTO caj_artistas
@@ -1607,8 +1624,8 @@ INSERT INTO caj_Catalogo_Pintura_Tienda
         'expresionismo abstracto',
         1948,
         NULL,
-        NULL,
-        1
+        1,
+        NULL
     );
      
 
@@ -1622,22 +1639,6 @@ INSERT INTO caj_P_A
         VALUES
         (10037,33);
 
-INSERT INTO caj_coleccionistas 
-    (dni,nombre,segundoNombre,apellido,segundoApellido,telefono,email,
-    fechaNacimiento,id_pais_nacio,id_pais_reside)
-    VALUES
-    (
-        '2972315',
-        'Carlos',
-        'Alvaro',
-        'Osuna',
-        'Piñero',
-        '+58 4267343349',
-        'carlosalvaroosuna1@yopmail.com',
-        '1993-09-07',
-        69,
-        69
-    );
 
 UPDATE caj_Catalogo_Pintura_Tienda SET id_coleccionista = 1, id_organizacion = NULL 
 WHERE nur = 10037;
@@ -1765,7 +1766,7 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         1,
         1
     ); 
@@ -1774,7 +1775,7 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         1,
         2
     );
@@ -1783,7 +1784,7 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         2,
         1
     );  
@@ -1792,7 +1793,7 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         2,
         3
     ); 
@@ -1801,7 +1802,7 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         3,
         4
     ); 
@@ -1810,7 +1811,7 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         4,
         1
     );
@@ -1819,7 +1820,7 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         5,
         1
     );
@@ -1828,7 +1829,7 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         6,
         1
     );
@@ -1837,12 +1838,13 @@ INSERT INTO caj_clientes
     (fechaIngreso,id_coleccionista,id_organizacion)
     VALUES
     (
-        '2021-07-18',
+        '2021-07-1',
         7,
         1
     );
 
 
+-- ID EVENTO 1
 INSERT INTO caj_eventos
     (inscripcionCliente,inscripcionClienteNuevo,fecha,
     status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
@@ -1851,7 +1853,7 @@ INSERT INTO caj_eventos
     150,
     250,
     '2021-07-29',
-    'pendiente',
+    'realizado',
     'virtual',
     'ascendente',
     5,
@@ -1863,6 +1865,7 @@ INSERT INTO caj_planificadores
     VALUES
     (1,1);
 
+-- ID EVENTO 2
 INSERT INTO caj_eventos
     (inscripcionCliente,inscripcionClienteNuevo,fecha,
     status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
@@ -1870,13 +1873,14 @@ INSERT INTO caj_eventos
     (500,
     700,
     '2021-07-25',
-    'pendiente',
+    'realizado',
     'presencial',
     'sobre cerrado',
     6,
     'Torre el silecio',
     69);
 
+-- ID EVENTO 3
 INSERT INTO caj_eventos
     (inscripcionCliente,inscripcionClienteNuevo,fecha,
     status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
@@ -1905,19 +1909,38 @@ INSERT INTO caj_participantes
     (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
     id_organizacion_cliente,id_pais)
     VALUES
-    (1,'2021-07-18',1,1,69);
+    (1,'2021-07-1',1,1,69);
 
 INSERT INTO caj_participantes
     (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
     id_organizacion_cliente,id_pais)
     VALUES
-    (2,'2021-07-18',1,1,69);
+    (2,'2021-07-1',1,1,69);
 
 INSERT INTO caj_participantes
     (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
     id_organizacion_cliente,id_pais)
     VALUES
-    (3,'2021-07-18',1,1,69);
+    (3,'2021-07-1',1,1,69);
+
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (1,'2021-07-1',2,1,69);
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (2,'2021-07-1',2,1,69);
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (3,'2021-07-1',2,1,69);
 
 INSERT INTO caj_costoEnvios 
     (id_evento,costoExtra,id_pais)
@@ -1928,10 +1951,10 @@ INSERT INTO caj_facturas
     (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
     id_organizacionParticipante,id_evento)
     VALUES
-    ('2021-07-18',500,'2021-07-18',1,1,3);
+    ('2021-07-18',500,'2021-07-1',1,1,3);
 
 
-
+-- LISTA OBJETOS 1
 INSERT INTO caj_Lista_Objetos
     (id_evento,id_eventoParticipante,
     id_pintura,nur_moneda,id_moneda,
@@ -1951,7 +1974,7 @@ INSERT INTO caj_Lista_Objetos
     1,
     40,
     NULL,
-    '2021-07-18',
+    '2021-07-1',
     1,
     1);
 
@@ -1959,3 +1982,365 @@ INSERT INTO caj_detFacturas
     (id_evento,id_objeto,numeroFactura,precio)
     VALUES
     (3,1,1,500);
+
+-- evento 4
+INSERT INTO caj_eventos
+    (inscripcionCliente,inscripcionClienteNuevo,fecha,
+    status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
+    VALUES
+    (500,
+    700,
+    '2021-07-29',
+    'pendiente',
+    'presencial',
+    'sobre cerrado',
+    6,
+    'Torre el silecio',
+    69);
+
+    INSERT INTO caj_planificadores
+    (id_evento,id_organizacion)
+    VALUES
+    (4,2);
+
+-- evento 5
+INSERT INTO caj_eventos
+    (inscripcionCliente,inscripcionClienteNuevo,fecha,
+    status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
+    VALUES
+    (5000,
+    7000,
+    '2021-08-16',
+    'pendiente',
+    'presencial',
+    'ascendente',
+    6,
+    'Tolón',
+    69);
+
+    INSERT INTO caj_planificadores
+    (id_evento,id_organizacion)
+    VALUES
+    (5,1);
+
+INSERT INTO caj_planificadores
+    (id_evento,id_organizacion)
+    VALUES
+    (5,2);
+
+
+-- evento 6
+INSERT INTO caj_eventos
+    (inscripcionCliente,inscripcionClienteNuevo,fecha,
+    status,tipo,tipoPuja,duracionHoras,lugar,id_pais)
+    VALUES
+    (5000,
+    7000,
+    '2021-08-1',
+    'realizado',
+    'presencial',
+    'ascendente',
+    6,
+    'San Ignacio',
+    69);
+
+INSERT INTO caj_planificadores
+    (id_evento,id_organizacion)
+    VALUES
+    (6,1);
+
+INSERT INTO caj_planificadores
+    (id_evento,id_organizacion)
+    VALUES
+    (6,2);
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (4,'2021-07-1',1,2,69);
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (6,'2021-07-1',1,2,69);
+
+INSERT INTO caj_participantes
+    (id_evento,fechaIngresoCliente,id_coleccionista_cliente,
+    id_organizacion_cliente,id_pais)
+    VALUES
+    (6,'2021-07-1',1,1,69);
+
+
+
+
+-- LISTA OBJETOS 2
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (1,
+    NULL,
+    NULL,
+    10000,
+    1,
+    50,
+    50,
+    200,
+    50,
+    1,
+    40,
+    'inferior al ask',
+    NULL,
+    NULL,
+    NULL);
+
+-- LISTA OBJETOS 3
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (1,
+    NULL,
+    NULL,
+    10001,
+    2,
+    50,
+    0,
+    200,
+    0,
+    2,
+    40,
+    'sin ofertas',
+    NULL,
+    NULL,
+    NULL);
+
+-- LISTA OBJETOS 4
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (1,
+    NULL,
+    10020,
+    NULL,
+    NULL,
+    50,
+    0,
+    200,
+    0,
+    3,
+    40,
+    'sin ofertas',
+    NULL,
+    NULL,
+    NULL);
+
+-- EVENTO 2
+
+-- LISTA OBJETOS 5
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (2,
+    NULL,
+    NULL,
+    10002,
+    3,
+    50,
+    40,
+    200,
+    40,
+    1,
+    40,
+    'inferior al ask',
+    NULL,
+    NULL,
+    NULL);
+
+-- LISTA OBJETOS 6
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (2,
+    2,
+    NULL,
+    10003,
+    4,
+    50,
+    400,
+    200,
+    400,
+    1,
+    40,
+    NULL,
+    '2021-07-1',
+    1,
+    1);
+INSERT INTO caj_facturas
+    (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante,id_evento)
+    VALUES
+    ('2021-07-25',400,'2021-07-1',1,1,2);
+
+INSERT INTO caj_detFacturas
+    (id_evento,id_objeto,numeroFactura,precio)
+    VALUES
+    (2,6,2,400);
+
+
+-- EVENTO 4
+-- LISTA OBJETOS 7
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (4,
+    4,
+    10021,
+    NULL,
+    NULL,
+    50,
+    750,
+    200,
+    750,
+    1,
+    40,
+    NULL,
+    '2021-07-1',
+    1,
+    2);
+
+INSERT INTO caj_facturas
+    (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante,id_evento)
+    VALUES
+    ('2021-07-29',750,'2021-07-1',1,2,4);
+
+INSERT INTO caj_detFacturas
+    (id_evento,id_objeto,numeroFactura,precio)
+    VALUES
+    (4,7,3,750);
+
+
+-- EVENTO 6
+-- LISTA OBJETOS 8
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (6,
+    6,
+    NULL,
+    10004,
+    5,
+    50,
+    750,
+    200,
+    750,
+    1,
+    40,
+    NULL,
+    '2021-07-1',
+    1,
+    1);
+
+-- LISTA OBJETOS 9
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (6,
+    6,
+    10022,
+    NULL,
+    NULL,
+    50,
+    890,
+    200,
+    890,
+    2,
+    40,
+    NULL,
+    '2021-07-1',
+    1,
+    1);
+
+INSERT INTO caj_facturas
+    (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante,id_evento)
+    VALUES
+    ('2021-08-1',1640,'2021-07-1',1,1,6);
+-- Factura y det Factura
+INSERT INTO caj_detFacturas
+    (id_evento,id_objeto,numeroFactura,precio)
+    VALUES
+    (6,8,4,750);
+
+INSERT INTO caj_detFacturas
+    (id_evento,id_objeto,numeroFactura,precio)
+    VALUES
+    (6,9,4,890);
+
+
+-- LISTA OBJETOS 10
+INSERT INTO caj_Lista_Objetos
+    (id_evento,id_eventoParticipante,
+    id_pintura,nur_moneda,id_moneda,
+    porcentajeGananciaMin,bid,ask,precioAlcanzado,orden,
+    duracionmin,razonNoVenta,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante)
+    VALUES
+    (6,
+    6,
+    10023,
+    NULL,
+    NULL,
+    50,
+    720,
+    200,
+    720,
+    2,
+    40,
+    NULL,
+    '2021-07-1',
+    1,
+    2);
+INSERT INTO caj_facturas
+    (fechaEmision,total,fechaIngresoParticipante,id_coleccionistaParticipante,
+    id_organizacionParticipante,id_evento)
+    VALUES
+    ('2021-08-1',720,'2021-07-1',1,2,6);
+
+INSERT INTO caj_detFacturas
+    (id_evento,id_objeto,numeroFactura,precio)
+    VALUES
+    (6,10,5,720);
